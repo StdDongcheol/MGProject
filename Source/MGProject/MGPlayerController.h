@@ -16,7 +16,11 @@ class MGPROJECT_API AMGPlayerController : public APlayerController
 
 public:
 	virtual void InitInputSystem() override;
-	
+	virtual void BeginPlay() override;
+
+private:
+	class AMGPlayerCharacter* PlayerCharacter = nullptr;
+
 private:
 	void MoveFront(float Value);
 	void MoveLeft(float Value);
@@ -24,4 +28,7 @@ private:
 	void MoveBack(float Value);
 	void MouseXMove(float Value);
 	void MouseYMove(float Value);
+	void LeftMouseButtonClick();
+	void RightMouseButtonClick();
+	void RightMouseButtonRelease();
 };

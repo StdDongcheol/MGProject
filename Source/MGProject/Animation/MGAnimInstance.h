@@ -23,9 +23,9 @@ private:
 	
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float	MovementYawValue;
-	
+
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float	CharacterAimYaw;
+	FRotator	CharacterAimRotation;
 	
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float	CharacterPrevAimYaw;
@@ -35,8 +35,6 @@ private:
 
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	ECharacter_ActionState	ActionState;
-
-	class ACharacter* OwnedCharacter;
 	
 public:
 	void SetMovementYaw(float Value)
@@ -44,9 +42,9 @@ public:
 		MovementYawValue = Value;
 	}
 	
-	void SetAimYaw(float Value)
+	void SetAimRotation(FRotator Rot)
 	{
-		CharacterAimYaw = Value;
+		CharacterAimRotation = Rot;
 	}
 
 	void SetMoving(bool Moving)
@@ -59,9 +57,10 @@ public:
 		ActionState = State;
 	}
 	
-	void SetCharacter(class ACharacter* Character)
+public:
+	ECharacter_ActionState GetActionState() const
 	{
-		OwnedCharacter = Character;
+		return ActionState;
 	}
 
 private:

@@ -17,15 +17,11 @@ class MGPROJECT_API UMGFlag : public UObject
 };
 
 UENUM()
-enum class ECharacter_ActionState
+enum class ECharacter_ActionState : uint8
 {
 	None,
-	Idle,
-	Walking,
-	Running,
-	Aiming,
-	Attaking,
-	Dying
+	Normal,
+	Aiming
 };
 
 UENUM()

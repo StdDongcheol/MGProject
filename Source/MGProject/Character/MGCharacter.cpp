@@ -3,9 +3,7 @@
 
 #include "MGCharacter.h"
 
-AMGCharacter::AMGCharacter() :
-	ActionState(ECharacter_ActionState::Idle),
-	ActiveState(ECharacter_ActiveState::Active)
+AMGCharacter::AMGCharacter()
 {
  	PrimaryActorTick.bCanEverTick = true;
 
@@ -34,8 +32,6 @@ void AMGCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	AnimInstance = Cast<UMGAnimInstance>(GetMesh()->GetAnimInstance());
-
-	AnimInstance->SetCharacter(this);
 }
 
 void AMGCharacter::Tick(float DeltaTime)

@@ -11,14 +11,14 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 {
 	Super::StateUpdate(DeltaTime);
 
-	FRotator3d CharacterRot = GetVelocity().Rotation();
-	FRotator3d AimRot = GetBaseAimRotation();
+	FRotator CharacterRot = GetVelocity().Rotation();
+	FRotator AimRot = GetBaseAimRotation();
 
-	FRotator3d RotValue = AimRot - CharacterRot;
+	FRotator RotValue = AimRot - CharacterRot;
 	RotValue.Normalize();
 
 	GetAnimInst()->SetMovementYaw(RotValue.Yaw);
-	GetAnimInst()->SetAimYaw(AimRot.Yaw);
+	GetAnimInst()->SetAimRotation(AimRot);
 
 }
 

@@ -2,7 +2,7 @@
 
 
 #include "MGPlayerController.h"
-#include "Character/MGCharacter.h"
+#include "MGFlag.h"
 #include "Character/MGPlayerCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -17,6 +17,15 @@ void AMGPlayerController::InitInputSystem()
 	InputComponent->BindAxis(FName("MoveRight"), this, &AMGPlayerController::MoveRight);
 	InputComponent->BindAxis(FName("MouseX"), this, &AMGPlayerController::MouseXMove);
 	InputComponent->BindAxis(FName("MouseY"), this, &AMGPlayerController::MouseYMove);
+
+	InputComponent->BindAction(FName("LeftMouseButton"), EInputEvent::IE_Pressed, this, &AMGPlayerController::LeftMouseButtonClick);
+	InputComponent->BindAction(FName("RightMouseButton"), EInputEvent::IE_Pressed, this, &AMGPlayerController::RightMouseButtonClick);
+	InputComponent->BindAction(FName("RightMouseButton"), EInputEvent::IE_Released, this, &AMGPlayerController::RightMouseButtonRelease);
+}
+
+void AMGPlayerController::BeginPlay()
+{
+	PlayerCharacter = Cast<AMGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 void AMGPlayerController::MoveFront(float Value)
@@ -24,19 +33,17 @@ void AMGPlayerController::MoveFront(float Value)
 	if (Value == 0.0f)
 		return;
 
-	ACharacter* pCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-
-	if (!pCharacter || !pCharacter->IsValidLowLevel())
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(pCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
+	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(PlayerCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
 
 	if (!ArmComponent || !ArmComponent->IsValidLowLevel())
 		return;
 
 	FVector ForwardVector = ArmComponent->GetForwardVector();
 
-	pCharacter->AddMovementInput(ForwardVector);
+	PlayerCharacter->AddMovementInput(ForwardVector);
 }
 
 void AMGPlayerController::MoveLeft(float Value)
@@ -44,19 +51,17 @@ void AMGPlayerController::MoveLeft(float Value)
 	if (Value == 0.0f)
 		return;
 
-	ACharacter* pCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-
-	if (!pCharacter || !pCharacter->IsValidLowLevel())
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(pCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
+	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(PlayerCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
 
 	if (!ArmComponent || !ArmComponent->IsValidLowLevel())
 		return;
 
 	FVector RightVector = ArmComponent->GetRightVector();
 
-	pCharacter->AddMovementInput(-RightVector);
+	PlayerCharacter->AddMovementInput(-RightVector);
 }
 
 void AMGPlayerController::MoveRight(float Value)
@@ -64,17 +69,15 @@ void AMGPlayerController::MoveRight(float Value)
 	if (Value == 0.0f)
 		return;
 
-	ACharacter* pCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-
-	if (!pCharacter || !pCharacter->IsValidLowLevel())
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(pCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
+	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(PlayerCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
 
 	if (!ArmComponent || !ArmComponent->IsValidLowLevel())
 		return;
 
-	pCharacter->AddMovementInput(ArmComponent->GetRightVector());
+	PlayerCharacter->AddMovementInput(ArmComponent->GetRightVector());
 }
 
 void AMGPlayerController::MoveBack(float Value)
@@ -82,19 +85,17 @@ void AMGPlayerController::MoveBack(float Value)
 	if (Value == 0.0f)
 		return;
 
-	ACharacter* pCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-
-	if (!pCharacter || !pCharacter->IsValidLowLevel())
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 	
-	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(pCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
+	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(PlayerCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
 
 	if (!ArmComponent || !ArmComponent->IsValidLowLevel())
 		return;
 
 	FVector ForwardVector = ArmComponent->GetForwardVector();
 	
-	pCharacter->AddMovementInput(-ForwardVector);
+	PlayerCharacter->AddMovementInput(-ForwardVector);
 }
 
 void AMGPlayerController::MouseXMove(float Value)
@@ -102,16 +103,14 @@ void AMGPlayerController::MouseXMove(float Value)
 	if (Value == 0.0f)
 		return;
 
-	AMGPlayerCharacter* pPlayerCharacter = Cast<AMGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
-	if (!pPlayerCharacter || !pPlayerCharacter->IsValidLowLevel())
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	FRotator Rotation = pPlayerCharacter->GetSpringArmComponent()->GetRelativeRotation();
+	FRotator Rotation = PlayerCharacter->GetSpringArmComponent()->GetRelativeRotation();
 
 	Rotation.Add(0.0f, Value, 0.0f);
 
-	pPlayerCharacter->GetSpringArmComponent()->SetRelativeRotation(Rotation);
+	PlayerCharacter->GetSpringArmComponent()->SetRelativeRotation(Rotation);
 
 }
 
@@ -120,14 +119,72 @@ void AMGPlayerController::MouseYMove(float Value)
 	if (Value == 0.0f)
 		return;
 
-	AMGPlayerCharacter* pPlayerCharacter = Cast<AMGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
-	if (!pPlayerCharacter || !pPlayerCharacter->IsValidLowLevel())
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	FRotator Rotation = pPlayerCharacter->GetSpringArmComponent()->GetRelativeRotation();
+	FRotator Rotation = PlayerCharacter->GetSpringArmComponent()->GetRelativeRotation();
 	
 	Rotation.Add(Value, 0.0f, 0.0f);
 	
-	pPlayerCharacter->GetSpringArmComponent()->SetRelativeRotation(Rotation);
+	PlayerCharacter->GetSpringArmComponent()->SetRelativeRotation(Rotation);
+}
+
+void AMGPlayerController::LeftMouseButtonClick()
+{
+}
+
+void AMGPlayerController::RightMouseButtonClick()
+{
+	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+
+	switch (ActionState)
+	{
+	case ECharacter_ActionState::Normal:
+	{
+		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
+		
+		if (!ArmComponent)
+			return;
+
+		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Aiming);
+		
+		// CameraArm Length 및 SocketOffset 조정
+		ArmComponent->TargetArmLength = 150.0f;
+		ArmComponent->SocketOffset = FVector(0.0f, -40.0f, 0.0f);
+
+		break;
+	}
+
+	case ECharacter_ActionState::Aiming:
+	default:
+		break;
+	}
+}
+
+void AMGPlayerController::RightMouseButtonRelease()
+{
+	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+
+	switch (ActionState)
+	{
+	case ECharacter_ActionState::Aiming:
+	{
+		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
+
+		if (!ArmComponent)
+			return;
+		
+		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Normal);
+
+		// CameraArm Length 및 SocketOffset 조정
+		ArmComponent->TargetArmLength = 250.0f;
+		ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
+
+		break;
+	}
+
+	case ECharacter_ActionState::Normal:
+	default:
+		break;
+	}
 }

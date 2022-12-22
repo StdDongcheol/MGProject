@@ -18,19 +18,11 @@ public:
 
 private:
 	UMGAnimInstance* AnimInstance;
-	ECharacter_ActionState ActionState;
-	ECharacter_ActiveState ActiveState;
 
 public:
 	UMGAnimInstance* GetAnimInst() const
 	{
 		return AnimInstance;
-	}
-	
-public:
-	ECharacter_ActionState GetActionState() const
-	{
-		return ActionState;
 	}
 
 protected:

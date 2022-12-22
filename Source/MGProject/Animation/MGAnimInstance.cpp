@@ -6,23 +6,24 @@
 
 UMGAnimInstance::UMGAnimInstance()
 {
-	CharacterAimYaw = 0.0f;
+	ActionState = ECharacter_ActionState::Normal;
 	CharacterPrevAimYaw = 0.0f;
 	RootBoneYaw = 0.0f;
 }
 
 void UMGAnimInstance::MGUpdateRotate(float DeltaSeconds)
 {
-	if (IsMoving)
+	if (IsMoving || 
+		ActionState == ECharacter_ActionState::Aiming)
 	{
-		RootBoneYaw = CharacterAimYaw;
+		RootBoneYaw = CharacterAimRotation.Yaw;
 	}
 
 	else
 	{
-		CharacterPrevAimYaw = CharacterAimYaw;
+		CharacterPrevAimYaw = CharacterAimRotation.Yaw;
 
-		RootBoneYaw -= (CharacterAimYaw - CharacterPrevAimYaw);
+		RootBoneYaw -= (CharacterAimRotation.Yaw - CharacterPrevAimYaw);
 	}
 }
 
@@ -31,6 +32,8 @@ void UMGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	MGUpdateRotate(DeltaSeconds);
+
+	
 }
 
 void UMGAnimInstance::NativeBeginPlay()
