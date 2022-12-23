@@ -22,6 +22,9 @@ private:
 	bool	IsMoving;
 	
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool	IsFire;
+	
+	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float	MovementYawValue;
 
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -50,6 +53,11 @@ public:
 	void SetMoving(bool Moving)
 	{
 		IsMoving = Moving;
+	}
+	
+	void SetFire(bool Fire)
+	{
+		IsFire = Fire;
 	}
 
 	void SetActionState(ECharacter_ActionState State)
