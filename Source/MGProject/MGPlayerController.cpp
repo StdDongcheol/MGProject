@@ -17,6 +17,7 @@ void AMGPlayerController::InitInputSystem()
 	InputComponent->BindAxis(FName("MoveRight"), this, &AMGPlayerController::MoveRight);
 	InputComponent->BindAxis(FName("MouseX"), this, &AMGPlayerController::MouseXMove);
 	InputComponent->BindAxis(FName("MouseY"), this, &AMGPlayerController::MouseYMove);
+	//InputComponent->BindAxis(FName("RightMouseButton"), this, &AMGPlayerController::RightMouseButtonAxis);
 
 	InputComponent->BindAction(FName("LeftMouseButton"), EInputEvent::IE_Pressed, this, &AMGPlayerController::LeftMouseButtonClick);
 	InputComponent->BindAction(FName("RightMouseButton"), EInputEvent::IE_Pressed, this, &AMGPlayerController::RightMouseButtonClick);
@@ -131,12 +132,15 @@ void AMGPlayerController::MouseYMove(float Value)
 
 void AMGPlayerController::LeftMouseButtonClick()
 {
+	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+
+	PlayerCharacter->GetAnimInst()->SetFire(true);
 }
 
 void AMGPlayerController::RightMouseButtonClick()
 {
 	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
-
+	UE_LOG(LogTemp, Log, TEXT("Pressed!!!"));
 	switch (ActionState)
 	{
 	case ECharacter_ActionState::Normal:
@@ -159,6 +163,38 @@ void AMGPlayerController::RightMouseButtonClick()
 	default:
 		break;
 	}
+}
+
+void AMGPlayerController::RightMouseButtonAxis(float Value)
+{
+	if (Value == 0.0f)
+		return;
+
+	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+	UE_LOG(LogTemp, Log, TEXT("Pressed!!!"));
+	switch (ActionState)
+	{
+	case ECharacter_ActionState::Normal:
+	{
+		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
+
+		if (!ArmComponent)
+			return;
+
+		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Aiming);
+
+		// CameraArm Length ¹× SocketOffset Á¶Á¤
+		ArmComponent->TargetArmLength = 150.0f;
+		ArmComponent->SocketOffset = FVector(0.0f, -40.0f, 0.0f);
+
+		break;
+	}
+
+	case ECharacter_ActionState::Aiming:
+	default:
+		break;
+	}
+
 }
 
 void AMGPlayerController::RightMouseButtonRelease()

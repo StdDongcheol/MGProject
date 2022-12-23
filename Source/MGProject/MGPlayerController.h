@@ -30,5 +30,6 @@ private:
 	void MouseYMove(float Value);
 	void LeftMouseButtonClick();
 	void RightMouseButtonClick();
+	void RightMouseButtonAxis(float Value);
 	void RightMouseButtonRelease();
 };
