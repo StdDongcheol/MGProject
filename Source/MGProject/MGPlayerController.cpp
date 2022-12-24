@@ -153,8 +153,8 @@ void AMGPlayerController::RightMouseButtonClick()
 		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Aiming);
 		
 		// CameraArm Length ¹× SocketOffset Á¶Á¤
-		ArmComponent->TargetArmLength = 150.0f;
-		ArmComponent->SocketOffset = FVector(0.0f, -40.0f, 0.0f);
+		ArmComponent->TargetArmLength = 100.0f;
+		ArmComponent->SocketOffset = FVector(0.0f, -60.0f, 30.0f);
 
 		break;
 	}
