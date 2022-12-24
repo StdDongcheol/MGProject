@@ -2,23 +2,27 @@
 
 
 #include "MGProjectile.h"
+#include "Particles/ParticleSystemComponent.h"
 
-// Sets default values
 AMGProjectile::AMGProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+ 	PrimaryActorTick.bCanEverTick = true;
+
+	Sphere = CreateDefaultSubobject<UStaticMeshComponent>(FName("Sphere"));
+	RootComponent = Sphere;
+
+	Particle = CreateDefaultSubobject<UParticleSystemComponent>(FName("Particle"));
+	
+	ProjectileComponent = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMovement"));
 
 }
 
-// Called when the game starts or when spawned
 void AMGProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
 void AMGProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
