@@ -64,6 +64,12 @@ public:
 	{
 		ActionState = State;
 	}
+
+public:
+	FRotator GetAimRot() const
+	{
+		return CharacterAimRotation;
+	}
 	
 public:
 	ECharacter_ActionState GetActionState() const
