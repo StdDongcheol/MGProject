@@ -2,14 +2,29 @@
 
 
 #include "MGAnimNotifyState_ObjectCreate.h"
+#include "UObject/Class.h"
+#include "../Character/MGCharacter.h"
 
 void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	const FTransform MeshTransform = MeshComp->GetSocketTransform(SocketName);
-	FVector3d Vec3d = MeshTransform.GetLocation();
-	FVector vector = Vec3d;
+	AActor* Owner = MeshComp->GetOwner();
 
-	AActor* Actor = MeshComp->GetWorld()->SpawnActor<AActor>(TargetActor, MeshTransform);
+
+	AMGCharacter* Character = Cast<AMGCharacter>(Owner);
+
+	if (!Character || !Character->IsValidLowLevel())
+		return;
+	
+	float Pitch = Character->GetAnimInst()->GetAimRot().Pitch;
+
+	const FTransform MeshTransform = MeshComp->GetSocketTransform(SocketName);
+
+	FVector Vector = MeshTransform.GetLocation();
+	FRotator Rotator = MeshTransform.Rotator();
+
+	Rotator.Pitch = Pitch;
+
+	AActor* Actor = MeshComp->GetWorld()->SpawnActor<AActor>(TargetActor, Vector, Rotator);
 }
