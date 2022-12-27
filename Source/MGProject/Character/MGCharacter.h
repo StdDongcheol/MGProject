@@ -19,6 +19,9 @@ public:
 private:
 	UMGAnimInstance* AnimInstance;
 
+protected:
+	class UCapsuleComponent* Capsule;
+
 public:
 	UMGAnimInstance* GetAnimInst() const
 	{

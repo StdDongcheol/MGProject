@@ -2,9 +2,12 @@
 
 
 #include "MGPlayerCharacter.h"
+#include "Components/CapsuleComponent.h"
 
 AMGPlayerCharacter::AMGPlayerCharacter()
 {
+	Capsule->SetCollisionProfileName(FName("Player"));
+
 }
 
 void AMGPlayerCharacter::StateUpdate(float DeltaTime)

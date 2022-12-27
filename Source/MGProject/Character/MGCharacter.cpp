@@ -2,11 +2,13 @@
 
 
 #include "MGCharacter.h"
+#include "Components/CapsuleComponent.h"
 
 AMGCharacter::AMGCharacter()
 {
  	PrimaryActorTick.bCanEverTick = true;
 
+	Capsule = FindComponentByClass<UCapsuleComponent>();
 }
 
 void AMGCharacter::StateUpdate(float DeltaTime)
