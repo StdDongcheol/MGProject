@@ -4,6 +4,7 @@
 #include "MGAnimNotifyState_ObjectCreate.h"
 #include "UObject/Class.h"
 #include "../Character/MGCharacter.h"
+#include "../Projectile/MGProjectile.h"
 
 void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -26,5 +27,5 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 
 	Rotator.Pitch = Pitch;
 
-	AActor* Actor = MeshComp->GetWorld()->SpawnActor<AActor>(TargetActor, Vector, Rotator);
+	AMGProjectile* Actor = MeshComp->GetWorld()->SpawnActor<AMGProjectile>(TargetActor, Vector, Rotator);
 }
