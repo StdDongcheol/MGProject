@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "../MGFlag.h"
-#include "GameFramework/Actor.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "MGProjectile.generated.h"
 
 UCLASS()
@@ -17,12 +15,17 @@ public:
 	AMGProjectile();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
-	class UStaticMeshComponent* Sphere;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
+	class USphereComponent* Sphere;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
+	class UStaticMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
 	class UParticleSystemComponent* Particle;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
 	class UProjectileMovementComponent* ProjectileComponent;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> HitEffect;
 
 private:
 	EObject_Force Force;
