@@ -14,12 +14,33 @@ class MGPROJECT_API AMGPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+private:
+	class AMGPlayerCharacter* PlayerCharacter = nullptr;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool	bRightMouseButtonPress = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool	bQButtonPress = false;
+
+public:
+	UFUNCTION()
+	bool IsRightMouseButtonPressed() const
+	{
+		return bRightMouseButtonPress;
+	}
+	
+	UFUNCTION()
+	bool IsQButtonPressed() const
+	{
+		return bQButtonPress;
+	}
+
 public:
 	virtual void InitInputSystem() override;
 	virtual void BeginPlay() override;
 
-private:
-	class AMGPlayerCharacter* PlayerCharacter = nullptr;
 
 private:
 	void MoveFront(float Value);
@@ -30,6 +51,7 @@ private:
 	void MouseYMove(float Value);
 	void LeftMouseButtonClick();
 	void RightMouseButtonClick();
-	void RightMouseButtonAxis(float Value);
 	void RightMouseButtonRelease();
+	void QButtonPress();
+	void QButtonRelease();
 };
