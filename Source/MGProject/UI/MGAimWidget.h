@@ -1,0 +1,26 @@
+
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "MGUserWidget.h"
+#include "MGAimWidget.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class MGPROJECT_API UMGAimWidget : public UMGUserWidget
+{
+	GENERATED_BODY()
+
+
+protected:
+	virtual void NativeOnInitialized() override;
+	virtual void NativePreConstruct() override;
+	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	//virtual void Tick(FGeometry MyGeometry, float InDeltaTime) override;
+	
+	
+};
