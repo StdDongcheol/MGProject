@@ -15,6 +15,9 @@ void AMGCharacter::StateUpdate(float DeltaTime)
 {
 	FVector Velocity = GetVelocity();
 
+	if (!AnimInstance || !AnimInstance->IsValidLowLevel())
+		return;
+
 	if (Velocity.Length() > 0.f)
 	{
 		AnimInstance->SetMoving(true);
@@ -24,9 +27,6 @@ void AMGCharacter::StateUpdate(float DeltaTime)
 	{
 		AnimInstance->SetMoving(false);
 	}
-
-
-
 }
 
 void AMGCharacter::BeginPlay()
@@ -43,10 +43,3 @@ void AMGCharacter::Tick(float DeltaTime)
 	StateUpdate(DeltaTime);
 
 }
-
-void AMGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
