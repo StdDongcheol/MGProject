@@ -4,6 +4,7 @@
 #include "MGPlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
+#include "MGEnemyCharacter.h"
 
 AMGPlayerCharacter::AMGPlayerCharacter()
 {
@@ -15,6 +16,7 @@ AMGPlayerCharacter::AMGPlayerCharacter()
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>("QBoxColliderComponent");
 	BoxCollision->SetupAttachment(BoxRoot);
 	BoxCollision->SetCollisionProfileName(FName("PlayerAttack"));
+	BoxCollision->AddLocalOffset(FVector(-300.f, 0.f, 0.f));
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerCharacter::OnCollisionEnter);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AMGPlayerCharacter::OnCollisionEnd);
@@ -76,7 +78,13 @@ void AMGPlayerCharacter::OnCollisionEnter(UPrimitiveComponent* _pComponent, AAct
 	// Target acquired
 	if (CollisionName == TEXT("Enemy"))
 	{
-		TargetArray.Add(_pOtherActor);
+		AMGEnemyCharacter* TargetEnemy = Cast<AMGEnemyCharacter>(_pOtherActor);
+
+		if (!TargetEnemy || !TargetEnemy->IsValidLowLevel())
+			return;
+
+		TargetArray.Add(TargetEnemy);
+		TargetEnemy->SetLockonWidget(true);
 	}
 }
 
@@ -86,5 +94,28 @@ void AMGPlayerCharacter::OnCollisionEnd(UPrimitiveComponent* _pComponent, AActor
 
 	if (!Component || !Component->IsValidLowLevel())
 		return;
+
+	FName CollisionName = Component->GetCollisionProfileName();
+
+	if (CollisionName == TEXT("Enemy"))
+	{
+		AMGEnemyCharacter* TargetEnemy = Cast<AMGEnemyCharacter>(_pOtherActor);
+
+		if (!TargetEnemy || !TargetEnemy->IsValidLowLevel())
+			return;
+
+		auto	iter = TargetArray.begin();
+		auto	iterEnd = TargetArray.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter) == TargetEnemy)
+			{
+				TargetEnemy->SetLockonWidget(false);
+				TargetArray.RemoveSingle(*iter);
+				break;
+			}
+		}
+	}
 	
 }
