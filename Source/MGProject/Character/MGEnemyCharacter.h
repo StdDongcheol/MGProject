@@ -21,9 +21,14 @@ protected:
 	UPROPERTY(Category = "Enemy Property", EditAnywhere, BlueprintReadWrite)
 	class UWidgetComponent* Widget;
 
+public:
+	void SetLockonWidget(bool bEnable);
+
 protected:
 	virtual void BeginPlay() override;
 
 public:
 	virtual void Tick(float DeltaTime) override;
+
+
 };

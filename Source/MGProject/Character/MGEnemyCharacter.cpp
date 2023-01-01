@@ -10,6 +10,12 @@ AMGEnemyCharacter::AMGEnemyCharacter()
 	Capsule->SetCollisionProfileName(FName("Enemy"));
 
 	Widget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Lockon Widget"));
+	Widget->SetupAttachment(RootComponent);
+}
+
+void AMGEnemyCharacter::SetLockonWidget(bool bEnable)
+{	
+	Widget->SetVisibility(bEnable);
 }
 
 void AMGEnemyCharacter::BeginPlay()
