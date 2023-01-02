@@ -21,6 +21,18 @@ protected:
 	UPROPERTY(Category = "Enemy Property", EditAnywhere, BlueprintReadWrite)
 	class UWidgetComponent* Widget;
 
+private:
+	class UMGEnemyWidget* EnemyHUD;
+
+private:
+	bool LockedByPlayer;
+
+public:
+	bool IsTargetLocked() const
+	{
+		return LockedByPlayer;
+	}
+
 public:
 	void SetLockonWidget(bool bEnable);
 
