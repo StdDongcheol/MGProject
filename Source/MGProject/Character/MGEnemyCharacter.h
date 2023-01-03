@@ -22,7 +22,7 @@ protected:
 	class UWidgetComponent* Widget;
 
 private:
-	class UMGEnemyWidget* EnemyHUD;
+	class UMGEnemyWidget* EnemyWidget;
 
 private:
 	bool LockedByPlayer;

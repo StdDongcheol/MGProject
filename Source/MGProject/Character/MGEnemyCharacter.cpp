@@ -22,8 +22,8 @@ void AMGEnemyCharacter::SetLockonWidget(bool bEnable)
 
 	if (!bEnable)
 	{
-		if (EnemyHUD && EnemyHUD->IsValidLowLevel())
-			EnemyHUD->SetTargetLock(false);
+		if (EnemyWidget && EnemyWidget->IsValidLowLevel())
+			EnemyWidget->SetTargetLock(false);
 	}
 }
 
@@ -31,7 +31,7 @@ void AMGEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	EnemyHUD = Cast<UMGEnemyWidget>(Widget->GetWidget());
+	EnemyWidget = Cast<UMGEnemyWidget>(Widget->GetWidget());
 
 	Widget->SetVisibility(false);
 }
@@ -40,5 +40,5 @@ void AMGEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	LockedByPlayer = EnemyHUD->IsTargetLocked();
+	LockedByPlayer = EnemyWidget->IsTargetLocked();
 }
