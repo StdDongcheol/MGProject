@@ -42,10 +42,15 @@ public:
 		return ArmSpring;
 	}
 	
-public:
 	UParticleSystemComponent* GetQEffect() const
 	{
 		return ParticleQEffect;
+	}
+
+public:
+	bool IsTargetEmpty() const
+	{
+		return TargetArray.IsEmpty();
 	}
 
 protected:
@@ -59,14 +64,17 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	void SetQSkillCollision(bool bEnable);
+
 
 protected:
 	UFUNCTION()
-	void OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
+	void QSkillOnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
 		int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit);
 
 	UFUNCTION()
-	void OnCollisionEnd(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
+	void QSkillOnCollisionEnd(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
 		int32 _OtherBodyIndex);
 
 

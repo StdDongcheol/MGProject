@@ -18,9 +18,10 @@ AMGPlayerCharacter::AMGPlayerCharacter()
 	BoxCollision->SetCollisionProfileName(FName("PlayerAttack"));
 	BoxCollision->AddLocalOffset(FVector(-300.f, 0.f, 0.f));
 
-	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerCharacter::OnCollisionEnter);
-	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AMGPlayerCharacter::OnCollisionEnd);
+	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerCharacter::QSkillOnCollisionEnter);
+	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AMGPlayerCharacter::QSkillOnCollisionEnd);
 }
+
 
 void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 {
@@ -53,6 +54,8 @@ void AMGPlayerCharacter::BeginPlay()
 	ParticleQEffect = FindComponentByClass<UParticleSystemComponent>();
 
 	BoxCollision->SetBoxExtent(FVector(256.0f, 128.0f, 128.0f));
+
+	SetQSkillCollision(false);
 }
 
 
@@ -66,7 +69,16 @@ void AMGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AMGPlayerCharacter::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
+
+void AMGPlayerCharacter::SetQSkillCollision(bool bEnable)
+{
+	if (!bEnable)
+		BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	else
+		BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
+
+void AMGPlayerCharacter::QSkillOnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
 {
 	UCapsuleComponent* Component = _pOtherActor->FindComponentByClass<UCapsuleComponent>();
 	
@@ -88,7 +100,7 @@ void AMGPlayerCharacter::OnCollisionEnter(UPrimitiveComponent* _pComponent, AAct
 	}
 }
 
-void AMGPlayerCharacter::OnCollisionEnd(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex)
+void AMGPlayerCharacter::QSkillOnCollisionEnd(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex)
 {
 	UCapsuleComponent* Component = _pOtherActor->FindComponentByClass<UCapsuleComponent>();
 
