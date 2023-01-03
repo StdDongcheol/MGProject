@@ -24,19 +24,32 @@ public:
 
 private:
 	FWidgetAnimationDynamicEvent ActivateScopeStartDelegate;
+	FWidgetAnimationDynamicEvent ActivateScopeEndDelegate;
+
+private:
+	class AMGPlayerController* PlayerController;
 
 private:
 	bool	ScopeActivated;
+	bool	ScopeActivateCompletely;
 
 public:
 	void SetScopeActivate(bool bEnable)
 	{
 		ScopeActivated = bEnable;
+
+		if (!bEnable)
+			ScopeActivateCompletely = bEnable;
 	}
 
 	bool IsScopeActivated() const
 	{
 		return ScopeActivated;
+	}
+
+	bool IsScopeActivatedCompletely() const
+	{
+		return ScopeActivateCompletely;
 	}
 
 protected:
@@ -48,4 +61,7 @@ protected:
 private:
 	UFUNCTION()
 	void ScopeActivateStart();
+
+	UFUNCTION()
+	void ScopeActivateEnd();
 };
