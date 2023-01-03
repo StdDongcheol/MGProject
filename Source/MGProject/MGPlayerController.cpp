@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MGPlayerController.h"
-#include "MGFlag.h"
-#include "Character/MGPlayerCharacter.h"
 #include "Engine/SkeletalMeshSocket.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "MGFlag.h"
+#include "MGPlayerController.h"
+#include "Character/MGPlayerCharacter.h"
 
 void AMGPlayerController::InitInputSystem()
 {
@@ -26,11 +26,13 @@ void AMGPlayerController::InitInputSystem()
 	InputComponent->BindAction(FName("SkillQ"), EInputEvent::IE_Released, this, &AMGPlayerController::QButtonRelease);
 }
 
-void AMGPlayerController::BeginPlay()
+void AMGPlayerController::BeginPlay()	
 {
 	PlayerCharacter = Cast<AMGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
 	
+	PlayerAimWidget = CreateWidget<UMGAimWidget>(this, PlayerWidget, TEXT("Player AimWidget"));
+	PlayerAimWidget->AddToViewport(0);
+	PlayerAimWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void AMGPlayerController::MoveFront(float Value)
@@ -243,6 +245,8 @@ void AMGPlayerController::QButtonPress()
 		ArmComponent->TargetArmLength = 100.0f;
 		ArmComponent->SocketOffset = FVector(0.0f, -60.0f, 30.0f);
 
+		PlayerAimWidget->SetVisibility(ESlateVisibility::Visible);
+
 		break;
 	}
 
@@ -270,18 +274,30 @@ void AMGPlayerController::QButtonRelease()
 			return;
 
 		// 발사여부에 따라서 Aiming 상태를 유지할 것인지 설정해야함.
-		// 발사함 : 로켓발사하는 동안 QAiming 상태를 유지.
-		// 발사안함 : 그대로 Normal 상태로 돌아오기.
 		
+		
+		// 발사함 : 로켓발사하는 동안 QAiming 상태를 유지.
+		if (!PlayerCharacter->IsTargetEmpty())
+		{
+			PlayerCharacter->GetAnimInst()->SetQFire(true);
+
+		}
+
+		// 발사안함 : 그대로 Normal 상태로 돌아오기.
+		else
+		{
+			// StateMachine내 ActionState 설정 
+			PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Normal);
+
+			// CameraArm Length 및 SocketOffset 조정
+			ArmComponent->TargetArmLength = 250.0f;
+			ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
 
 
-		// StateMachine내 ActionState 설정 
-		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Normal);
-
-		// CameraArm Length 및 SocketOffset 조정
-		ArmComponent->TargetArmLength = 250.0f;
-		ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
-
+			PlayerAimWidget->SetVisibility(ESlateVisibility::Hidden);
+			PlayerAimWidget->SetScopeActivate(false);
+			PlayerCharacter->SetQSkillCollision(false);
+		}
 
 		break;
 	}

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "UI/MGAimWidget.h"
+#include "Character/MGPlayerCharacter.h"
 #include "MGPlayerController.generated.h"
 
 /**
@@ -16,6 +18,12 @@ class MGPROJECT_API AMGPlayerController : public APlayerController
 
 private:
 	class AMGPlayerCharacter* PlayerCharacter = nullptr;
+
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> PlayerWidget;
+
+	UMGAimWidget* PlayerAimWidget;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -35,6 +43,12 @@ public:
 	bool IsQButtonPressed() const
 	{
 		return bQButtonPress;
+	}
+
+	UFUNCTION()
+	AMGPlayerCharacter* GetPlayerCharacter() const
+	{
+		return PlayerCharacter;
 	}
 
 public:
