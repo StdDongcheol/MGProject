@@ -2,9 +2,11 @@
 
 
 #include "MGAnimInstance.h"
+#include "../Character/MGPlayerCharacter.h"
 #include "GameFramework/Character.h"
 
-UMGAnimInstance::UMGAnimInstance()
+UMGAnimInstance::UMGAnimInstance() :
+	QCurrentCount(0)
 {
 	ActionState = ECharacter_ActionState::Normal;
 	CharacterPrevAimYaw = 0.0f;
@@ -35,10 +37,41 @@ void UMGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	MGUpdateRotate(DeltaSeconds);
 
-	
+	StateUpdate(DeltaSeconds);
 }
 
 void UMGAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
+}
+
+void UMGAnimInstance::StateUpdate(float DeltaTime)
+{
+	switch (BodyActionState)
+	{
+	case ECharacter_BodyAction::None:
+		break;
+	case ECharacter_BodyAction::Ready:
+		break;
+	case ECharacter_BodyAction::NormalFire:
+		break;
+	case ECharacter_BodyAction::QFire:
+	{
+		if (QCurrentCount >= QAnimLoopCount)
+		{
+			AMGPlayerCharacter* PlayerCharacter = Cast<AMGPlayerCharacter>(GetOwningActor());
+
+			QAnimLoopCount = PlayerCharacter->GetMissileCount(QCurrentCount);
+			QCurrentCount = 0;
+
+			SetActionState(ECharacter_ActionState::Normal);
+			SetBodyActionState(ECharacter_BodyAction::Ready);
+		}
+	}
+		break;
+	case ECharacter_BodyAction::RThrowing:
+		break;
+	default:
+		break;
+	}
 }

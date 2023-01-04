@@ -23,21 +23,33 @@ private:
 	
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool	IsFire;
+
+	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool	IsQFire;
 	
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float	MovementYawValue;
 
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	FRotator	CharacterAimRotation;
-	
-	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float	CharacterPrevAimYaw;
 	
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float	RootBoneYaw;
+	
+	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int		QCurrentCount;
+	
+	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int		QAnimLoopCount;
+
+	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FRotator	CharacterAimRotation;
 
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	ECharacter_ActionState	ActionState;
+
+	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	ECharacter_BodyAction	BodyActionState;
 	
 public:
 	void SetMovementYaw(float Value)
@@ -60,9 +72,19 @@ public:
 		IsFire = Fire;
 	}
 
+	void SetQFire(bool Fire)
+	{
+		IsQFire = Fire;
+	}
+
 	void SetActionState(ECharacter_ActionState State)
 	{
 		ActionState = State;
+	}
+	
+	void SetBodyActionState(ECharacter_BodyAction State)
+	{
+		BodyActionState = State;
 	}
 
 public:
@@ -77,11 +99,30 @@ public:
 		return ActionState;
 	}
 
+	ECharacter_BodyAction GetBodyActionState() const
+	{
+		return BodyActionState;
+	}
+
+public:
+	void AddQCount(int Count)
+	{
+		QCurrentCount += Count;
+	}
+
+	void AddQAnimLoopCount(int Count)
+	{
+		QAnimLoopCount += Count;
+	}
+
 private:
 	void MGUpdateRotate(float DeltaSeconds);
 
 public:
 	void NativeUpdateAnimation(float DeltaSeconds) override;
 	void NativeBeginPlay() override;
+
+private:
+	void StateUpdate(float DeltaTime);
 
 };
