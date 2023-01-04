@@ -13,7 +13,7 @@ void UMGAnimNotifyState_StateUpdate::NotifyEnd(USkeletalMeshComponent* MeshComp,
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	PlayerCharacter->GetAnimInst()->SetFire(false);
+	PlayerCharacter->GetAnimInst()->SetBodyActionState(State);
 	
 	return;
 }

@@ -17,7 +17,7 @@ class MGPROJECT_API UMGAnimNotifyState_StateUpdate : public UAnimNotifyState
 	
 public:
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	ECharacter_ActionState State;
+	ECharacter_BodyAction State;
 
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
