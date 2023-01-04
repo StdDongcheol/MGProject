@@ -6,7 +6,10 @@
 #include "Components/BoxComponent.h"
 #include "MGEnemyCharacter.h"
 
-AMGPlayerCharacter::AMGPlayerCharacter()
+AMGPlayerCharacter::AMGPlayerCharacter() :
+	MissileCount(10),
+	MissileChargeTime(5.0f),
+	MissileChargeTimeAcc(0.0f)
 {
 	Capsule->SetCollisionProfileName(FName("Player"));
 
@@ -22,6 +25,24 @@ AMGPlayerCharacter::AMGPlayerCharacter()
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AMGPlayerCharacter::QSkillOnCollisionEnd);
 }
 
+
+int AMGPlayerCharacter::GetMissileCount() const
+{
+	return MissileCount;
+}
+
+int AMGPlayerCharacter::GetMissileCount(int UsingCount)
+{
+	if (MissileCount - UsingCount < 0)
+		return 0;
+
+	else
+	{
+		MissileCount -= UsingCount;
+
+		return MissileCount;
+	}
+}
 
 void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 {
@@ -43,6 +64,23 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 	// Debugging QDetectBox
 	if (BoxCollision && BoxRoot)
 		DrawDebugBox(GetWorld(), BoxCollision->GetComponentLocation(), BoxCollision->GetScaledBoxExtent(), BoxRoot->GetComponentRotation().Quaternion(), FColor::Green);
+
+	// Missile Charge Start
+	if (MissileCount < 10)
+	{
+		MissileChargeTimeAcc += DeltaTime;
+
+		if (MissileChargeTimeAcc > MissileChargeTime)
+		{
+			MissileChargeTimeAcc -= MissileChargeTime;
+			++MissileCount;
+
+			// AnimInst 업데이트
+			GetAnimInst()->AddQAnimLoopCount(1);
+		}
+	}
+	// Missile Charge End
+
 }
 
 void AMGPlayerCharacter::BeginPlay()
@@ -56,6 +94,9 @@ void AMGPlayerCharacter::BeginPlay()
 	BoxCollision->SetBoxExtent(FVector(256.0f, 128.0f, 128.0f));
 
 	SetQSkillCollision(false);
+
+	// PlayerAnim setting start
+	GetAnimInst()->AddQAnimLoopCount(MissileCount);
 }
 
 
@@ -76,6 +117,10 @@ void AMGPlayerCharacter::SetQSkillCollision(bool bEnable)
 		BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	else
 		BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
+
+void AMGPlayerCharacter::QFireEnd()
+{
 }
 
 void AMGPlayerCharacter::QSkillOnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)

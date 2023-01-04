@@ -16,6 +16,8 @@ class MGPROJECT_API AMGPlayerCharacter : public AMGCharacter
 {
 	GENERATED_BODY()
 
+		friend class UMGAnimInstance;
+
 public:
 	AMGPlayerCharacter();
 
@@ -24,6 +26,9 @@ private:
 
 private:
 	TArray<AActor*> TargetArray;
+	int		MissileCount;
+	float	MissileChargeTime;
+	float	MissileChargeTimeAcc;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -53,6 +58,9 @@ public:
 		return TargetArray.IsEmpty();
 	}
 
+	int GetMissileCount() const;
+	int GetMissileCount(int UsingCount);
+
 protected:
 	virtual void StateUpdate(float DeltaTime) override;
 
@@ -67,6 +75,8 @@ public:
 public:
 	void SetQSkillCollision(bool bEnable);
 
+public:
+	void QFireEnd();
 
 protected:
 	UFUNCTION()
