@@ -145,7 +145,7 @@ void AMGPlayerController::LeftMouseButtonClick()
 	case ECharacter_ActionState::Normal:
 	case ECharacter_ActionState::Aiming:
 	{
-		PlayerCharacter->GetAnimInst()->SetFire(true);
+		PlayerCharacter->GetAnimInst()->SetBodyActionState(ECharacter_BodyAction::NormalFire);
 		break;
 	}
 
@@ -279,7 +279,16 @@ void AMGPlayerController::QButtonRelease()
 		// 발사함 : 로켓발사하는 동안 QAiming 상태를 유지.
 		if (!PlayerCharacter->IsTargetEmpty())
 		{
-			PlayerCharacter->GetAnimInst()->SetQFire(true);
+			PlayerCharacter->GetAnimInst()->SetBodyActionState(ECharacter_BodyAction::QFire);
+
+			// CameraArm Length 및 SocketOffset 조정
+			ArmComponent->TargetArmLength = 250.0f;
+			ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
+
+
+			PlayerAimWidget->SetVisibility(ESlateVisibility::Hidden);
+			PlayerAimWidget->SetScopeActivate(false);
+			PlayerCharacter->SetQSkillCollision(false);
 
 		}
 

@@ -16,6 +16,8 @@ class MGPROJECT_API AMGPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+	friend class AMGPlayerCharacter;
+
 private:
 	class AMGPlayerCharacter* PlayerCharacter = nullptr;
 
