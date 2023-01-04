@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
+//#include "NiagaraComponent.h"
 
 AMGProjectile::AMGProjectile() :
 	Speed(2400.f)
@@ -19,10 +20,19 @@ AMGProjectile::AMGProjectile() :
 	Sphere = CreateDefaultSubobject<USphereComponent>(FName("Sphere"));
 	Sphere->SetupAttachment(Mesh);
 
-	Particle = CreateDefaultSubobject<UParticleSystemComponent>(FName("Particle"));
-	Particle->SetupAttachment(Mesh);
+	ParticleLegacy = CreateDefaultSubobject<UParticleSystemComponent>(FName("Particle"));
+	ParticleLegacy->SetupAttachment(Mesh);
+
+	//ParticleNiagara = CreateDefaultSubobject<UNiagaraComponent>(FName("Particle"));
+	//ParticleNiagara->SetupAttachment(Mesh);
 
 	ProjectileComponent = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMovement"));
+
+}
+
+void AMGProjectile::BeginPlay()
+{
+	Super::BeginPlay();
 
 	ProjectileComponent->ProjectileGravityScale = 0.0f;
 	ProjectileComponent->Velocity = GetActorForwardVector() * Speed;
@@ -30,12 +40,6 @@ AMGProjectile::AMGProjectile() :
 	ProjectileComponent->MaxSpeed = 0.0f;
 	ProjectileComponent->Bounciness = 0.0f;
 	ProjectileComponent->SetUpdatedComponent(Mesh);
-
-}
-
-void AMGProjectile::BeginPlay()
-{
-	Super::BeginPlay();
 
 	SetLifeSpan(8.0f);
 }

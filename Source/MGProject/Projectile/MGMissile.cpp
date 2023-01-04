@@ -2,10 +2,11 @@
 
 
 #include "MGMissile.h"
+#include "MGHitEffect.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
-AMGMissile::AMGMissile()
+AMGMissile::AMGMissile() 
 {
 	Mesh->SetCollisionProfileName(FName("PlayerAttack"));
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AMGMissile::OnCollisionEnter);
@@ -23,4 +24,9 @@ void AMGMissile::Tick(float DeltaTime)
 
 void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
 {
+	ProjectileComponent->StopSimulating(_Hit);
+
+	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(HitEffect, GetActorLocation(), GetActorRotation());
+
+	Destroy();
 }

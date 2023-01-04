@@ -15,7 +15,6 @@ AMGBullet::AMGBullet()
 void AMGBullet::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 	
 void AMGBullet::Tick(float DeltaTime)

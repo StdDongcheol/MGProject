@@ -17,10 +17,16 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
 	class USphereComponent* Sphere;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
 	class UStaticMeshComponent* Mesh;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
-	class UParticleSystemComponent* Particle;
+	class UParticleSystemComponent* ParticleLegacy;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
+	class UNiagaraComponent* ParticleNiagara;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
 	class UProjectileMovementComponent* ProjectileComponent;
 
