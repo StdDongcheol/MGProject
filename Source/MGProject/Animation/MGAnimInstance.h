@@ -87,13 +87,22 @@ public:
 		BodyActionState = State;
 	}
 
+	void AddQCount(int Count)
+	{
+		QCurrentCount += Count;
+	}
+
+	void AddQAnimLoopCount(int Count)
+	{
+		QAnimLoopCount += Count;
+	}
+
 public:
 	FRotator GetAimRot() const
 	{
 		return CharacterAimRotation;
 	}
 	
-public:
 	ECharacter_ActionState GetActionState() const
 	{
 		return ActionState;
@@ -104,15 +113,9 @@ public:
 		return BodyActionState;
 	}
 
-public:
-	void AddQCount(int Count)
+	int GetCurrentQCount() const
 	{
-		QCurrentCount += Count;
-	}
-
-	void AddQAnimLoopCount(int Count)
-	{
-		QAnimLoopCount += Count;
+		return QCurrentCount;
 	}
 
 private:

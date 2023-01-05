@@ -66,6 +66,7 @@ void UMGAnimInstance::StateUpdate(float DeltaTime)
 
 			SetActionState(ECharacter_ActionState::Normal);
 			SetBodyActionState(ECharacter_BodyAction::Ready);
+			PlayerCharacter->QFireEnd();
 		}
 	}
 		break;
