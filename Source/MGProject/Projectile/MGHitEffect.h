@@ -14,9 +14,21 @@ class MGPROJECT_API AMGHitEffect : public AActor
 public:	
 	AMGHitEffect();
 
-protected:
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Effect")
 	class UParticleSystemComponent* HitParticle;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Effect")
+	class UAudioComponent* Sound;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Effect")
+	float	LifeTime = 0.0f;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Effect")
+	bool	AttachToOtherComponent = false;
+
+public:
+	void SetStatus(float fLifetime = 1.0f, USceneComponent* Component = nullptr);
 
 protected:
 	virtual void BeginPlay() override;

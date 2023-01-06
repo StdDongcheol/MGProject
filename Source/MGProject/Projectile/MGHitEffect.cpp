@@ -3,21 +3,34 @@
 
 #include "MGHitEffect.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
 
 AMGHitEffect::AMGHitEffect()
 {
  	PrimaryActorTick.bCanEverTick = true;
 
 	HitParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
-
 	RootComponent = HitParticle;
+
+	Sound = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound"));
+	Sound->SetupAttachment(RootComponent); 
+}
+
+void AMGHitEffect::SetStatus(float fLifetime, USceneComponent* Component)
+{
+	if (LifeTime > 0.0f)
+		SetLifeSpan(fLifetime);
+
+	if (Component != nullptr)
+		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void AMGHitEffect::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	SetLifeSpan(1.5f);
+
+	if (Sound->GetSound())
+		Sound->Play();
 }
 
 void AMGHitEffect::Tick(float DeltaTime)
