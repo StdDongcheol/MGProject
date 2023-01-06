@@ -4,7 +4,10 @@
 #include "MGAnimNotifyState_ObjectCreate.h"
 #include "UObject/Class.h"
 #include "../Character/MGCharacter.h"
+#include "../Character/MGPlayerCharacter.h"
 #include "../Projectile/MGProjectile.h"
+#include "../Projectile/MGBullet.h"
+#include "../Projectile/MGMissile.h"
 
 void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -12,8 +15,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 
 	AActor* Owner = MeshComp->GetOwner();
 
-
-	AMGCharacter* Character = Cast<AMGCharacter>(Owner);
+	AMGPlayerCharacter* Character = Cast<AMGPlayerCharacter>(Owner);
 
 	if (!Character || !Character->IsValidLowLevel())
 		return;
@@ -22,10 +24,37 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 
 	const FTransform MeshTransform = MeshComp->GetSocketTransform(SocketName);
 
-	FVector Vector = MeshTransform.GetLocation();
+	FVector Vector = MeshTransform.GetLocation() + SpawnOffset;
 	FRotator Rotator = MeshTransform.Rotator();
 
 	Rotator.Pitch = Pitch;
 
-	AMGProjectile* Actor = MeshComp->GetWorld()->SpawnActor<AMGProjectile>(TargetActor, Vector, Rotator);
+	
+	ECharacter_BodyAction BodyAction = Character->GetAnimInst()->GetBodyActionState();
+
+	switch (BodyAction)
+	{
+	case ECharacter_BodyAction::NormalFire:
+	{
+		AActor* Actor = MeshComp->GetWorld()->SpawnActor<AActor>(TargetActor, Vector, Rotator);
+		break;
+	}
+	case ECharacter_BodyAction::QFire:
+	{	
+		AMGProjectile* Actor = MeshComp->GetWorld()->SpawnActor<AMGProjectile>(TargetActor, Vector, Rotator);
+		AMGMissile* Missile = Cast<AMGMissile>(Actor);
+
+		if (!Missile || !Missile->IsValidLowLevel())
+			return;
+		
+		Missile->SetTarget(Character->GetTarget());	
+		break;
+	}
+	case ECharacter_BodyAction::RThrowing:
+		break;
+	default:
+		break;
+	}
+
+
 }
