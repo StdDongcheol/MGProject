@@ -18,6 +18,17 @@ public:
 	AMGMissile();
 
 protected:
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
+	class USkeletalMesh* SkeletalMesh;
+	
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
+	class USphereComponent* SphereCollider;
+
+
+public:
+	void SetTarget(USceneComponent* TargetComponent);
+
+protected:
 	virtual void BeginPlay() override;
 
 public:

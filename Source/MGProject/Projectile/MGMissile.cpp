@@ -5,16 +5,37 @@
 #include "MGHitEffect.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/SphereComponent.h"
 
 AMGMissile::AMGMissile() 
 {
-	Mesh->SetCollisionProfileName(FName("PlayerAttack"));
-	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AMGMissile::OnCollisionEnter);
+	PrimaryActorTick.bCanEverTick = true;
+
+	SphereCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollider"));
+	SphereCollider->SetupAttachment(RootComponent);
+	SphereCollider->SetCollisionProfileName(TEXT("PlayerAttack"));
+	SphereCollider->SetNotifyRigidBodyCollision(true);
+	SphereCollider->SetRelativeLocation(FVector(30.0f, 0.0f, 0.0f));
+	SphereCollider->OnComponentBeginOverlap.AddDynamic(this, &AMGMissile::OnCollisionEnter);
+}
+
+void AMGMissile::SetTarget(USceneComponent* TargetComponent)
+{
+	ProjectileComponent->HomingTargetComponent = TargetComponent;
+	ProjectileComponent->bIsHomingProjectile = true;
 }
 
 void AMGMissile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ProjectileComponent->InitialSpeed = 1000.f;
+	ProjectileComponent->MaxSpeed = 1000.f;
+	ProjectileComponent->bRotationFollowsVelocity = true;
+	ProjectileComponent->HomingAccelerationMagnitude = 1000.f;
+	ProjectileComponent->ProjectileGravityScale = 0.f;
+	ProjectileComponent->bShouldBounce = true;
 }
 
 void AMGMissile::Tick(float DeltaTime)
