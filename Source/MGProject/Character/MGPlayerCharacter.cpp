@@ -44,6 +44,13 @@ int AMGPlayerCharacter::GetMissileCount(int UsingCount)
 	}
 }
 
+USceneComponent* AMGPlayerCharacter::GetTarget() const
+{
+	int Index = GetAnimInst()->GetCurrentQCount() % TargetArray.Num();
+	
+	return TargetArray[Index]->GetRootComponent();
+}
+
 void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 {
 	Super::StateUpdate(DeltaTime);
@@ -91,7 +98,8 @@ void AMGPlayerCharacter::BeginPlay()
 	BoxCollision = FindComponentByClass<UBoxComponent>();
 	ParticleQEffect = FindComponentByClass<UParticleSystemComponent>();
 
-	BoxCollision->SetBoxExtent(FVector(256.0f, 128.0f, 128.0f));
+	BoxCollision->SetBoxExtent(FVector(1024.0f, 500.0f, 128.0f));
+	BoxCollision->AddRelativeLocation(FVector(-1024.0f, 0.0f, 0.0f));
 
 	SetQSkillCollision(false);
 
@@ -121,6 +129,16 @@ void AMGPlayerCharacter::SetQSkillCollision(bool bEnable)
 
 void AMGPlayerCharacter::QFireEnd()
 {
+	auto	iter = TargetArray.begin();
+	auto	iterEnd = TargetArray.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		AMGEnemyCharacter* Enemy = Cast<AMGEnemyCharacter>(*iter);
+		Enemy->SetLockonWidget(false);
+	}
+
+	TargetArray.Empty();
 }
 
 void AMGPlayerCharacter::QSkillOnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
@@ -161,16 +179,21 @@ void AMGPlayerCharacter::QSkillOnCollisionEnd(UPrimitiveComponent* _pComponent, 
 		if (!TargetEnemy || !TargetEnemy->IsValidLowLevel())
 			return;
 
-		auto	iter = TargetArray.begin();
-		auto	iterEnd = TargetArray.end();
+		ECharacter_BodyAction BodyState = GetAnimInst()->GetBodyActionState();
 
-		for (; iter != iterEnd; ++iter)
+		if (!(BodyState == ECharacter_BodyAction::QFire))
 		{
-			if ((*iter) == TargetEnemy)
+			auto	iter = TargetArray.begin();
+			auto	iterEnd = TargetArray.end();
+
+			for (; iter != iterEnd; ++iter)
 			{
-				TargetEnemy->SetLockonWidget(false);
-				TargetArray.RemoveSingle(*iter);
-				break;
+				if ((*iter) == TargetEnemy)
+				{
+					TargetEnemy->SetLockonWidget(false);
+					TargetArray.RemoveSingle(*iter);
+					break;
+				}
 			}
 		}
 	}

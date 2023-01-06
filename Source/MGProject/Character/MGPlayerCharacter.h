@@ -61,6 +61,9 @@ public:
 	int GetMissileCount() const;
 	int GetMissileCount(int UsingCount);
 
+public:
+	USceneComponent* GetTarget() const;
+
 protected:
 	virtual void StateUpdate(float DeltaTime) override;
 
