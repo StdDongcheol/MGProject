@@ -8,6 +8,8 @@
 
 AMGBullet::AMGBullet()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	Mesh->SetCollisionProfileName(FName("PlayerAttack"));
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AMGBullet::OnCollisionEnter);
 }

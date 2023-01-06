@@ -15,8 +15,6 @@ public:
 	AMGProjectile();
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
-	class USphereComponent* Sphere;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
 	class UStaticMeshComponent* Mesh;
@@ -25,15 +23,12 @@ protected:
 	class UParticleSystemComponent* ParticleLegacy;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
-	class UNiagaraComponent* ParticleNiagara;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
 	class UProjectileMovementComponent* ProjectileComponent;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> HitEffect;
 
-private:
+protected:
 	EObject_Force Force;
 	float		  Range;
 	float		  Speed;
@@ -44,6 +39,7 @@ public:
 		Force = _Force;
 	}
 
+public:
 	EObject_Force GetForce() const
 	{
 		return Force;
