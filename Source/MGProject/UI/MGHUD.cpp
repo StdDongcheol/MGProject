@@ -7,7 +7,6 @@
 void AMGHUD::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 }
 

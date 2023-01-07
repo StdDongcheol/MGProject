@@ -14,6 +14,10 @@ class MGPROJECT_API AMGPlayHUD : public AMGHUD
 {
 	GENERATED_BODY()
 
+
+private:
+	class AMGPlayerController* PlayerController;
+
 protected:
 	virtual void BeginPlay() override;
 

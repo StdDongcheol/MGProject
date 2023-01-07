@@ -13,5 +13,13 @@ UCLASS()
 class MGPROJECT_API ATestGameMode : public AGameMode
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UMGAimWidget* AimWidget;
+
+protected:
+	virtual void BeginPlay() override;
 	
+	virtual void Tick(float DeltaTime) override;
 };

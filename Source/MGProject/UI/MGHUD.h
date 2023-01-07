@@ -15,14 +15,9 @@ class MGPROJECT_API AMGHUD : public AHUD
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	class UMGUserWidget* UserWidget;
-
-protected:
 	virtual void BeginPlay() override;
 
 public:
 	virtual void Tick(float DeltaTime) override;
-
 
 };
