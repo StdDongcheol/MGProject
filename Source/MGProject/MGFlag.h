@@ -24,7 +24,7 @@ enum class ECharacter_ActionState : uint8
 	Normal,
 	Aiming,
 	QAiming,
-	RAiming,
+	EAiming,
 };
 
 UENUM()
@@ -34,7 +34,7 @@ enum class ECharacter_BodyAction : uint8
 	Ready,
 	NormalFire,
 	QFire,
-	RThrowing
+	EThrowing
 };
 
 UENUM()

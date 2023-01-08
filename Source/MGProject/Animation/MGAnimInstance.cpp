@@ -18,7 +18,7 @@ void UMGAnimInstance::MGUpdateRotate(float DeltaSeconds)
 	if (IsMoving || 
 		ActionState == ECharacter_ActionState::Aiming ||
 		ActionState == ECharacter_ActionState::QAiming ||
-		ActionState == ECharacter_ActionState::RAiming)
+		ActionState == ECharacter_ActionState::EAiming)
 	{
 		RootBoneYaw = CharacterAimRotation.Yaw;
 	}
@@ -70,7 +70,7 @@ void UMGAnimInstance::StateUpdate(float DeltaTime)
 		}
 	}
 		break;
-	case ECharacter_BodyAction::RThrowing:
+	case ECharacter_BodyAction::EThrowing:
 		break;
 	default:
 		break;
