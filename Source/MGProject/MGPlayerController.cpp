@@ -146,11 +146,12 @@ void AMGPlayerController::LeftMouseButtonClick()
 	case ECharacter_ActionState::Aiming:
 	{
 		PlayerCharacter->GetAnimInst()->SetBodyActionState(ECharacter_BodyAction::NormalFire);
+		PlayerCharacter->GetTrace();
 		break;
 	}
 
 	case ECharacter_ActionState::QAiming:
-	case ECharacter_ActionState::RAiming:
+	case ECharacter_ActionState::EAiming:
 	default:
 		break;
 	}
@@ -184,7 +185,7 @@ void AMGPlayerController::RightMouseButtonClick()
 
 	case ECharacter_ActionState::Aiming:
 	case ECharacter_ActionState::QAiming:
-	case ECharacter_ActionState::RAiming:
+	case ECharacter_ActionState::EAiming:
 	default:
 		break;
 	}
@@ -217,7 +218,7 @@ void AMGPlayerController::RightMouseButtonRelease()
 
 	case ECharacter_ActionState::Normal:
 	case ECharacter_ActionState::QAiming:
-	case ECharacter_ActionState::RAiming:
+	case ECharacter_ActionState::EAiming:
 	default:
 		break;
 	}
@@ -252,7 +253,7 @@ void AMGPlayerController::QButtonPress()
 
 	case ECharacter_ActionState::Aiming:
 	case ECharacter_ActionState::QAiming:
-	case ECharacter_ActionState::RAiming:
+	case ECharacter_ActionState::EAiming:
 	default:
 		break;
 	}
@@ -313,8 +314,41 @@ void AMGPlayerController::QButtonRelease()
 
 	case ECharacter_ActionState::Normal:
 	case ECharacter_ActionState::Aiming:
-	case ECharacter_ActionState::RAiming:
+	case ECharacter_ActionState::EAiming:
 	default:
 		break;
 	}
+}
+
+void AMGPlayerController::EButtonPress()
+{
+	bEButtonPress = !bEButtonPress;
+
+	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+
+	switch (ActionState)
+	{
+	case ECharacter_ActionState::Normal:
+	{
+		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
+
+		if (!ArmComponent)
+			return;
+
+		// StateMachine내 ActionState 설정 
+		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::EAiming);
+
+		// CameraArm Length 및 SocketOffset 조정
+		ArmComponent->TargetArmLength = 100.0f;
+		ArmComponent->SocketOffset = FVector(0.0f, -60.0f, 30.0f);
+
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+void AMGPlayerController::EButtonRelease()
+{
 }

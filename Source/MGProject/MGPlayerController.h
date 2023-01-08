@@ -33,6 +33,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool	bQButtonPress = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool	bEButtonPress = false;
 
 public:
 	UFUNCTION()
@@ -45,6 +48,12 @@ public:
 	bool IsQButtonPressed() const
 	{
 		return bQButtonPress;
+	}
+
+	UFUNCTION()
+	bool IsEButtonPressed() const
+	{
+		return bEButtonPress;
 	}
 
 	UFUNCTION()
@@ -70,4 +79,6 @@ private:
 	void RightMouseButtonRelease();
 	void QButtonPress();
 	void QButtonRelease();
+	void EButtonPress();
+	void EButtonRelease();
 };
