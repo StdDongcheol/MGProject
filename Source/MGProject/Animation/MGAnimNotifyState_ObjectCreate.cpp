@@ -24,25 +24,30 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 
 	const FTransform MeshTransform = MeshComp->GetSocketTransform(SocketName);
 
-	FVector Vector = MeshTransform.GetLocation() + SpawnOffset;
-	FRotator Rotator = MeshTransform.Rotator();
+	FVector SpawnPosition = MeshTransform.GetLocation() + SpawnOffset;
 
-	Rotator.Pitch = Pitch;
+	FRotator SpawnRotation = MeshTransform.Rotator();
+	SpawnRotation.Pitch = Pitch;
 
-	
+
 	ECharacter_BodyAction BodyAction = Character->GetAnimInst()->GetBodyActionState();
 
 	switch (BodyAction)
 	{
 	case ECharacter_BodyAction::NormalFire:
 	{
-		AActor* Actor = MeshComp->GetWorld()->SpawnActor<AActor>(TargetActor, Vector, Rotator);
+		FVector HitPos = Character->GetTrace();
+		
+		FVector Dir = HitPos - SpawnPosition;
+		FRotator Rot = Dir.Rotation();
+
+		AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
+
 		break;
 	}
 	case ECharacter_BodyAction::QFire:
 	{	
-		AMGProjectile* Actor = MeshComp->GetWorld()->SpawnActor<AMGProjectile>(TargetActor, Vector, Rotator);
-		AMGMissile* Missile = Cast<AMGMissile>(Actor);
+		AMGMissile* Missile = MeshComp->GetWorld()->SpawnActor<AMGMissile>(TargetActor, SpawnPosition, SpawnRotation);
 
 		if (!Missile || !Missile->IsValidLowLevel())
 			return;
@@ -50,7 +55,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 		Missile->SetTarget(Character->GetTarget());	
 		break;
 	}
-	case ECharacter_BodyAction::RThrowing:
+	case ECharacter_BodyAction::EThrowing:
 		break;
 	default:
 		break;
