@@ -4,6 +4,7 @@
 #include "MGPlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
+#include "Camera/CameraComponent.h"
 #include "MGEnemyCharacter.h"
 
 AMGPlayerCharacter::AMGPlayerCharacter() :
@@ -25,6 +26,34 @@ AMGPlayerCharacter::AMGPlayerCharacter() :
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AMGPlayerCharacter::QSkillOnCollisionEnd);
 }
 
+void AMGPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ArmSpring = FindComponentByClass<USpringArmComponent>();
+	BoxCollision = FindComponentByClass<UBoxComponent>();
+	Camera = FindComponentByClass<UCameraComponent>();
+
+	BoxCollision->SetBoxExtent(FVector(1024.0f, 500.0f, 128.0f));
+	BoxCollision->AddRelativeLocation(FVector(-1024.0f, 0.0f, 0.0f));
+
+	SetQSkillCollision(false);
+
+	// PlayerAnim setting start
+	GetAnimInst()->AddQAnimLoopCount(MissileCount);
+}
+
+
+void AMGPlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+void AMGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
 
 int AMGPlayerCharacter::GetMissileCount() const
 {
@@ -51,6 +80,51 @@ USceneComponent* AMGPlayerCharacter::GetTarget() const
 	return TargetArray[Index]->GetRootComponent();
 }
 
+FVector AMGPlayerCharacter::GetTrace(FVector Pos) const
+{
+	FHitResult Result;
+
+	bool bHit = false;
+
+	// 카메라 위치에서 Trace.
+	if (Pos == FVector::ZeroVector)
+	{
+		FTransform CameraTransform = Camera->GetComponentTransform();
+		
+		FVector CameraPos = CameraTransform.GetLocation();
+		
+		FVector CameraForwardPos = CameraPos + (Camera->GetForwardVector() * 10000.f);
+		
+		DrawDebugLine(GetWorld(), CameraPos, CameraForwardPos, FColor::Red, false, 10.f, 0U, 2.f);
+
+		bHit = GetWorld()->LineTraceSingleByChannel(Result, CameraPos, CameraForwardPos, ECollisionChannel::ECC_WorldDynamic);
+		
+		// Trace가 Hit일 경우
+		if (bHit)
+		{
+			// Debugging log print start.
+			AActor* HitActor = Result.GetActor(); 
+			UE_LOG(LogTemp, Log, TEXT("Hit Target : %s"), *HitActor->GetName());
+			// Debugging log print end.
+		}
+
+		// false의 경우, CameraForwardPos 위치를 반환.
+		else
+		{
+			Result.ImpactPoint = CameraForwardPos;
+		}
+	}
+
+	// 지정받은 위치에서 Trace
+	else 
+	{
+
+	}
+
+	
+	return Result.ImpactPoint;
+}
+
 void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 {
 	Super::StateUpdate(DeltaTime);
@@ -69,8 +143,8 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 	BoxRoot->SetRelativeRotation(BoxRot);
 
 	// Debugging QDetectBox
-	if (BoxCollision && BoxRoot)
-		DrawDebugBox(GetWorld(), BoxCollision->GetComponentLocation(), BoxCollision->GetScaledBoxExtent(), BoxRoot->GetComponentRotation().Quaternion(), FColor::Green);
+	//if (BoxCollision && BoxRoot)
+	//	DrawDebugBox(GetWorld(), BoxCollision->GetComponentLocation(), BoxCollision->GetScaledBoxExtent(), BoxRoot->GetComponentRotation().Quaternion(), FColor::Green);
 
 	// Missile Charge Start
 	if (MissileCount < 10)
@@ -89,35 +163,6 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 	// Missile Charge End
 
 }
-
-void AMGPlayerCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-
-	ArmSpring = FindComponentByClass<USpringArmComponent>();
-	BoxCollision = FindComponentByClass<UBoxComponent>();
-	ParticleQEffect = FindComponentByClass<UParticleSystemComponent>();
-
-	BoxCollision->SetBoxExtent(FVector(1024.0f, 500.0f, 128.0f));
-	BoxCollision->AddRelativeLocation(FVector(-1024.0f, 0.0f, 0.0f));
-
-	SetQSkillCollision(false);
-
-	// PlayerAnim setting start
-	GetAnimInst()->AddQAnimLoopCount(MissileCount);
-}
-
-
-void AMGPlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-void AMGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
 
 void AMGPlayerCharacter::SetQSkillCollision(bool bEnable)
 {
