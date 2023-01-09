@@ -8,6 +8,7 @@
 #include "../Projectile/MGProjectile.h"
 #include "../Projectile/MGBullet.h"
 #include "../Projectile/MGMissile.h"
+#include "../Projectile/MGPlayerDrone.h"
 
 void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -56,7 +57,22 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 		break;
 	}
 	case ECharacter_BodyAction::EThrowing:
+	{
+		FVector DeployPos = Character->GetDroneDeployPosition();
+
+		FVector Dir = DeployPos - SpawnPosition;
+		FRotator Rot = Dir.Rotation();
+
+		AMGPlayerDrone* Drone = MeshComp->GetWorld()->SpawnActor<AMGPlayerDrone>(TargetActor, SpawnPosition, Rot);
+
+		if (!Drone || !Drone->IsValidLowLevel())
+		{
+			Drone->Destroy();
+			return;
+		}
+
 		break;
+	}
 	default:
 		break;
 	}

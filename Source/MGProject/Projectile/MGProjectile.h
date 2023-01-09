@@ -15,7 +15,6 @@ public:
 	AMGProjectile();
 
 protected:
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Projectile")
 	class UStaticMeshComponent* Mesh;
 
