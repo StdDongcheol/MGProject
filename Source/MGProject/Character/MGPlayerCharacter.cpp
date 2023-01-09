@@ -20,7 +20,11 @@ AMGPlayerCharacter::AMGPlayerCharacter() :
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>("QBoxColliderComponent");
 	BoxCollision->SetupAttachment(BoxRoot);
 	BoxCollision->SetCollisionProfileName(FName("PlayerAttack"));
-	BoxCollision->AddLocalOffset(FVector(-300.f, 0.f, 0.f));
+	BoxCollision->AddLocalOffset(FVector3d(-300.0f, 0.0f, 0.0f));
+
+	DroneDeployParticle = CreateDefaultSubobject<UParticleSystemComponent>("DroneDeploy");
+	DroneDeployParticle->SetupAttachment(RootComponent);
+	DroneDeployParticle->SetRelativeRotation(FRotator3d(90.0f, 0.0f, 0.0f));
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerCharacter::QSkillOnCollisionEnter);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AMGPlayerCharacter::QSkillOnCollisionEnd);
@@ -33,9 +37,12 @@ void AMGPlayerCharacter::BeginPlay()
 	ArmSpring = FindComponentByClass<USpringArmComponent>();
 	BoxCollision = FindComponentByClass<UBoxComponent>();
 	Camera = FindComponentByClass<UCameraComponent>();
+	DroneDeployParticle = FindComponentByClass<UParticleSystemComponent>();
 
 	BoxCollision->SetBoxExtent(FVector(1024.0f, 500.0f, 128.0f));
 	BoxCollision->AddRelativeLocation(FVector(-1024.0f, 0.0f, 0.0f));
+
+	DroneDeployParticle->SetVisibility(false);
 
 	SetQSkillCollision(false);
 
@@ -48,6 +55,7 @@ void AMGPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	ActionStateUpdate(DeltaTime);
 }
 
 void AMGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -80,7 +88,7 @@ USceneComponent* AMGPlayerCharacter::GetTarget() const
 	return TargetArray[Index]->GetRootComponent();
 }
 
-FVector AMGPlayerCharacter::GetTrace(FVector Pos) const
+FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance) const
 {
 	FHitResult Result;
 
@@ -93,9 +101,9 @@ FVector AMGPlayerCharacter::GetTrace(FVector Pos) const
 		
 		FVector CameraPos = CameraTransform.GetLocation();
 		
-		FVector CameraForwardPos = CameraPos + (Camera->GetForwardVector() * 10000.f);
+		FVector CameraForwardPos = CameraPos + (Camera->GetForwardVector() * TraceDistance);
 		
-		DrawDebugLine(GetWorld(), CameraPos, CameraForwardPos, FColor::Red, false, 10.f, 0U, 2.f);
+		//DrawDebugLine(GetWorld(), CameraPos, CameraForwardPos, FColor::Red, false, 10.f, 0U, 2.f);
 
 		bHit = GetWorld()->LineTraceSingleByChannel(Result, CameraPos, CameraForwardPos, ECollisionChannel::ECC_WorldDynamic);
 		
@@ -118,7 +126,27 @@ FVector AMGPlayerCharacter::GetTrace(FVector Pos) const
 	// 지정받은 위치에서 Trace
 	else 
 	{
+		FVector TargetForwardPos = Pos + (Camera->GetForwardVector() * TraceDistance);
 
+		//Debugging Line
+		//DrawDebugLine(GetWorld(), CameraPos, CameraForwardPos, FColor::Red, false, 10.f, 0U, 2.f);
+
+		bHit = GetWorld()->LineTraceSingleByChannel(Result, Pos, TargetForwardPos, ECollisionChannel::ECC_WorldDynamic);
+
+		// Trace가 Hit일 경우
+		if (bHit)
+		{
+			// Debugging log print start.
+			AActor* HitActor = Result.GetActor();
+			UE_LOG(LogTemp, Log, TEXT("Hit Target : %s"), *HitActor->GetName());
+			// Debugging log print end.
+		}
+
+		// false의 경우, CameraForwardPos 위치를 반환.
+		else
+		{
+			Result.ImpactPoint = TargetForwardPos;
+		}
 	}
 
 	
@@ -162,6 +190,40 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 	}
 	// Missile Charge End
 
+}
+
+void AMGPlayerCharacter::ActionStateUpdate(float DeltaTime)
+{
+	ECharacter_ActionState CurrentState = GetAnimInst()->GetActionState();
+
+	switch (CurrentState)
+	{
+	case ECharacter_ActionState::None:
+		break;
+	case ECharacter_ActionState::Normal:
+		break;
+	case ECharacter_ActionState::Aiming:
+		break;
+	case ECharacter_ActionState::QAiming:
+		break;
+	case ECharacter_ActionState::EAiming:
+	{
+		ESkillTrace();
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+void AMGPlayerCharacter::ESkillTrace()
+{
+	FVector3d HitPos = GetTrace(FVector3d::ZeroVector, 1000.0f);
+	HitPos += FVector3d(0.0f, 0.0f, 50.0f);
+
+	DronePos = HitPos;
+
+	DroneDeployParticle->SetWorldLocation(HitPos);
 }
 
 void AMGPlayerCharacter::SetQSkillCollision(bool bEnable)

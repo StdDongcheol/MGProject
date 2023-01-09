@@ -23,9 +23,10 @@ public:
 
 private:
 	TArray<AActor*> TargetArray;
-	int		MissileCount;
-	float	MissileChargeTime;
-	float	MissileChargeTimeAcc;
+	int				MissileCount;
+	float			MissileChargeTime;
+	float			MissileChargeTimeAcc;
+	FVector3d		DronePos;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -36,6 +37,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class USceneComponent* BoxRoot;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UParticleSystemComponent* DroneDeployParticle;
 	
 	class UCameraComponent* Camera;
 
@@ -52,20 +56,34 @@ public:
 		return ArmSpring;
 	}
 
+	UParticleSystemComponent* GetDroneParticleSystem() const
+	{
+		return DroneDeployParticle;
+	}
+
+public:
 	bool IsTargetEmpty() const
 	{
 		return TargetArray.IsEmpty();
+	}
+
+	FVector3d GetDroneDeployPosition() const
+	{
+		return DronePos;
 	}
 
 public:
 	int GetMissileCount() const;
 	int GetMissileCount(int UsingCount);
 	USceneComponent* GetTarget() const;
-	FVector GetTrace(FVector Pos = FVector::ZeroVector) const;
+	FVector GetTrace(FVector Pos = FVector::ZeroVector, float TraceDistance = 10000.0f) const;
 
 protected:
 	virtual void StateUpdate(float DeltaTime) override;
+	virtual void ActionStateUpdate(float DeltaTime);
 
+private:
+	void ESkillTrace();
 
 public:
 	void SetQSkillCollision(bool bEnable);
