@@ -24,6 +24,8 @@ void AMGPlayerController::InitInputSystem()
 	InputComponent->BindAction(FName("RightMouseButton"), EInputEvent::IE_Released, this, &AMGPlayerController::RightMouseButtonRelease);
 	InputComponent->BindAction(FName("SkillQ"), EInputEvent::IE_Pressed, this, &AMGPlayerController::QButtonPress);
 	InputComponent->BindAction(FName("SkillQ"), EInputEvent::IE_Released, this, &AMGPlayerController::QButtonRelease);
+	InputComponent->BindAction(FName("SkillE"), EInputEvent::IE_Pressed, this, &AMGPlayerController::EButtonPress);
+	InputComponent->BindAction(FName("SkillE"), EInputEvent::IE_Released, this, &AMGPlayerController::EButtonRelease);
 }
 
 void AMGPlayerController::BeginPlay()	
@@ -342,6 +344,12 @@ void AMGPlayerController::EButtonPress()
 		ArmComponent->TargetArmLength = 100.0f;
 		ArmComponent->SocketOffset = FVector(0.0f, -60.0f, 30.0f);
 
+		
+
+		// ParticleSystem Off
+		PlayerCharacter->GetDroneParticleSystem()->SetVisibility(true);
+		PlayerCharacter->GetDroneParticleSystem()->ActivateSystem();
+
 		break;
 	}
 	default:
@@ -351,4 +359,33 @@ void AMGPlayerController::EButtonPress()
 
 void AMGPlayerController::EButtonRelease()
 {
+	bEButtonPress = !bEButtonPress;
+
+	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+
+	switch (ActionState)
+	{
+	case ECharacter_ActionState::EAiming:
+	{
+		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
+
+		if (!ArmComponent)
+			return;
+
+		PlayerCharacter->GetAnimInst()->SetBodyActionState(ECharacter_BodyAction::EThrowing);
+
+		// StateMachine내 ActionState 설정 
+		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Normal);
+
+		// CameraArm Length 및 SocketOffset 조정
+		ArmComponent->TargetArmLength = 250.0f;
+		ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
+
+		PlayerCharacter->GetDroneParticleSystem()->SetVisibility(false);
+		PlayerCharacter->GetDroneParticleSystem()->DeactivateSystem();
+		break;
+	}
+	default:
+		break;
+	}
 }
