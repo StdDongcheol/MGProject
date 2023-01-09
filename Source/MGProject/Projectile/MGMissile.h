@@ -36,7 +36,7 @@ public:
 
 protected:
 	UFUNCTION()
-		void OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
-		int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit);
+	void OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
+	int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit);
 
 };

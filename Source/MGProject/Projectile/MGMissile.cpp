@@ -31,9 +31,9 @@ void AMGMissile::BeginPlay()
 	Super::BeginPlay();
 
 	ProjectileComponent->InitialSpeed = 1000.f;
-	ProjectileComponent->MaxSpeed = 1000.f;
+	ProjectileComponent->MaxSpeed = 4000.f;
 	ProjectileComponent->bRotationFollowsVelocity = true;
-	ProjectileComponent->HomingAccelerationMagnitude = 1000.f;
+	ProjectileComponent->HomingAccelerationMagnitude = 3500.f;
 	ProjectileComponent->ProjectileGravityScale = 0.f;
 	ProjectileComponent->bShouldBounce = true;
 }
