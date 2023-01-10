@@ -19,10 +19,20 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Drone")
+	class USceneComponent* FloatingLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Drone")
 	class UParticleSystemComponent* ActivateParticle;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Drone")
 	class UParticleSystemComponent* DeactivateParticle;
+
+private:
+	FVector StartPos;
+	FVector EndPos;
+	float	ActivatedTime;
+	float	ActivatedTimeAcc;
+	bool	IsActivated;
 
 protected:
 	virtual void BeginPlay() override;
@@ -35,5 +45,4 @@ protected:
 	UFUNCTION()
 	void OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
 	int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit);
-
 };
