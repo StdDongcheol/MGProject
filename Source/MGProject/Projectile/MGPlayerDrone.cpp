@@ -2,12 +2,13 @@
 
 
 #include "MGPlayerDrone.h"
+#include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AMGPlayerDrone::AMGPlayerDrone() :
 	IsActivated(false),
-	ActivatedTime(3.0f)
+	ActivatedTime(5.0f)
 {
 	Mesh->SetCollisionProfileName(TEXT("PlayerAttack"));
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerDrone::OnCollisionEnter);
@@ -24,6 +25,14 @@ AMGPlayerDrone::AMGPlayerDrone() :
 	DeactivateParticle->SetupAttachment(RootComponent);
 	DeactivateParticle->bAutoActivate = false;
 	
+	HealSphere = CreateDefaultSubobject<USphereComponent>(TEXT("HealSphere"));
+	HealSphere->SetupAttachment(RootComponent);
+	HealSphere->SetNotifyRigidBodyCollision(true);
+	HealSphere->SetCollisionProfileName(TEXT("PlayerAttack"));
+	HealSphere->SetSphereRadius(500.f);
+	HealSphere->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerDrone::OnHealCollisionEnter);
+	HealSphere->OnComponentEndOverlap.AddDynamic(this, &AMGPlayerDrone::OnHealCollisionEnd);
+
 	ProjectileComponent->Velocity = FVector(1200.0f, 0.0f, 0.0f);
 }
 
@@ -90,4 +99,12 @@ void AMGPlayerDrone::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* 
 
 	StartPos = RootComponent->GetComponentLocation();
 	EndPos = RootComponent->GetComponentLocation() + FVector(0.0f, 0.0f, 150.0f);
+}
+
+void AMGPlayerDrone::OnHealCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
+{
+}
+
+void AMGPlayerDrone::OnHealCollisionEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
 }

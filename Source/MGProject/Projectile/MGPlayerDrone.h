@@ -26,6 +26,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Drone")
 	class UParticleSystemComponent* DeactivateParticle;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Drone")
+	class USphereComponent* HealSphere;
 
 private:
 	FVector StartPos;
@@ -45,4 +48,12 @@ protected:
 	UFUNCTION()
 	void OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
 	int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit);
+	
+	UFUNCTION()
+	void OnHealCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
+	int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit);
+	
+	UFUNCTION()
+	void OnHealCollisionEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 };
