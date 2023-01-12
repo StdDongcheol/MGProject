@@ -4,11 +4,13 @@
 #include "MGPlayerDrone.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AMGPlayerDrone::AMGPlayerDrone() :
 	IsActivated(false),
-	ActivatedTime(5.0f)
+	IsHealActivated(false),
+	ActivatedTime(10.0f)
 {
 	Mesh->SetCollisionProfileName(TEXT("PlayerAttack"));
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerDrone::OnCollisionEnter);
@@ -21,15 +23,21 @@ AMGPlayerDrone::AMGPlayerDrone() :
 	ActivateParticle->SetupAttachment(RootComponent);
 	ActivateParticle->bAutoActivate = false;
 
+
 	DeactivateParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("DeactivateParticle"));
 	DeactivateParticle->SetupAttachment(RootComponent);
 	DeactivateParticle->bAutoActivate = false;
 	
+	HealParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("HealParticle"));
+	HealParticle->SetupAttachment(RootComponent);
+	HealParticle->bAutoActivate = false;
+	
 	HealSphere = CreateDefaultSubobject<USphereComponent>(TEXT("HealSphere"));
 	HealSphere->SetupAttachment(RootComponent);
 	HealSphere->SetNotifyRigidBodyCollision(true);
-	HealSphere->SetCollisionProfileName(TEXT("PlayerAttack"));
-	HealSphere->SetSphereRadius(500.f);
+	HealSphere->SetCollisionProfileName(TEXT("PlayerHeal"));
+	HealSphere->SetSphereRadius(1000.f);
+	HealSphere->SetGenerateOverlapEvents(false);
 	HealSphere->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerDrone::OnHealCollisionEnter);
 	HealSphere->OnComponentEndOverlap.AddDynamic(this, &AMGPlayerDrone::OnHealCollisionEnd);
 
@@ -41,11 +49,27 @@ void AMGPlayerDrone::BeginPlay()
 	Super::BeginPlay();
 
 	SetLifeSpan(0.0f);
+
 }
 
 void AMGPlayerDrone::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//UE_LOG(LogTemp, Log, TEXT("AccumTickTime : %f"), ActivateParticle->AccumTickTime);
+
+	if (ParticleDatas.Num() > 0)
+	{
+		for (FMGParticleSoundEventInfo& ParticleEventData : ParticleDatas)
+		{
+			if (!ParticleEventData.IsPlayed &&
+				ActivateParticle->AccumTickTime > ParticleEventData.EventTime )
+			{
+				ParticleEventData.IsPlayed = true;
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), ParticleEventData.Audio, GetActorLocation());
+			}
+		}
+	}
 
 	if (!ProjectileComponent->bSimulationEnabled)
 	{
@@ -67,6 +91,7 @@ void AMGPlayerDrone::Tick(float DeltaTime)
 			if (!IsActivated && GetLifeSpan() == 0.0f)
 			{
 				IsActivated = true;
+				HealSphere->SetGenerateOverlapEvents(true);
 				ActivateParticle->ActivateSystem();
 			}
 		}
@@ -80,6 +105,12 @@ void AMGPlayerDrone::Tick(float DeltaTime)
 		{
 			IsActivated = false;
 
+			// Heal off
+			IsHealActivated = !IsHealActivated;
+			HealParticle->KillParticlesForced();
+			HealParticle->DeactivateSystem();
+			
+			// Particle off
 			ActivateParticle->DeactivateSystem();
 			ParticleLegacy->DeactivateSystem();
 			Mesh->SetVisibility(false);
@@ -90,21 +121,67 @@ void AMGPlayerDrone::Tick(float DeltaTime)
 		}
 	}
 
+	if (IsHealActivated)
+	{
+		if (HealingTarget && HealingTarget->IsValidLowLevel())
+		{
+			FVector Pos = HealingTarget->GetActorLocation() + FVector(0.0f, 0.0f, -100.0f);
+
+			HealParticle->SetWorldLocation(Pos);
+		}
+	}
 }
 
 void AMGPlayerDrone::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, 
 	UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
 {
-	ProjectileComponent->bSimulationEnabled = false;
+	FName CollisionName = _OtherComp->GetCollisionProfileName();
 
-	StartPos = RootComponent->GetComponentLocation();
-	EndPos = RootComponent->GetComponentLocation() + FVector(0.0f, 0.0f, 150.0f);
+	if (CollisionName != FName("PlayerHeal"))
+	{
+		ProjectileComponent->bSimulationEnabled = false;
+
+		StartPos = RootComponent->GetComponentLocation();
+		EndPos = RootComponent->GetComponentLocation() + FVector(0.0f, 0.0f, 150.0f);
+	}
 }
 
-void AMGPlayerDrone::OnHealCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
+void AMGPlayerDrone::OnHealCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, 
+	UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
 {
+	FName CollisionName = _OtherComp->GetCollisionProfileName();
+
+	if (CollisionName == FName("Player"))
+	{
+		HealingTarget = _pOtherActor;
+
+		IsHealActivated = !IsHealActivated;
+
+		// heal effect 시작.
+		HealParticle->ActivateSystem();
+
+		// Player 도트 heal 시작.
+		 
+		
+	}
 }
 
-void AMGPlayerDrone::OnHealCollisionEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AMGPlayerDrone::OnHealCollisionEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	FName CollisionName = OtherComp->GetCollisionProfileName();
+
+	if (CollisionName == FName("Player"))
+	{
+		HealingTarget = nullptr;
+
+		IsHealActivated = !IsHealActivated;
+
+		// heal effect 정지.
+		HealParticle->DeactivateSystem();
+
+		// Player 도트 heal 정지.
+
+
+	}
 }

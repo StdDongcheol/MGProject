@@ -4,11 +4,34 @@
 
 #include "CoreMinimal.h"
 #include "MGProjectile.h"
+#include "Components/AudioComponent.h"
 #include "MGPlayerDrone.generated.h"
 
 /**
  * 
  */
+
+USTRUCT(Atomic, BlueprintType)
+struct FMGParticleSoundEventInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float EventTime;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool IsPlayed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> Audio;
+	
+	FMGParticleSoundEventInfo() :
+		EventTime(0.0f),
+		IsPlayed(false)
+	{
+	}
+};
+
 UCLASS()
 class MGPROJECT_API AMGPlayerDrone : public AMGProjectile
 {
@@ -28,14 +51,22 @@ protected:
 	class UParticleSystemComponent* DeactivateParticle;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Drone")
+	class UParticleSystemComponent* HealParticle;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Drone")
 	class USphereComponent* HealSphere;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "DroneEffect")
+	TArray<FMGParticleSoundEventInfo> ParticleDatas;
 
 private:
 	FVector StartPos;
 	FVector EndPos;
+	class AActor* HealingTarget;
 	float	ActivatedTime;
 	float	ActivatedTimeAcc;
 	bool	IsActivated;
+	bool	IsHealActivated;
 
 protected:
 	virtual void BeginPlay() override;
