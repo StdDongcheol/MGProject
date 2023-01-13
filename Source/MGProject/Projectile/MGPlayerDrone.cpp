@@ -2,6 +2,7 @@
 
 
 #include "MGPlayerDrone.h"
+#include "../Character/MGPlayerCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -10,7 +11,9 @@
 AMGPlayerDrone::AMGPlayerDrone() :
 	IsActivated(false),
 	IsHealActivated(false),
-	ActivatedTime(10.0f)
+	ActivatedTime(10.0f),
+	HealTime(0.2f),
+	HealTimeAcc(0.0f)
 {
 	Mesh->SetCollisionProfileName(TEXT("PlayerAttack"));
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerDrone::OnCollisionEnter);
@@ -55,8 +58,6 @@ void AMGPlayerDrone::BeginPlay()
 void AMGPlayerDrone::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//UE_LOG(LogTemp, Log, TEXT("AccumTickTime : %f"), ActivateParticle->AccumTickTime);
 
 	if (ParticleDatas.Num() > 0)
 	{
@@ -126,8 +127,19 @@ void AMGPlayerDrone::Tick(float DeltaTime)
 		if (HealingTarget && HealingTarget->IsValidLowLevel())
 		{
 			FVector Pos = HealingTarget->GetActorLocation() + FVector(0.0f, 0.0f, -100.0f);
-
+			
 			HealParticle->SetWorldLocation(Pos);
+
+
+			HealTimeAcc += DeltaTime;
+
+			if (HealTimeAcc >= HealTime)
+			{
+				HealTimeAcc -= HealTime;
+				
+				AMGPlayerCharacter* Player = Cast<AMGPlayerCharacter>(HealingTarget);
+				Player->AdjustHP(1.0f);
+			}	
 		}
 	}
 }

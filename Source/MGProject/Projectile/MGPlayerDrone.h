@@ -65,6 +65,8 @@ private:
 	class AActor* HealingTarget;
 	float	ActivatedTime;
 	float	ActivatedTimeAcc;
+	float	HealTime;
+	float	HealTimeAcc;
 	bool	IsActivated;
 	bool	IsHealActivated;
 
