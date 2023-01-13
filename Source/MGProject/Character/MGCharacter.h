@@ -20,6 +20,10 @@ private:
 	UMGAnimInstance* AnimInstance;
 
 protected:
+	float		HP;
+	float		HPMax;
+
+protected:
 	class UCapsuleComponent* Capsule;
 
 public:
@@ -27,6 +31,20 @@ public:
 	{
 		return AnimInstance;
 	}
+
+public:
+	float GetCurrentHP() const
+	{
+		return HP;
+	}
+
+	float GetMaxHP() const
+	{
+		return HPMax;
+	}
+
+public:
+	void AdjustHP(float _HP);
 
 protected:
 	virtual void StateUpdate(float DeltaTime);

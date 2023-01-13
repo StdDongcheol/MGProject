@@ -11,6 +11,20 @@ AMGCharacter::AMGCharacter()
 	Capsule = FindComponentByClass<UCapsuleComponent>();
 }
 
+void AMGCharacter::AdjustHP(float _HP)
+{
+	if (_HP < 0.0f)
+	{
+		HP -= _HP;
+	}
+
+	else
+	{
+		if (HP < HPMax)
+			HP += _HP;
+	}
+}
+
 void AMGCharacter::StateUpdate(float DeltaTime)
 {
 	FVector Velocity = GetVelocity();
