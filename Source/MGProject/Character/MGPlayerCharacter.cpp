@@ -8,9 +8,13 @@
 #include "MGEnemyCharacter.h"
 
 AMGPlayerCharacter::AMGPlayerCharacter() :
+	IsDroneDeployable(true),
+	MissileMaxCount(10),
 	MissileCount(10),
 	MissileChargeTime(5.0f),
-	MissileChargeTimeAcc(0.0f)
+	MissileChargeTimeAcc(0.0f),
+	DroneChargeTime(20.0f),
+	DroneChargeTimeAcc(0.0f)
 {
 	Capsule->SetCollisionProfileName(FName("Player"));
 
@@ -48,6 +52,10 @@ void AMGPlayerCharacter::BeginPlay()
 
 	// PlayerAnim setting start
 	GetAnimInst()->AddQAnimLoopCount(MissileCount);
+
+	// Character status setting start
+	HP = 75.0f;
+	HPMax = 100.0f;
 }
 
 
@@ -175,7 +183,7 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 	//	DrawDebugBox(GetWorld(), BoxCollision->GetComponentLocation(), BoxCollision->GetScaledBoxExtent(), BoxRoot->GetComponentRotation().Quaternion(), FColor::Green);
 
 	// Missile Charge Start
-	if (MissileCount < 10)
+	if (MissileCount < MissileMaxCount)
 	{
 		MissileChargeTimeAcc += DeltaTime;
 
@@ -189,6 +197,20 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 		}
 	}
 	// Missile Charge End
+
+	// Drone Charge start
+	if (!IsDroneDeployable)
+	{
+		DroneChargeTimeAcc += DeltaTime;
+
+		if (DroneChargeTimeAcc > DroneChargeTime)
+		{
+			DroneChargeTimeAcc -= DroneChargeTime;
+
+			IsDroneDeployable = true;
+		}
+	}
+	// Drone Charge end
 
 }
 

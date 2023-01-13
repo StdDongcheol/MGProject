@@ -23,10 +23,15 @@ public:
 
 private:
 	TArray<AActor*> TargetArray;
+	FVector3d		DronePos;
+	int				MissileMaxCount;
 	int				MissileCount;
 	float			MissileChargeTime;
 	float			MissileChargeTimeAcc;
-	FVector3d		DronePos;
+	float			DroneChargeTime;
+	float			DroneChargeTimeAcc;
+	bool			IsDroneDeployable;
+
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -70,6 +75,41 @@ public:
 	FVector3d GetDroneDeployPosition() const
 	{
 		return DronePos;
+	}
+
+	float GetDroneChargeTime() const
+	{
+		return DroneChargeTime;
+	}
+	
+	float GetDroneChargeTimeAcc() const
+	{
+		return DroneChargeTimeAcc;
+	}
+	
+	float GetMissileMax() const
+	{
+		return MissileMaxCount;
+	}
+	
+	float GetMissileChargeTime() const
+	{
+		return MissileChargeTime;
+	}
+	
+	float GetMissileChargeTimeAcc() const
+	{
+		return MissileChargeTimeAcc;
+	}
+
+	void UseDroneReady()
+	{
+		IsDroneDeployable = false;
+	}
+	
+	bool IsDroneReady() const
+	{
+		return IsDroneDeployable;
 	}
 
 public:
