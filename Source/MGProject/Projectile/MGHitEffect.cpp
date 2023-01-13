@@ -18,8 +18,7 @@ AMGHitEffect::AMGHitEffect()
 
 void AMGHitEffect::SetStatus(float fLifetime, USceneComponent* Component)
 {
-	if (LifeTime > 0.0f)
-		SetLifeSpan(fLifetime);
+	SetLifeSpan(fLifetime);
 
 	if (Component != nullptr)
 		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform);

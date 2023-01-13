@@ -20,9 +20,6 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Effect")
 	class UAudioComponent* Sound;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Effect")
-	float	LifeTime = 0.0f;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Effect")
 	bool	AttachToOtherComponent = false;

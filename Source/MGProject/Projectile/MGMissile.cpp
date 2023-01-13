@@ -48,6 +48,7 @@ void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOt
 	ProjectileComponent->StopSimulating(_Hit);
 
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(HitEffect, GetActorLocation(), GetActorRotation());
+	Effect->SetStatus(3.0f);
 
 	Destroy();
 }
