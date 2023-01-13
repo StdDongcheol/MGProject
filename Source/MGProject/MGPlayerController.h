@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "UI/MGAimWidget.h"
+#include "UI/MGNormalAimWidget.h"
+#include "UI/MGPlayerWidget.h"
 #include "Character/MGPlayerCharacter.h"
 #include "MGPlayerController.generated.h"
 
@@ -21,11 +23,18 @@ class MGPROJECT_API AMGPlayerController : public APlayerController
 private:
 	class AMGPlayerCharacter* PlayerCharacter = nullptr;
 
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> PlayerWidget;
 
-	UMGAimWidget* PlayerAimWidget;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> PlayerNormalAimWBP;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> PlayerStatusWBP;
+
+	UMGAimWidget* PlayerQAimWidget;
+	UMGNormalAimWidget* PlayerNormalAimWidget;
+	UMGPlayerWidget* PlayerStatusWidget;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

@@ -32,9 +32,17 @@ void AMGPlayerController::BeginPlay()
 {
 	PlayerCharacter = Cast<AMGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	
-	PlayerAimWidget = CreateWidget<UMGAimWidget>(this, PlayerWidget, TEXT("Player AimWidget"));
-	PlayerAimWidget->AddToViewport(0);
-	PlayerAimWidget->SetVisibility(ESlateVisibility::Hidden);
+	PlayerQAimWidget = CreateWidget<UMGAimWidget>(this, PlayerWidget, TEXT("Player AimWidget"));
+	PlayerQAimWidget->AddToViewport(9);
+	PlayerQAimWidget->SetVisibility(ESlateVisibility::Hidden);
+
+	PlayerNormalAimWidget = CreateWidget<UMGNormalAimWidget>(this, PlayerNormalAimWBP, TEXT("PlayerNormalAimWidget"));
+	PlayerNormalAimWidget->AddToViewport(9);
+	PlayerNormalAimWidget->SetVisibility(ESlateVisibility::Hidden);
+
+	PlayerStatusWidget = CreateWidget<UMGPlayerWidget>(this, PlayerStatusWBP, TEXT("PlayerStatusWidget"));
+	PlayerStatusWidget->AddToViewport(8);
+	PlayerStatusWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AMGPlayerController::MoveFront(float Value)
@@ -148,6 +156,7 @@ void AMGPlayerController::LeftMouseButtonClick()
 	case ECharacter_ActionState::Aiming:
 	{
 		PlayerCharacter->GetAnimInst()->SetBodyActionState(ECharacter_BodyAction::NormalFire);
+
 		PlayerCharacter->GetTrace();
 		break;
 	}
@@ -177,10 +186,13 @@ void AMGPlayerController::RightMouseButtonClick()
 
 		// StateMachine내 ActionState 설정 
 		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Aiming);
-		
+
 		// CameraArm Length 및 SocketOffset 조정
 		ArmComponent->TargetArmLength = 100.0f;
 		ArmComponent->SocketOffset = FVector(0.0f, -60.0f, 30.0f);
+		
+		// NormalAimWidget off
+		PlayerNormalAimWidget->SetVisibility(ESlateVisibility::Visible);
 
 		break;
 	}
@@ -215,6 +227,9 @@ void AMGPlayerController::RightMouseButtonRelease()
 		ArmComponent->TargetArmLength = 250.0f;
 		ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
 
+		// NormalAimWidget off
+		PlayerNormalAimWidget->SetVisibility(ESlateVisibility::Hidden);
+
 		break;
 	}
 
@@ -248,7 +263,7 @@ void AMGPlayerController::QButtonPress()
 		ArmComponent->TargetArmLength = 100.0f;
 		ArmComponent->SocketOffset = FVector(0.0f, -60.0f, 30.0f);
 
-		PlayerAimWidget->SetVisibility(ESlateVisibility::Visible);
+		PlayerQAimWidget->SetVisibility(ESlateVisibility::Visible);
 
 		break;
 	}
@@ -289,8 +304,8 @@ void AMGPlayerController::QButtonRelease()
 			ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
 
 
-			PlayerAimWidget->SetVisibility(ESlateVisibility::Hidden);
-			PlayerAimWidget->SetScopeActivate(false);
+			PlayerQAimWidget->SetVisibility(ESlateVisibility::Hidden);
+			PlayerQAimWidget->SetScopeActivate(false);
 			PlayerCharacter->SetQSkillCollision(false);
 
 		}
@@ -306,8 +321,8 @@ void AMGPlayerController::QButtonRelease()
 			ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
 
 
-			PlayerAimWidget->SetVisibility(ESlateVisibility::Hidden);
-			PlayerAimWidget->SetScopeActivate(false);
+			PlayerQAimWidget->SetVisibility(ESlateVisibility::Hidden);
+			PlayerQAimWidget->SetScopeActivate(false);
 			PlayerCharacter->SetQSkillCollision(false);
 		}
 
@@ -326,34 +341,35 @@ void AMGPlayerController::EButtonPress()
 {
 	bEButtonPress = !bEButtonPress;
 
-	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
-
-	switch (ActionState)
+	if (PlayerCharacter->IsDroneReady())
 	{
-	case ECharacter_ActionState::Normal:
-	{
-		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
+		ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
 
-		if (!ArmComponent)
-			return;
+		switch (ActionState)
+		{
+		case ECharacter_ActionState::Normal:
+		{
+			USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
 
-		// StateMachine내 ActionState 설정 
-		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::EAiming);
+			if (!ArmComponent)
+				return;
 
-		// CameraArm Length 및 SocketOffset 조정
-		ArmComponent->TargetArmLength = 100.0f;
-		ArmComponent->SocketOffset = FVector(0.0f, -60.0f, 30.0f);
+			// StateMachine내 ActionState 설정 
+			PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::EAiming);
 
-		
+			// CameraArm Length 및 SocketOffset 조정
+			ArmComponent->TargetArmLength = 100.0f;
+			ArmComponent->SocketOffset = FVector(0.0f, -60.0f, 30.0f);
 
-		// ParticleSystem Off
-		PlayerCharacter->GetDroneParticleSystem()->SetVisibility(true);
-		PlayerCharacter->GetDroneParticleSystem()->ActivateSystem();
+			// ParticleSystem On
+			PlayerCharacter->GetDroneParticleSystem()->SetVisibility(true);
+			PlayerCharacter->GetDroneParticleSystem()->ActivateSystem();
 
-		break;
-	}
-	default:
-		break;
+			break;
+		}
+		default:
+			break;
+		}
 	}
 }
 
@@ -381,8 +397,12 @@ void AMGPlayerController::EButtonRelease()
 		ArmComponent->TargetArmLength = 250.0f;
 		ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
 
+		// ParticleSystem off
 		PlayerCharacter->GetDroneParticleSystem()->SetVisibility(false);
 		PlayerCharacter->GetDroneParticleSystem()->DeactivateSystem();
+
+		// UseDrone check
+		PlayerCharacter->UseDroneReady();
 		break;
 	}
 	default:
