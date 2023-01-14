@@ -22,6 +22,11 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "UIParticleSystem",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher: //ue/marketplace/content/10b64fc937ac49edba22761bb0b9eaeb"
 		}
 	]
 }
