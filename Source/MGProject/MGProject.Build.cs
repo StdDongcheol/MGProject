@@ -9,7 +9,8 @@ public class MGProject : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Niagara" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", 
+			"UMG", "Niagara", "AIModule", "GameplayTasks" });
 
         PublicIncludePaths.AddRange(new string[] { Path.Combine(ModuleDirectory, "Engine/Plugins/FX/Niagara/Source/Niagara") });
 
