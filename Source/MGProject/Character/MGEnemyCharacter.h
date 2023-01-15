@@ -18,20 +18,30 @@ public:
 	AMGEnemyCharacter();
 
 protected:
-	UPROPERTY(Category = "Enemy Property", EditAnywhere, BlueprintReadWrite)
-	class UWidgetComponent* Widget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty")
+	class UWidgetComponent* TargetingWidgetComponent;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty", meta = (AllowPrivateAccess = "true"))
+	class UBehaviorTree* BehaviorTree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty", meta = (AllowPrivateAccess = "true"))
+	class UBlackboardData* BlackboardData;
 
 private:
 	class UMGEnemyWidget* EnemyWidget;
 
 private:
-	bool LockedByPlayer;
+	bool IsTargetLock;
 
 public:
 	bool IsTargetLocked() const
 	{
-		return LockedByPlayer;
+		return IsTargetLock;
 	}
+
+	class UBehaviorTree* GetBehaviorTree() const;
+	class UBlackboardData* GetBlackboardData() const;
 
 public:
 	void SetLockonWidget(bool bEnable);
