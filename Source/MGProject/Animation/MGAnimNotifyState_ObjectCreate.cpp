@@ -31,11 +31,11 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 	SpawnRotation.Pitch = Pitch;
 
 
-	ECharacter_BodyAction BodyAction = Character->GetAnimInst()->GetBodyActionState();
+	EPlayer_BodyAction BodyAction = Character->GetAnimInst()->GetBodyActionState();
 
 	switch (BodyAction)
 	{
-	case ECharacter_BodyAction::NormalFire:
+	case EPlayer_BodyAction::NormalFire:
 	{
 		FVector HitPos = Character->GetTrace();
 		
@@ -46,7 +46,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 
 		break;
 	}
-	case ECharacter_BodyAction::QFire:
+	case EPlayer_BodyAction::QFire:
 	{	
 		AMGMissile* Missile = MeshComp->GetWorld()->SpawnActor<AMGMissile>(TargetActor, SpawnPosition, SpawnRotation);
 
@@ -56,7 +56,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 		Missile->SetTarget(Character->GetTarget());	
 		break;
 	}
-	case ECharacter_BodyAction::EThrowing:
+	case EPlayer_BodyAction::EThrowing:
 	{
 		FVector DeployPos = Character->GetDroneDeployPosition();
 

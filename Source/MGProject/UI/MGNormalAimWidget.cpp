@@ -62,11 +62,11 @@ void UMGNormalAimWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	ECharacter_BodyAction State = PlayerController->GetPlayerCharacter()->GetAnimInst()->GetBodyActionState();
+	EPlayer_BodyAction State = PlayerController->GetPlayerCharacter()->GetAnimInst()->GetBodyActionState();
 
 	switch (State)
 	{
-	case ECharacter_BodyAction::Ready:
+	case EPlayer_BodyAction::Ready:
 	{
 		if (IsPlayingRecoil)
 		{
@@ -74,7 +74,7 @@ void UMGNormalAimWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 		}
 		break;
 	}
-	case ECharacter_BodyAction::NormalFire:
+	case EPlayer_BodyAction::NormalFire:
 	{
 		if (!IsPlayingRecoil)
 		{

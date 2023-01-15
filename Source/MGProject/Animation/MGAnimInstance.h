@@ -46,10 +46,10 @@ private:
 	FRotator	CharacterAimRotation;
 
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	ECharacter_ActionState	ActionState;
+	EPlayer_ActionState	ActionState;
 
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	ECharacter_BodyAction	BodyActionState;
+	EPlayer_BodyAction	BodyActionState;
 	
 public:
 	void SetMovementYaw(float Value)
@@ -77,12 +77,12 @@ public:
 		IsQFire = Fire;
 	}
 
-	void SetActionState(ECharacter_ActionState State)
+	void SetActionState(EPlayer_ActionState State)
 	{
 		ActionState = State;
 	}
 	
-	void SetBodyActionState(ECharacter_BodyAction State)
+	void SetBodyActionState(EPlayer_BodyAction State)
 	{
 		BodyActionState = State;
 	}
@@ -103,12 +103,12 @@ public:
 		return CharacterAimRotation;
 	}
 	
-	ECharacter_ActionState GetActionState() const
+	EPlayer_ActionState GetActionState() const
 	{
 		return ActionState;
 	}
 
-	ECharacter_BodyAction GetBodyActionState() const
+	EPlayer_BodyAction GetBodyActionState() const
 	{
 		return BodyActionState;
 	}

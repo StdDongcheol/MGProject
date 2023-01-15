@@ -8,7 +8,6 @@
 #include "MGEnemyCharacter.h"
 
 AMGPlayerCharacter::AMGPlayerCharacter() :
-	IsDroneDeployable(true),
 	MissileMaxCount(10),
 	MissileCount(10),
 	MissileChargeTime(5.0f),
@@ -56,6 +55,7 @@ void AMGPlayerCharacter::BeginPlay()
 	// Character status setting start
 	HP = 75.0f;
 	HPMax = 100.0f;
+	IsDroneDeployable = true;
 }
 
 
@@ -216,19 +216,19 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 
 void AMGPlayerCharacter::ActionStateUpdate(float DeltaTime)
 {
-	ECharacter_ActionState CurrentState = GetAnimInst()->GetActionState();
+	EPlayer_ActionState CurrentState = GetAnimInst()->GetActionState();
 
 	switch (CurrentState)
 	{
-	case ECharacter_ActionState::None:
+	case EPlayer_ActionState::None:
 		break;
-	case ECharacter_ActionState::Normal:
+	case EPlayer_ActionState::Normal:
 		break;
-	case ECharacter_ActionState::Aiming:
+	case EPlayer_ActionState::Aiming:
 		break;
-	case ECharacter_ActionState::QAiming:
+	case EPlayer_ActionState::QAiming:
 		break;
-	case ECharacter_ActionState::EAiming:
+	case EPlayer_ActionState::EAiming:
 	{
 		ESkillTrace();
 		break;
@@ -308,9 +308,9 @@ void AMGPlayerCharacter::QSkillOnCollisionEnd(UPrimitiveComponent* _pComponent, 
 		if (!TargetEnemy || !TargetEnemy->IsValidLowLevel())
 			return;
 
-		ECharacter_BodyAction BodyState = GetAnimInst()->GetBodyActionState();
+		EPlayer_BodyAction BodyState = GetAnimInst()->GetBodyActionState();
 
-		if (!(BodyState == ECharacter_BodyAction::QFire))
+		if (!(BodyState == EPlayer_BodyAction::QFire))
 		{
 			auto	iter = TargetArray.begin();
 			auto	iterEnd = TargetArray.end();

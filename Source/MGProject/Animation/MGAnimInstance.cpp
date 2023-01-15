@@ -8,7 +8,7 @@
 UMGAnimInstance::UMGAnimInstance() :
 	QCurrentCount(0)
 {
-	ActionState = ECharacter_ActionState::Normal;
+	ActionState = EPlayer_ActionState::Normal;
 	CharacterPrevAimYaw = 0.0f;
 	RootBoneYaw = 0.0f;
 }
@@ -16,9 +16,9 @@ UMGAnimInstance::UMGAnimInstance() :
 void UMGAnimInstance::MGUpdateRotate(float DeltaSeconds)
 {
 	if (IsMoving || 
-		ActionState == ECharacter_ActionState::Aiming ||
-		ActionState == ECharacter_ActionState::QAiming ||
-		ActionState == ECharacter_ActionState::EAiming)
+		ActionState == EPlayer_ActionState::Aiming ||
+		ActionState == EPlayer_ActionState::QAiming ||
+		ActionState == EPlayer_ActionState::EAiming)
 	{
 		RootBoneYaw = CharacterAimRotation.Yaw;
 	}
@@ -49,13 +49,13 @@ void UMGAnimInstance::StateUpdate(float DeltaTime)
 {
 	switch (BodyActionState)
 	{
-	case ECharacter_BodyAction::None:
+	case EPlayer_BodyAction::None:
 		break;
-	case ECharacter_BodyAction::Ready:
+	case EPlayer_BodyAction::Ready:
 		break;
-	case ECharacter_BodyAction::NormalFire:
+	case EPlayer_BodyAction::NormalFire:
 		break;
-	case ECharacter_BodyAction::QFire:
+	case EPlayer_BodyAction::QFire:
 	{
 		if (QCurrentCount >= QAnimLoopCount)
 		{
@@ -64,13 +64,13 @@ void UMGAnimInstance::StateUpdate(float DeltaTime)
 			QAnimLoopCount = PlayerCharacter->GetMissileCount(QCurrentCount);
 			QCurrentCount = 0;
 
-			SetActionState(ECharacter_ActionState::Normal);
-			SetBodyActionState(ECharacter_BodyAction::Ready);
+			SetActionState(EPlayer_ActionState::Normal);
+			SetBodyActionState(EPlayer_BodyAction::Ready);
 			PlayerCharacter->QFireEnd();
 		}
 	}
 		break;
-	case ECharacter_BodyAction::EThrowing:
+	case EPlayer_BodyAction::EThrowing:
 		break;
 	default:
 		break;

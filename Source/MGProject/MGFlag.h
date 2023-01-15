@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataTable.h"
 #include "UObject/NoExportTypes.h"
 #include "MGFlag.generated.h"
 
@@ -18,7 +17,7 @@ class MGPROJECT_API UMGFlag : public UObject
 };
 
 UENUM()
-enum class ECharacter_ActionState : uint8
+enum class EPlayer_ActionState : uint8
 {
 	None,
 	Normal,
@@ -28,7 +27,7 @@ enum class ECharacter_ActionState : uint8
 };
 
 UENUM()
-enum class ECharacter_BodyAction : uint8
+enum class EPlayer_BodyAction : uint8
 {
 	None,
 	Ready,
@@ -49,24 +48,7 @@ UENUM()
 enum class EObject_Force : uint8
 {
 	None,
-	Player,
+	Player, 
 	Enemy,
 	Neutural
-};
-
-USTRUCT(Atomic, BlueprintType)
-struct FBulletTable : public FTableRowBase
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UParticleSystem* ProjectileEffect;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UParticleSystem* HitEffect;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EObject_Force Force;
-
 };

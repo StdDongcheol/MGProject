@@ -1,11 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "MGPlayerController.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "MGFlag.h"
-#include "MGPlayerController.h"
 #include "Character/MGPlayerCharacter.h"
 
 void AMGPlayerController::InitInputSystem()
@@ -148,21 +147,21 @@ void AMGPlayerController::MouseYMove(float Value)
 
 void AMGPlayerController::LeftMouseButtonClick()
 {
-	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
 
 	switch (ActionState)
 	{
-	case ECharacter_ActionState::Normal:
-	case ECharacter_ActionState::Aiming:
+	case EPlayer_ActionState::Normal:
+	case EPlayer_ActionState::Aiming:
 	{
-		PlayerCharacter->GetAnimInst()->SetBodyActionState(ECharacter_BodyAction::NormalFire);
+		PlayerCharacter->GetAnimInst()->SetBodyActionState(EPlayer_BodyAction::NormalFire);
 
 		PlayerCharacter->GetTrace();
 		break;
 	}
 
-	case ECharacter_ActionState::QAiming:
-	case ECharacter_ActionState::EAiming:
+	case EPlayer_ActionState::QAiming:
+	case EPlayer_ActionState::EAiming:
 	default:
 		break;
 	}
@@ -172,12 +171,12 @@ void AMGPlayerController::RightMouseButtonClick()
 {
 	bRightMouseButtonPress = !bRightMouseButtonPress;
 
-	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
 
 	UE_LOG(LogTemp, Log, TEXT("Pressed!!!"));
 	switch (ActionState)
 	{
-	case ECharacter_ActionState::Normal:
+	case EPlayer_ActionState::Normal:
 	{
 		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
 		
@@ -185,7 +184,7 @@ void AMGPlayerController::RightMouseButtonClick()
 			return;
 
 		// StateMachine내 ActionState 설정 
-		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Aiming);
+		PlayerCharacter->GetAnimInst()->SetActionState(EPlayer_ActionState::Aiming);
 
 		// CameraArm Length 및 SocketOffset 조정
 		ArmComponent->TargetArmLength = 100.0f;
@@ -197,9 +196,9 @@ void AMGPlayerController::RightMouseButtonClick()
 		break;
 	}
 
-	case ECharacter_ActionState::Aiming:
-	case ECharacter_ActionState::QAiming:
-	case ECharacter_ActionState::EAiming:
+	case EPlayer_ActionState::Aiming:
+	case EPlayer_ActionState::QAiming:
+	case EPlayer_ActionState::EAiming:
 	default:
 		break;
 	}
@@ -209,11 +208,11 @@ void AMGPlayerController::RightMouseButtonRelease()
 {
 	bRightMouseButtonPress = !bRightMouseButtonPress;
 
-	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
 
 	switch (ActionState)
 	{
-	case ECharacter_ActionState::Aiming:
+	case EPlayer_ActionState::Aiming:
 	{
 		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
 
@@ -221,7 +220,7 @@ void AMGPlayerController::RightMouseButtonRelease()
 			return;
 
 		// StateMachine내 ActionState 설정 
-		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Normal);
+		PlayerCharacter->GetAnimInst()->SetActionState(EPlayer_ActionState::Normal);
 
 		// CameraArm Length 및 SocketOffset 조정
 		ArmComponent->TargetArmLength = 250.0f;
@@ -233,9 +232,9 @@ void AMGPlayerController::RightMouseButtonRelease()
 		break;
 	}
 
-	case ECharacter_ActionState::Normal:
-	case ECharacter_ActionState::QAiming:
-	case ECharacter_ActionState::EAiming:
+	case EPlayer_ActionState::Normal:
+	case EPlayer_ActionState::QAiming:
+	case EPlayer_ActionState::EAiming:
 	default:
 		break;
 	}
@@ -245,11 +244,11 @@ void AMGPlayerController::QButtonPress()
 {
 	bQButtonPress = !bQButtonPress;
 
-	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
 
 	switch (ActionState)
 	{
-	case ECharacter_ActionState::Normal:
+	case EPlayer_ActionState::Normal:
 	{
 		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
 
@@ -257,7 +256,7 @@ void AMGPlayerController::QButtonPress()
 			return;
 
 		// StateMachine내 ActionState 설정 
-		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::QAiming);
+		PlayerCharacter->GetAnimInst()->SetActionState(EPlayer_ActionState::QAiming);
 
 		// CameraArm Length 및 SocketOffset 조정
 		ArmComponent->TargetArmLength = 100.0f;
@@ -268,9 +267,9 @@ void AMGPlayerController::QButtonPress()
 		break;
 	}
 
-	case ECharacter_ActionState::Aiming:
-	case ECharacter_ActionState::QAiming:
-	case ECharacter_ActionState::EAiming:
+	case EPlayer_ActionState::Aiming:
+	case EPlayer_ActionState::QAiming:
+	case EPlayer_ActionState::EAiming:
 	default:
 		break;
 	}
@@ -280,11 +279,11 @@ void AMGPlayerController::QButtonRelease()
 {
 	bRightMouseButtonPress = !bRightMouseButtonPress;
 
-	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
 
 	switch (ActionState)
 	{
-	case ECharacter_ActionState::QAiming:
+	case EPlayer_ActionState::QAiming:
 	{
 		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
 
@@ -297,7 +296,7 @@ void AMGPlayerController::QButtonRelease()
 		// 발사함 : 로켓발사하는 동안 QAiming 상태를 유지.
 		if (!PlayerCharacter->IsTargetEmpty())
 		{
-			PlayerCharacter->GetAnimInst()->SetBodyActionState(ECharacter_BodyAction::QFire);
+			PlayerCharacter->GetAnimInst()->SetBodyActionState(EPlayer_BodyAction::QFire);
 
 			// CameraArm Length 및 SocketOffset 조정
 			ArmComponent->TargetArmLength = 250.0f;
@@ -314,7 +313,7 @@ void AMGPlayerController::QButtonRelease()
 		else
 		{
 			// StateMachine내 ActionState 설정 
-			PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Normal);
+			PlayerCharacter->GetAnimInst()->SetActionState(EPlayer_ActionState::Normal);
 
 			// CameraArm Length 및 SocketOffset 조정
 			ArmComponent->TargetArmLength = 250.0f;
@@ -329,9 +328,9 @@ void AMGPlayerController::QButtonRelease()
 		break;
 	}
 
-	case ECharacter_ActionState::Normal:
-	case ECharacter_ActionState::Aiming:
-	case ECharacter_ActionState::EAiming:
+	case EPlayer_ActionState::Normal:
+	case EPlayer_ActionState::Aiming:
+	case EPlayer_ActionState::EAiming:
 	default:
 		break;
 	}
@@ -343,11 +342,11 @@ void AMGPlayerController::EButtonPress()
 
 	if (PlayerCharacter->IsDroneReady())
 	{
-		ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+		EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
 
 		switch (ActionState)
 		{
-		case ECharacter_ActionState::Normal:
+		case EPlayer_ActionState::Normal:
 		{
 			USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
 
@@ -355,7 +354,7 @@ void AMGPlayerController::EButtonPress()
 				return;
 
 			// StateMachine내 ActionState 설정 
-			PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::EAiming);
+			PlayerCharacter->GetAnimInst()->SetActionState(EPlayer_ActionState::EAiming);
 
 			// CameraArm Length 및 SocketOffset 조정
 			ArmComponent->TargetArmLength = 100.0f;
@@ -377,21 +376,21 @@ void AMGPlayerController::EButtonRelease()
 {
 	bEButtonPress = !bEButtonPress;
 
-	ECharacter_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst()->GetActionState();
 
 	switch (ActionState)
 	{
-	case ECharacter_ActionState::EAiming:
+	case EPlayer_ActionState::EAiming:
 	{
 		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
 
 		if (!ArmComponent)
 			return;
 
-		PlayerCharacter->GetAnimInst()->SetBodyActionState(ECharacter_BodyAction::EThrowing);
+		PlayerCharacter->GetAnimInst()->SetBodyActionState(EPlayer_BodyAction::EThrowing);
 
 		// StateMachine내 ActionState 설정 
-		PlayerCharacter->GetAnimInst()->SetActionState(ECharacter_ActionState::Normal);
+		PlayerCharacter->GetAnimInst()->SetActionState(EPlayer_ActionState::Normal);
 
 		// CameraArm Length 및 SocketOffset 조정
 		ArmComponent->TargetArmLength = 250.0f;
