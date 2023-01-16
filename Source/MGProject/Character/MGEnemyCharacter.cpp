@@ -10,10 +10,26 @@
 
 AMGEnemyCharacter::AMGEnemyCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	Tags.Add("Enemy");
+
 	Capsule->SetCollisionProfileName(FName("Enemy"));
 
 	TargetingWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Lockon Widget"));
 	TargetingWidgetComponent->SetupAttachment(RootComponent);
+
+	TargetingWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+
+	static ConstructorHelpers::FObjectFinder<UBlueprint> BPObject(TEXT("WidgetBlueprint'/Game/Play/UI/Enemy/WBP_EnemyWidget.WBP_EnemyWidget'")); // PATH is blueprint object path
+
+	if (BPObject.Object)
+	{
+		TSubclassOf<UUserWidget> BPClass = BPObject.Object->GeneratedClass;
+
+		TargetingWidgetComponent->SetWidgetClass(BPClass);
+	}
 
 	IsTargetLock = false;
 }
@@ -39,6 +55,11 @@ void AMGEnemyCharacter::SetLockonWidget(bool bEnable)
 	}
 }
 
+const FMGEnemyStatusDataTable* AMGEnemyCharacter::InitEnemyData()
+{
+	return nullptr;
+}
+
 void AMGEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -52,5 +73,6 @@ void AMGEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	IsTargetLock = EnemyWidget->IsTargetLocked();
+	if (EnemyWidget)
+		IsTargetLock = EnemyWidget->IsTargetLocked();
 }

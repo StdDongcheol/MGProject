@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MGCharacter.h"
+#include "../MGStructs.h"
 #include "MGEnemyCharacter.generated.h"
 
 /**
@@ -28,11 +29,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty", meta = (AllowPrivateAccess = "true"))
 	class UBlackboardData* BlackboardData;
 
-private:
 	class UMGEnemyWidget* EnemyWidget;
 
-private:
-	bool IsTargetLock;
+protected:
+	bool	IsTargetLock;
+	double	DetectRange;
+	double	AttackRange;
 
 public:
 	bool IsTargetLocked() const
@@ -40,11 +42,24 @@ public:
 		return IsTargetLock;
 	}
 
+	void SetDetectRange(float _Range)
+	{
+		DetectRange = _Range;
+	}
+
+	void SetAttackRange(float _Range)
+	{
+		AttackRange = _Range;
+	}
+
 	class UBehaviorTree* GetBehaviorTree() const;
 	class UBlackboardData* GetBlackboardData() const;
 
 public:
 	void SetLockonWidget(bool bEnable);
+
+public:
+	virtual const FMGEnemyStatusDataTable* InitEnemyData();
 
 protected:
 	virtual void BeginPlay() override;

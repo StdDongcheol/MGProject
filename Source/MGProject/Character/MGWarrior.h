@@ -17,7 +17,20 @@ class MGPROJECT_API AMGWarrior : public AMGEnemyCharacter
 public:
 	AMGWarrior();
 
+private:
+	const struct FMGEnemyStatusDataTable* EnemyData;
+
+public:
+	const FMGEnemyStatusDataTable* GetEnemyData()
+	{
+		return EnemyData;
+	}
+
 protected:
 	void BeginPlay() override;
+
+public:
+	virtual const FMGEnemyStatusDataTable* InitEnemyData() override;
+
 
 };

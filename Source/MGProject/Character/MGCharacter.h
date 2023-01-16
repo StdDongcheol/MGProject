@@ -20,8 +20,12 @@ private:
 	UMGAnimInstance* AnimInstance;
 
 protected:
-	float		HP;
-	float		HPMax;
+	double		HP;
+	double		HPMax;
+	double		MinAttack;
+	double		MaxAttack;
+	double		AttackSpeed;
+	double		MoveSpeed;
 
 protected:
 	class UCapsuleComponent* Capsule;
@@ -33,18 +37,75 @@ public:
 	}
 
 public:
-	float GetCurrentHP() const
+	void SetCurrentHP(double _HP)
+	{
+		HP = _HP;
+	}
+	
+	void SetMaxHP(double _MaxHP)
+	{
+		HPMax = _MaxHP;
+	}
+	
+	void SetMinAttack(double _MinAttack)
+	{
+		MinAttack = _MinAttack;
+	}
+	
+	void SetMaxAttack(double _MaxAttack)
+	{
+		MaxAttack = _MaxAttack;
+	}
+	
+	void SetAttackSpeed(double _AttackSpeed)
+	{
+		AttackSpeed = _AttackSpeed;
+	}
+	
+	void SetMoveSpeed(double _MoveSpeed)
+	{
+		MoveSpeed = _MoveSpeed;
+	}
+
+public:
+	double GetCurrentHP() const
 	{
 		return HP;
 	}
 
-	float GetMaxHP() const
+	double GetMaxHP() const
 	{
 		return HPMax;
+	}
+	
+	double GetMinAttack() const
+	{
+		return MinAttack;
+	}
+
+	double GetMaxAttack() const
+	{
+		return MaxAttack;
+	}
+	
+	double GetAttackSpeed() const
+	{
+		return AttackSpeed;
+	}
+
+	double GetMoveSpeed() const
+	{
+		return MoveSpeed;
 	}
 
 public:
 	void AdjustHP(float _HP);
+
+public:
+	AActor* FindTarget(FName _TargetTag, double _Range = 0.0f);
+	FVector GetTargetDir(AActor* _Target);
+	FVector GetTargetDir(const FVector& _TargetLocation);
+	void SetLookAt(AActor* _Target);
 
 protected:
 	virtual void StateUpdate(float DeltaTime);
