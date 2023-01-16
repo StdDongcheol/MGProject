@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MGStructs.h"
 #include "Engine/GameInstance.h"
 #include "MGGameInstance.generated.h"
 
@@ -21,5 +22,6 @@ private:
 	UPROPERTY()
 	TSoftObjectPtr<class UDataTable>	EnemyDataTable;
 
-
+public:
+	const FMGEnemyStatusDataTable* GetEnemyData(FName _Name) const;
 };
