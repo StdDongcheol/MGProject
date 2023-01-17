@@ -17,7 +17,7 @@ class MGPROJECT_API AMGAIController : public AAIController
 protected:
 	void OnPossess(APawn* _Mon) override;
 
-private:
+protected:
 	UBehaviorTree*		BehaviorTree;
 	UBlackboardData*	BlackboardData;
 };

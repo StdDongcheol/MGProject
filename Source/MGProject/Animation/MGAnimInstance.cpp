@@ -13,6 +13,20 @@ UMGAnimInstance::UMGAnimInstance() :
 	RootBoneYaw = 0.0f;
 }
 
+void UMGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
+{
+	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	MGUpdateRotate(DeltaSeconds);
+
+	StateUpdate(DeltaSeconds);
+}
+
+void UMGAnimInstance::NativeBeginPlay()
+{
+	Super::NativeBeginPlay();
+}
+
 void UMGAnimInstance::MGUpdateRotate(float DeltaSeconds)
 {
 	if (IsMoving || 
@@ -31,21 +45,7 @@ void UMGAnimInstance::MGUpdateRotate(float DeltaSeconds)
 	}
 }
 
-void UMGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
-{
-	Super::NativeUpdateAnimation(DeltaSeconds);
-
-	MGUpdateRotate(DeltaSeconds);
-
-	StateUpdate(DeltaSeconds);
-}
-
-void UMGAnimInstance::NativeBeginPlay()
-{
-	Super::NativeBeginPlay();
-}
-
-void UMGAnimInstance::StateUpdate(float DeltaTime)
+void UMGAnimInstance::StateUpdate(float DeltaSeconds)
 {
 	switch (BodyActionState)
 	{

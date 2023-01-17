@@ -9,8 +9,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AMGPlayerDrone::AMGPlayerDrone() :
-	IsActivated(false),
 	IsHealActivated(false),
+	IsActivated(false),
 	ActivatedTime(10.0f),
 	HealTime(0.2f),
 	HealTimeAcc(0.0f)

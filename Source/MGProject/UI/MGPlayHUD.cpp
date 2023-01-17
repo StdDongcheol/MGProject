@@ -14,6 +14,7 @@ void AMGPlayHUD::BeginPlay()
 
 	if (!PlayerController || !PlayerController->IsValidLowLevel())
 		return;
+	
 }
 
 void AMGPlayHUD::Tick(float DeltaTime)

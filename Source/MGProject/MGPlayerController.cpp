@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "MGFlag.h"
+#include "MGBlueprintFunctionLibrary.h"
 #include "Character/MGPlayerCharacter.h"
 
 void AMGPlayerController::InitInputSystem()
@@ -29,8 +30,10 @@ void AMGPlayerController::InitInputSystem()
 
 void AMGPlayerController::BeginPlay()	
 {
-	PlayerCharacter = Cast<AMGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	Super::BeginPlay();
 	
+	PlayerCharacter = Cast<AMGPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
 	PlayerQAimWidget = CreateWidget<UMGAimWidget>(this, PlayerWidget, TEXT("Player AimWidget"));
 	PlayerQAimWidget->AddToViewport(9);
 	PlayerQAimWidget->SetVisibility(ESlateVisibility::Hidden);

@@ -15,6 +15,8 @@ AMGPlayerCharacter::AMGPlayerCharacter() :
 	DroneChargeTime(20.0f),
 	DroneChargeTimeAcc(0.0f)
 {
+	Tags.Add(TEXT("Player"));
+
 	Capsule->SetCollisionProfileName(FName("Player"));
 
 	BoxRoot = CreateDefaultSubobject<USceneComponent>("QAimSceneComponent");
