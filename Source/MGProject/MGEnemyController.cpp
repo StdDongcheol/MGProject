@@ -15,6 +15,7 @@ void AMGEnemyController::OnPossess(APawn* _Mon)
 	if (EnemyData)
 	{
 		GetBlackboardComponent()->SetValueAsFloat(TEXT("DetectionRange"), EnemyData->DetectionRange);
+		GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), EnemyData->AttackRange);
 	}
 
 }

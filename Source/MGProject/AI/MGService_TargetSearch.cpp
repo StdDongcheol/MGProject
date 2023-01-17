@@ -10,7 +10,7 @@ UMGService_TargetSearch::UMGService_TargetSearch()
 {
 	NodeName = TEXT("Search Target");
 
-	Interval = 0.0f;
+	Interval = 0.1f;
 }
 
 void UMGService_TargetSearch::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)

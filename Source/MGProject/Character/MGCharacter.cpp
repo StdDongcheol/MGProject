@@ -74,6 +74,11 @@ void AMGCharacter::SetLookAt(AActor* _Target)
 	SetActorRotation(GetTargetDir(_Target).GetSafeNormal().Rotation());
 }
 
+void AMGCharacter::AddMovement(FVector Dir, float Scale)
+{
+	AddMovementInput(Dir, Scale);
+}
+
 
 void AMGCharacter::StateUpdate(float DeltaTime)
 {
@@ -105,5 +110,4 @@ void AMGCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	StateUpdate(DeltaTime);
-
 }

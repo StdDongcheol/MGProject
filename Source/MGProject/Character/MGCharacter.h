@@ -106,6 +106,7 @@ public:
 	FVector GetTargetDir(AActor* _Target);
 	FVector GetTargetDir(const FVector& _TargetLocation);
 	void SetLookAt(AActor* _Target);
+	void AddMovement(FVector Dir, float Scale = 1.0f);
 
 protected:
 	virtual void StateUpdate(float DeltaTime);

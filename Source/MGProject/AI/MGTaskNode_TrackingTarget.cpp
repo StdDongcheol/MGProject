@@ -9,6 +9,7 @@
 
 UMGTaskNode_TrackingTarget::UMGTaskNode_TrackingTarget()
 {
+	bNotifyTick = true;
 }
 
 EBTNodeResult::Type UMGTaskNode_TrackingTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -23,13 +24,23 @@ EBTNodeResult::Type UMGTaskNode_TrackingTarget::ExecuteTask(UBehaviorTreeCompone
 	AActor* ActorTarget = Cast<AActor>(Target);
 
 	if (ActorTarget)
-	{
+	{ 
+		double Dist = (ActorTarget->GetActorLocation() - EnemyCharacter->GetActorLocation()).Length();
+		FVector Dir = (ActorTarget->GetActorLocation() - EnemyCharacter->GetActorLocation()).GetSafeNormal();
 		EnemyCharacter->SetLookAt(ActorTarget);
+		EnemyCharacter->AddMovement(Dir);
 
-		return EBTNodeResult::InProgress;
+		double AttackRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("AttackRange"));
+
+		if (AttackRange > Dist)
+			return EBTNodeResult::Failed;
+		
+		else
+			return EBTNodeResult::InProgress;
 	}
 
-	return EBTNodeResult::Succeeded;
+	else 
+		return EBTNodeResult::Succeeded;
 }
 
 void UMGTaskNode_TrackingTarget::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
