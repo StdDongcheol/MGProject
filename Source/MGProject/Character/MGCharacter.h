@@ -35,6 +35,13 @@ public:
 	{
 		return AnimInstance;
 	}
+	
+public:
+	template<typename ClassType>
+	ClassType* GetAnimInst() const
+	{
+		return Cast<ClassType>(AnimInstance);
+	}
 
 public:
 	void SetCurrentHP(double _HP)
