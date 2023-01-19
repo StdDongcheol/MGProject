@@ -3,6 +3,7 @@
 
 #include "MGNormalAimWidget.h"
 #include "../MGPlayerController.h"
+#include "../Animation/MGPlayerAnimInstance.h"
 
 void UMGNormalAimWidget::SetVisibility(ESlateVisibility InVisibility)
 {
@@ -62,7 +63,7 @@ void UMGNormalAimWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	EPlayer_BodyAction State = PlayerController->GetPlayerCharacter()->GetAnimInst()->GetBodyActionState();
+	EPlayer_BodyAction State = PlayerController->GetPlayerCharacter()->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
 
 	switch (State)
 	{

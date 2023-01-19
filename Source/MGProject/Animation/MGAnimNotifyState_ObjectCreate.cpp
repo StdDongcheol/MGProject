@@ -3,6 +3,7 @@
 
 #include "MGAnimNotifyState_ObjectCreate.h"
 #include "UObject/Class.h"
+#include "MGPlayerAnimInstance.h"
 #include "../Character/MGCharacter.h"
 #include "../Character/MGPlayerCharacter.h"
 #include "../Projectile/MGProjectile.h"
@@ -21,7 +22,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 	if (!Character || !Character->IsValidLowLevel())
 		return;
 	
-	float Pitch = Character->GetAnimInst()->GetAimRot().Pitch;
+	float Pitch = Character->GetAnimInst<UMGPlayerAnimInstance>()->GetAimRot().Pitch;
 
 	const FTransform MeshTransform = MeshComp->GetSocketTransform(SocketName);
 
@@ -31,7 +32,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 	SpawnRotation.Pitch = Pitch;
 
 
-	EPlayer_BodyAction BodyAction = Character->GetAnimInst()->GetBodyActionState();
+	EPlayer_BodyAction BodyAction = Character->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
 
 	switch (BodyAction)
 	{

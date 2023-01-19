@@ -3,6 +3,7 @@
 
 #include "MGAnimNotifyState_CountUpdate.h"
 #include "../Character/MGPlayerCharacter.h"
+#include "../Animation/MGPlayerAnimInstance.h"
 
 void UMGAnimNotifyState_CountUpdate::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -15,5 +16,6 @@ void UMGAnimNotifyState_CountUpdate::NotifyBegin(USkeletalMeshComponent* MeshCom
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	PlayerCharacter->GetAnimInst()->AddQCount(1);
+	PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->AddQCount(1);
+	
 }

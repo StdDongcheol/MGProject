@@ -2,10 +2,11 @@
 
 
 #include "MGPlayerCharacter.h"
+#include "MGEnemyCharacter.h"
+#include "../Animation/MGPlayerAnimInstance.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
 #include "Camera/CameraComponent.h"
-#include "MGEnemyCharacter.h"
 
 AMGPlayerCharacter::AMGPlayerCharacter() :
 	MissileMaxCount(10),
@@ -52,7 +53,7 @@ void AMGPlayerCharacter::BeginPlay()
 	SetQSkillCollision(false);
 
 	// PlayerAnim setting start
-	GetAnimInst()->AddQAnimLoopCount(MissileCount);
+	GetAnimInst<UMGPlayerAnimInstance>()->AddQAnimLoopCount(MissileCount);
 
 	// Character status setting start
 	HP = 75.0f;
@@ -93,7 +94,7 @@ int AMGPlayerCharacter::GetMissileCount(int UsingCount)
 
 USceneComponent* AMGPlayerCharacter::GetTarget() const
 {
-	int Index = GetAnimInst()->GetCurrentQCount() % TargetArray.Num();
+	int Index = GetAnimInst<UMGPlayerAnimInstance>()->GetCurrentQCount() % TargetArray.Num();
 	
 	return TargetArray[Index]->GetRootComponent();
 }
@@ -173,8 +174,8 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 	FRotator RotValue = AimRot - CharacterRot;
 	RotValue.Normalize();
 
-	GetAnimInst()->SetMovementYaw(RotValue.Yaw);
-	GetAnimInst()->SetAimRotation(AimRot);
+	GetAnimInst<UMGPlayerAnimInstance>()->SetMovementYaw(RotValue.Yaw);
+	GetAnimInst<UMGPlayerAnimInstance>()->SetAimRotation(AimRot);
 
 	// Set QDetectBox rotation to Yaw AimRotation.
 	FRotator BoxRot = FRotator(0.0f, AimRot.Yaw, 0.0f);
@@ -195,7 +196,7 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 			++MissileCount;
 
 			// AnimInst 업데이트
-			GetAnimInst()->AddQAnimLoopCount(1);
+			GetAnimInst<UMGPlayerAnimInstance>()->AddQAnimLoopCount(1);
 		}
 	}
 	// Missile Charge End
@@ -218,7 +219,7 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 
 void AMGPlayerCharacter::ActionStateUpdate(float DeltaTime)
 {
-	EPlayer_ActionState CurrentState = GetAnimInst()->GetActionState();
+	EPlayer_ActionState CurrentState = GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
 
 	switch (CurrentState)
 	{
@@ -310,7 +311,7 @@ void AMGPlayerCharacter::QSkillOnCollisionEnd(UPrimitiveComponent* _pComponent, 
 		if (!TargetEnemy || !TargetEnemy->IsValidLowLevel())
 			return;
 
-		EPlayer_BodyAction BodyState = GetAnimInst()->GetBodyActionState();
+		EPlayer_BodyAction BodyState = GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
 
 		if (!(BodyState == EPlayer_BodyAction::QFire))
 		{

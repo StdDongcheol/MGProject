@@ -2,6 +2,7 @@
 
 
 #include "MGAnimNotifyState_StateUpdate.h"
+#include "MGPlayerAnimInstance.h"
 #include "../Character/MGCharacter.h"
 
 void UMGAnimNotifyState_StateUpdate::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
@@ -13,7 +14,7 @@ void UMGAnimNotifyState_StateUpdate::NotifyEnd(USkeletalMeshComponent* MeshComp,
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	PlayerCharacter->GetAnimInst()->SetBodyActionState(State);
+	PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetBodyActionState(State);
 	
 	return;
 }
