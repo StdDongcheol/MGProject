@@ -6,10 +6,13 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "../MGEnemyController.h"
 #include "../Character/MGEnemyCharacter.h"
+#include "../Animation/MGEnemyAnimInstance.h"
 
 UMGTaskNode_Attack::UMGTaskNode_Attack()
 {
 	bNotifyTick = true;
+
+	AttackAnimTimeAcc = 0.0f;
 }
 
 EBTNodeResult::Type UMGTaskNode_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -18,34 +21,74 @@ EBTNodeResult::Type UMGTaskNode_Attack::ExecuteTask(UBehaviorTreeComponent& Owne
 
 	AMGEnemyController* EnemyController = Cast<AMGEnemyController>(OwnerComp.GetAIOwner());
 	AMGEnemyCharacter* EnemyCharacter = EnemyController->GetPawn<AMGEnemyCharacter>();
+	UMGEnemyAnimInstance* AnimInst = EnemyCharacter->GetAnimInst<UMGEnemyAnimInstance>();
 
 	UObject* Target = OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName("TargetObject"));
 
 	AActor* ActorTarget = Cast<AActor>(Target);
 
-	if (!ActorTarget)
-	{
-		return EBTNodeResult::Succeeded;
-	}
+
+	int32 AttStateIndex = AnimInst->GetInstanceAssetPlayerIndex(TEXT("Locomotion"), TEXT("Attack"));
+
+	float AttackLength = AnimInst->GetInstanceAssetPlayerLength(AttStateIndex);
 
 	double AttackRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("AttackRange"));
 	double Dist = (ActorTarget->GetActorLocation() - EnemyCharacter->GetActorLocation()).Length();
 	
-	// 거리가 AttackRange보다 멀어졌다면,
-	if (Dist > AttackRange)
-	{
-		//if (공격 애니메이션 재생중이라면)
-			return EBTNodeResult::InProgress;
 
-		// 애니메이션 재생이 끝났다
-		//else
-		//	return EBTNodeResult::Succeeded;
+	// 타겟이 범위 안에 존재할 경우
+	if (Dist <= AttackRange)
+	{
+		// 공격 애니메이션을 재생하도록 SetAttacking.
+		if (!AnimInst->GetCurrentAttacking())
+		{
+			AnimInst->SetCurrentAttacking(true);
+		}
+
+		if (AttackAnimTimeAcc >= AttackLength)
+		{
+			AttackAnimTimeAcc = 0.0f;
+		}
+		
+		return EBTNodeResult::InProgress;
 	}
 
-    return EBTNodeResult::Succeeded;
+	// 타겟이 바깥으로 나갔을 경우
+	else
+	{
+		// Is Attacking?
+		if (AnimInst->GetCurrentAttacking())
+		{
+
+			// is AnimEnd?
+			if (AttackAnimTimeAcc >= AttackLength)
+			{
+				AnimInst->SetCurrentAttacking(false);
+				AttackAnimTimeAcc = 0.0f;
+			}
+
+			else
+			{
+				return EBTNodeResult::InProgress;
+			}
+		}
+
+		return EBTNodeResult::Succeeded;
+	}
+
+	return EBTNodeResult::Succeeded;
 }
 
 void UMGTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
 {
 	FinishLatentTask(_OwnerComp, ExecuteTask(_OwnerComp, _pNodeMemory));
+
+	AMGEnemyController* EnemyController = Cast<AMGEnemyController>(_OwnerComp.GetAIOwner());
+	AMGEnemyCharacter* EnemyCharacter = EnemyController->GetPawn<AMGEnemyCharacter>();
+	UMGEnemyAnimInstance* AnimInst = EnemyCharacter->GetAnimInst<UMGEnemyAnimInstance>();
+
+	if (AnimInst->GetCurrentAttacking())
+	{
+		AttackAnimTimeAcc += _DeltaSeconds;
+	}
 }

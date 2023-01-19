@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "MGTaskNode_Attack.generated.h"
+#include "MGTaskNode_Attack.generated.h"	
 
 /**
  * 
@@ -16,6 +16,9 @@ class MGPROJECT_API UMGTaskNode_Attack : public UBTTaskNode
 
 public:
 	UMGTaskNode_Attack();
+
+private:
+	double	AttackAnimTimeAcc;
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
