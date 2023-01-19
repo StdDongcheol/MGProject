@@ -5,6 +5,8 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "../Character/MGEnemyCharacter.h"
+#include "../Animation/MGEnemyAnimInstance.h"
+#include "../MGEnemyController.h"
 
 UMGTaskNode_Idle::UMGTaskNode_Idle()
 {
@@ -15,8 +17,9 @@ EBTNodeResult::Type UMGTaskNode_Idle::ExecuteTask(UBehaviorTreeComponent& OwnerC
 {
     Super::ExecuteTask(OwnerComp, NodeMemory);
     
-    AMGEnemyCharacter* Enemy = Cast<AMGEnemyCharacter>(OwnerComp.GetOwner());
-    
+    AMGEnemyController* EnemyController = Cast<AMGEnemyController>(OwnerComp.GetAIOwner());
+    AMGEnemyCharacter* EnemyCharacter = EnemyController->GetPawn<AMGEnemyCharacter>();
+
     UObject* Target = OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName("TargetObject"));
 
     if (Target)
