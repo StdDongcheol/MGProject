@@ -27,6 +27,13 @@ EBTNodeResult::Type UMGTaskNode_Attack::ExecuteTask(UBehaviorTreeComponent& Owne
 
 	AActor* ActorTarget = Cast<AActor>(Target);
 
+	if (!ActorTarget)
+	{
+		AnimInst->SetCurrentAttacking(false);
+		AttackAnimTimeAcc = 0.0f;
+
+		return EBTNodeResult::Succeeded;
+	}
 
 	int32 AttStateIndex = AnimInst->GetInstanceAssetPlayerIndex(TEXT("Locomotion"), TEXT("Attack"));
 
@@ -48,6 +55,9 @@ EBTNodeResult::Type UMGTaskNode_Attack::ExecuteTask(UBehaviorTreeComponent& Owne
 		if (AttackAnimTimeAcc >= AttackLength)
 		{
 			AttackAnimTimeAcc = 0.0f;
+
+			FVector Dir = (ActorTarget->GetActorLocation() - EnemyCharacter->GetActorLocation()).GetSafeNormal();
+			EnemyCharacter->SetLookAt(ActorTarget);
 		}
 		
 		return EBTNodeResult::InProgress;
