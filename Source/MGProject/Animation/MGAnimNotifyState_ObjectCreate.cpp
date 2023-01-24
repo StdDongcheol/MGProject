@@ -4,79 +4,107 @@
 #include "MGAnimNotifyState_ObjectCreate.h"
 #include "UObject/Class.h"
 #include "MGPlayerAnimInstance.h"
+#include "BehaviorTree/BlackboardData.h"
 #include "../Character/MGCharacter.h"
 #include "../Character/MGPlayerCharacter.h"
+#include "../Character/MGEnemyCharacter.h"
 #include "../Projectile/MGProjectile.h"
 #include "../Projectile/MGBullet.h"
 #include "../Projectile/MGMissile.h"
 #include "../Projectile/MGPlayerDrone.h"
 
-void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
+void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, 
+	float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
 	AActor* Owner = MeshComp->GetOwner();
 
-	AMGPlayerCharacter* Character = Cast<AMGPlayerCharacter>(Owner);
+	AMGCharacter* Character = Cast<AMGCharacter>(Owner);
 
 	if (!Character || !Character->IsValidLowLevel())
 		return;
 	
-	float Pitch = Character->GetAnimInst<UMGPlayerAnimInstance>()->GetAimRot().Pitch;
-
-	const FTransform MeshTransform = MeshComp->GetSocketTransform(SocketName);
-
-	FVector SpawnPosition = MeshTransform.GetLocation() + SpawnOffset;
-
-	FRotator SpawnRotation = MeshTransform.Rotator();
-	SpawnRotation.Pitch = Pitch;
-
-
-	EPlayer_BodyAction BodyAction = Character->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
-
-	switch (BodyAction)
+	if (Character->ActorHasTag(TEXT("Player")))
 	{
-	case EPlayer_BodyAction::NormalFire:
-	{
-		FVector HitPos = Character->GetTrace();
-		
-		FVector Dir = HitPos - SpawnPosition;
-		FRotator Rot = Dir.Rotation();
+		AMGPlayerCharacter* PlayerCharacter = Cast<AMGPlayerCharacter>(Character);
+		float Pitch = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetAimRot().Pitch;
 
-		AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
+		const FTransform MeshTransform = MeshComp->GetSocketTransform(SocketName);
 
-		break;
-	}
-	case EPlayer_BodyAction::QFire:
-	{	
-		AMGMissile* Missile = MeshComp->GetWorld()->SpawnActor<AMGMissile>(TargetActor, SpawnPosition, SpawnRotation);
+		FVector SpawnPosition = MeshTransform.GetLocation() + SpawnOffset;
 
-		if (!Missile || !Missile->IsValidLowLevel())
-			return;
-		
-		Missile->SetTarget(Character->GetTarget());	
-		break;
-	}
-	case EPlayer_BodyAction::EThrowing:
-	{
-		FVector DeployPos = Character->GetDroneDeployPosition();
+		FRotator SpawnRotation = MeshTransform.Rotator();
+		SpawnRotation.Pitch = Pitch;
 
-		FVector Dir = DeployPos - SpawnPosition;
-		FRotator Rot = Dir.Rotation();
 
-		AMGPlayerDrone* Drone = MeshComp->GetWorld()->SpawnActor<AMGPlayerDrone>(TargetActor, SpawnPosition, Rot);
+		EPlayer_BodyAction BodyAction = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
 
-		if (!Drone || !Drone->IsValidLowLevel())
+		switch (BodyAction)
 		{
-			Drone->Destroy();
-			return;
+		case EPlayer_BodyAction::NormalFire:
+		{
+			FVector HitPos = PlayerCharacter->GetTrace();
+
+			FVector Dir = HitPos - SpawnPosition;
+			FRotator Rot = Dir.Rotation();
+
+			AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
+			Bullet->SetCollisionProfile(TEXT("PlayerAttack"));
+			break;
 		}
+		case EPlayer_BodyAction::QFire:
+		{
+			AMGMissile* Missile = MeshComp->GetWorld()->SpawnActor<AMGMissile>(TargetActor, SpawnPosition, SpawnRotation);
 
-		break;
-	}
-	default:
-		break;
+			if (!Missile || !Missile->IsValidLowLevel())
+				return;
+
+			Missile->SetTarget(PlayerCharacter->GetTarget());
+			break;
+		}
+		case EPlayer_BodyAction::EThrowing:
+		{
+			FVector DeployPos = PlayerCharacter->GetDroneDeployPosition();
+
+			FVector Dir = DeployPos - SpawnPosition;
+			FRotator Rot = Dir.Rotation();
+
+			AMGPlayerDrone* Drone = MeshComp->GetWorld()->SpawnActor<AMGPlayerDrone>(TargetActor, SpawnPosition, Rot);
+
+			if (!Drone || !Drone->IsValidLowLevel())
+			{
+				Drone->Destroy();
+				return;
+			}
+
+			break;
+		}
+		default:
+			break;
+		}
 	}
 
+	else if (Character->ActorHasTag(TEXT("Enemy")))
+	{
+		AMGEnemyCharacter* EnemyCharacter = Cast<AMGEnemyCharacter>(Character);
+
+		const FTransform MeshTransform = MeshComp->GetSocketTransform(SocketName);
+
+		FVector SpawnPosition = MeshTransform.GetLocation() + SpawnOffset;
+		FRotator SpawnRotation = MeshTransform.Rotator();
+
+		AActor* PlayerActor = EnemyCharacter->FindTarget("Player", EnemyCharacter->GetDetectRange());
+
+		if (PlayerActor)
+		{
+			FVector PlayerPos = PlayerActor->GetActorLocation();
+			FVector Dir = PlayerPos - SpawnPosition;
+			FRotator Rot = Dir.Rotation();
+
+			AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
+			Bullet->SetCollisionProfile(TEXT("EnemyAttack"));
+		}
+	}
 
 }

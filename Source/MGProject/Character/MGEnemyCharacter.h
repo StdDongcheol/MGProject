@@ -52,6 +52,17 @@ public:
 		AttackRange = _Range;
 	}
 
+public:
+	double GetDetectRange() const
+	{
+		return DetectRange;
+	}
+
+	double GetAttackRange() const
+	{
+		return AttackRange;
+	}
+
 	class UBehaviorTree* GetBehaviorTree() const;
 	class UBlackboardData* GetBlackboardData() const;
 
