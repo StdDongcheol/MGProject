@@ -23,6 +23,9 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+public:
+	void SetCollisionProfile(FName _Name);
+
 protected:
 	UFUNCTION()
 	void OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, 

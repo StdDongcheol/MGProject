@@ -9,8 +9,7 @@
 AMGBullet::AMGBullet()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	Mesh->SetCollisionProfileName(FName("PlayerAttack"));
+	
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AMGBullet::OnCollisionEnter);
 }
 
@@ -22,6 +21,11 @@ void AMGBullet::BeginPlay()
 void AMGBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AMGBullet::SetCollisionProfile(FName _Name)
+{
+	Mesh->SetCollisionProfileName(_Name);
 }
 
 void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, 
