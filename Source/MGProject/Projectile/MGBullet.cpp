@@ -3,7 +3,9 @@
 
 #include "MGBullet.h"
 #include "MGHitEffect.h"
+#include "../MGBlueprintFunctionLibrary.h"
 #include "Components/SphereComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AMGBullet::AMGBullet()
@@ -23,9 +25,25 @@ void AMGBullet::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AMGBullet::SetCollisionProfile(FName _Name)
+void AMGBullet::SetBulletProfile(FName _Name)
 {
 	Mesh->SetCollisionProfileName(_Name);
+
+	if (_Name == "PlayerAttack")
+	{
+		const FMGBulletDataTable* BulletTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetBulletData(TEXT("PlayerBullet"));
+
+		if (BulletTable)
+			ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
+	}
+
+	else if (_Name == "EnemyAttack")
+	{
+		const FMGBulletDataTable* BulletTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetBulletData(TEXT("EnemyBullet"));
+
+		if (BulletTable)
+			ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
+	}
 }
 
 void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, 

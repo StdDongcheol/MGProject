@@ -20,11 +20,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-public:
+protected:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	void SetCollisionProfile(FName _Name);
+	void SetBulletProfile(FName _Name);
 
 protected:
 	UFUNCTION()

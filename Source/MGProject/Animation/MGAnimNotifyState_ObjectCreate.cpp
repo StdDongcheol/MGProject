@@ -50,7 +50,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 			FRotator Rot = Dir.Rotation();
 
 			AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
-			Bullet->SetCollisionProfile(TEXT("PlayerAttack"));
+			Bullet->SetBulletProfile(TEXT("PlayerAttack"));
 			break;
 		}
 		case EPlayer_BodyAction::QFire:
@@ -103,7 +103,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 			FRotator Rot = Dir.Rotation();
 
 			AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
-			Bullet->SetCollisionProfile(TEXT("EnemyAttack"));
+			Bullet->SetBulletProfile(TEXT("EnemyAttack"));
 		}
 	}
 
