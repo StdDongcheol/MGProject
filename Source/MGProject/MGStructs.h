@@ -19,16 +19,16 @@ class MGPROJECT_API UMGStructs : public UObject
 };
 
 USTRUCT(Atomic, BlueprintType)
-struct FMGBulletTable : public FTableRowBase
+struct FMGBulletDataTable : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UParticleSystem* ProjectileEffect;
+	TObjectPtr<class UParticleSystem> ProjectileEffect;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UParticleSystem* HitEffect;
+	TObjectPtr<class UParticleSystem> HitEffect;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EObject_Force Force;

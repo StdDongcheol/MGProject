@@ -17,6 +17,17 @@ UMGGameInstance::UMGGameInstance()
 			EnemyDataTable = DataTable.Object;
 		}
 	}
+
+	{
+		FString BulletDataPath = TEXT("DataTable'/Game/Play/Data/BulletDataTable.BulletDataTable'");
+
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*BulletDataPath);
+
+		if (DataTable.Succeeded())
+		{
+			BulletDataTable = DataTable.Object;
+		}
+	}
 }
 
 const FMGEnemyStatusDataTable* UMGGameInstance::GetEnemyData(FName _Name) const
@@ -25,6 +36,19 @@ const FMGEnemyStatusDataTable* UMGGameInstance::GetEnemyData(FName _Name) const
 		return nullptr;
 
 	FMGEnemyStatusDataTable* EnemyDataInfo = EnemyDataTable->FindRow<FMGEnemyStatusDataTable>(_Name, _Name.ToString());
+
+	if (!EnemyDataInfo)
+		return nullptr;
+
+	return EnemyDataInfo;
+}
+
+const FMGBulletDataTable* UMGGameInstance::GetBulletData(FName _Name) const
+{
+	if (!BulletDataTable)
+		return nullptr;
+
+	FMGBulletDataTable* EnemyDataInfo = BulletDataTable->FindRow<FMGBulletDataTable>(_Name, _Name.ToString());
 
 	if (!EnemyDataInfo)
 		return nullptr;
