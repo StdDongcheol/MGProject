@@ -8,6 +8,11 @@ UMGAnimInstance::UMGAnimInstance()
 {
 }
 
+void UMGAnimInstance::SetDamaged(bool Damaged)
+{
+	IsDamaged = Damaged;
+}
+
 void UMGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);

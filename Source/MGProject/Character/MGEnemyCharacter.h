@@ -71,6 +71,7 @@ public:
 
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData();
+	virtual void AdjustHP(float _HP);
 
 protected:
 	virtual void BeginPlay() override;

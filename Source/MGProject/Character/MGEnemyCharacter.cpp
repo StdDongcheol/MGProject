@@ -60,6 +60,11 @@ const FMGEnemyStatusDataTable* AMGEnemyCharacter::InitEnemyData()
 	return nullptr;
 }
 
+void AMGEnemyCharacter::AdjustHP(float _HP)
+{
+	Super::AdjustHP(_HP);
+}
+
 void AMGEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();

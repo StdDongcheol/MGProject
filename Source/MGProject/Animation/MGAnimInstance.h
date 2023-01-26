@@ -24,6 +24,9 @@ protected:
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool	IsFire;
 	
+	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool	IsDamaged;
+	
 public:
 	void SetMoving(bool Moving)
 	{
@@ -34,6 +37,9 @@ public:
 	{
 		IsFire = Fire;
 	}
+	
+public:
+	virtual void SetDamaged(bool Damaged);
 
 public:
 	void NativeUpdateAnimation(float DeltaSeconds) override;

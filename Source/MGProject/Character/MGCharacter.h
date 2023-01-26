@@ -26,6 +26,7 @@ protected:
 	double		MaxAttack;
 	double		AttackSpeed;
 	double		MoveSpeed;
+	ECharacter_Status	Status;
 
 protected:
 	class UCapsuleComponent* Capsule;
@@ -73,6 +74,11 @@ public:
 	{
 		MoveSpeed = _MoveSpeed;
 	}
+	
+	void SetStatus(ECharacter_Status _Status)
+	{
+		Status = _Status;
+	}
 
 public:
 	double GetCurrentHP() const
@@ -104,9 +110,14 @@ public:
 	{
 		return MoveSpeed;
 	}
+	
+	ECharacter_Status GetStatus() const
+	{
+		return Status;
+	}
 
 public:
-	void AdjustHP(float _HP);
+	virtual void AdjustHP(float _HP);
 
 public:
 	AActor* FindTarget(FName _TargetTag, double _Range = 0.0f);

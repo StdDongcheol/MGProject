@@ -13,6 +13,14 @@ UMGPlayerAnimInstance::UMGPlayerAnimInstance()
 	RootBoneYaw = 0.0f;
 }
 
+void UMGPlayerAnimInstance::SetDamaged(bool Damaged)
+{
+	Super::SetDamaged(Damaged);
+
+	if (Damaged)
+		DamagedTimeAcc = 0.0f;
+}
+
 void UMGPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
@@ -75,4 +83,23 @@ void UMGPlayerAnimInstance::StateUpdate(float DeltaSeconds)
 	default:
 		break;
 	}
+	
+	if (IsDamaged)
+	{
+		DamagedTimeAcc += DeltaSeconds;
+		
+		if (DamagedTimeAcc > 1.0f)
+		{
+			DamagedTimeAcc -= DamagedTimeAcc;
+			
+			AMGCharacter* Player = Cast<AMGCharacter>(GetOwningActor());
+			Player->SetStatus(ECharacter_Status::Normal);
+
+			SetDamaged(false);
+		}
+
+		int32 Index = GetInstanceAssetPlayerIndex(TEXT("HitReact"), TEXT("HitReact"));
+
+	}
+
 }

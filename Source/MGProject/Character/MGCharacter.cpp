@@ -16,15 +16,11 @@ AMGCharacter::AMGCharacter()
 
 void AMGCharacter::AdjustHP(float _HP)
 {
+	HP += _HP;
+
 	if (_HP < 0.0f)
 	{
-		HP -= _HP;
-	}
-
-	else
-	{
-		if (HP < HPMax)
-			HP += _HP;
+		AnimInstance->SetDamaged(true);
 	}
 }
 

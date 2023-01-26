@@ -164,6 +164,11 @@ FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance) const
 	return Result.ImpactPoint;
 }
 
+void AMGPlayerCharacter::AdjustHP(float _HP)
+{
+	Super::AdjustHP(_HP);
+}
+
 void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 {
 	Super::StateUpdate(DeltaTime);

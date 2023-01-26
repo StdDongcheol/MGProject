@@ -18,41 +18,35 @@ public:
 	UMGPlayerAnimInstance();
 
 private:
-	// Player
-	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		bool	IsQFire;
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool	IsQFire;
 
-	// Player
-	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		float	MovementYawValue;
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float	MovementYawValue;
 
-	// Player
-	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		float	CharacterPrevAimYaw;
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float	CharacterPrevAimYaw;
 
-	// Player
-	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		float	RootBoneYaw;
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float	RootBoneYaw;
+	
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float	DamagedTimeAcc;
 
-	// Player
-	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		int		QCurrentCount;
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int		QCurrentCount;
 
-	// Player
-	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		int		QAnimLoopCount;
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int		QAnimLoopCount;
 
-	// Player
-	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		FRotator	CharacterAimRotation;
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FRotator	CharacterAimRotation;
 
-	// Player
-	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		EPlayer_ActionState	ActionState;
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	EPlayer_ActionState	ActionState;
 
-	// Player
-	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		EPlayer_BodyAction	BodyActionState;
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	EPlayer_BodyAction	BodyActionState;
 
 public:
 	void SetMovementYaw(float Value)
@@ -110,6 +104,9 @@ public:
 		return QCurrentCount;
 	}
 
+
+public:
+	virtual void SetDamaged(bool Damaged);
 
 public:
 	void NativeUpdateAnimation(float DeltaSeconds) override;

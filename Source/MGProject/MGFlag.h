@@ -52,3 +52,21 @@ enum class EObject_Force : uint8
 	Enemy,
 	Neutural
 };
+
+UENUM()
+enum class ECharacter_Status : uint8
+{
+	Normal = 0x0000,
+	Status_Damaged = 0x0001,
+	Status_Slow = 0x0010,
+}; 
+
+inline ECharacter_Status operator&(ECharacter_Status l, ECharacter_Status r)
+{
+	return (ECharacter_Status)((uint8)l & (uint8)r);
+}
+
+inline ECharacter_Status operator|(ECharacter_Status l, ECharacter_Status r)
+{
+	return (ECharacter_Status)((uint8)l | (uint8)r);
+}

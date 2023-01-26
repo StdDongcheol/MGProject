@@ -118,6 +118,9 @@ public:
 	USceneComponent* GetTarget() const;
 	FVector GetTrace(FVector Pos = FVector::ZeroVector, float TraceDistance = 10000.0f) const;
 
+public:
+	virtual void AdjustHP(float _HP);
+
 protected:
 	virtual void StateUpdate(float DeltaTime) override;
 	virtual void ActionStateUpdate(float DeltaTime);
