@@ -56,6 +56,13 @@ void AMGPlayerController::MoveFront(float Value)
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
+	bool bCheck = (bool)(PlayerCharacter->GetStatus() & ECharacter_Status::Status_Damaged);
+
+	if (bCheck)
+	{
+		return;
+	}
+
 	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(PlayerCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
 
 	if (!ArmComponent || !ArmComponent->IsValidLowLevel())
@@ -73,6 +80,13 @@ void AMGPlayerController::MoveLeft(float Value)
 
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
+
+	bool bCheck = (bool)(PlayerCharacter->GetStatus() & ECharacter_Status::Status_Damaged);
+
+	if (bCheck)
+	{
+		return;
+	}
 
 	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(PlayerCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
 
@@ -92,6 +106,13 @@ void AMGPlayerController::MoveRight(float Value)
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
+	bool bCheck = (bool)(PlayerCharacter->GetStatus() & ECharacter_Status::Status_Damaged);
+
+	if (bCheck)
+	{
+		return;
+	}
+
 	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(PlayerCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
 
 	if (!ArmComponent || !ArmComponent->IsValidLowLevel())
@@ -107,7 +128,14 @@ void AMGPlayerController::MoveBack(float Value)
 
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
-	
+
+	bool bCheck = (bool)(PlayerCharacter->GetStatus() & ECharacter_Status::Status_Damaged);
+
+	if (bCheck)
+	{
+		return;
+	}
+
 	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(PlayerCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
 
 	if (!ArmComponent || !ArmComponent->IsValidLowLevel())
@@ -281,7 +309,7 @@ void AMGPlayerController::QButtonPress()
 
 void AMGPlayerController::QButtonRelease()
 {
-	bRightMouseButtonPress = !bRightMouseButtonPress;
+	bQButtonPress = !bQButtonPress;
 
 	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
 
