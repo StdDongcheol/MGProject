@@ -6,9 +6,7 @@
 #include "MGEnemyCharacter.h"
 #include "MGWarrior.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class MGPROJECT_API AMGWarrior : public AMGEnemyCharacter
 {
@@ -19,6 +17,13 @@ public:
 
 private:
 	const struct FMGEnemyStatusDataTable* EnemyData;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBoxComponent* DamageBoxLeft;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBoxComponent* DamageBoxRight;
 
 public:
 	const FMGEnemyStatusDataTable* GetEnemyData()
@@ -31,6 +36,11 @@ protected:
 
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData() override;
+
+protected:
+	UFUNCTION()
+	void OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
+	int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit);
 
 
 };
