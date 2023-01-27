@@ -15,7 +15,7 @@ AMGWarrior::AMGWarrior()
 	DamageBoxLeft->SetCollisionProfileName(FName("EnemyAttack"));
 	DamageBoxLeft->SetBoxExtent(FVector(20.0f, 70.0f, 10.0f));
 	DamageBoxLeft->AddLocalOffset(FVector(-15.0f, 50.0f, 0.0f));
-	DamageBoxLeft->SetNotifyRigidBodyCollision(false);
+	DamageBoxLeft->SetGenerateOverlapEvents(false);
 	DamageBoxLeft->OnComponentBeginOverlap.AddDynamic(this, &AMGWarrior::OnDamageCollisionEnter);
 	
 	DamageBoxRight = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxRight"));
@@ -23,7 +23,7 @@ AMGWarrior::AMGWarrior()
 	DamageBoxRight->SetCollisionProfileName(FName("EnemyAttack"));
 	DamageBoxRight->SetBoxExtent(FVector(20.0f, 70.0f, 10.0f));
 	DamageBoxRight->AddLocalOffset(FVector(-15.0f, 50.0f, 0.0f));
-	DamageBoxLeft->SetNotifyRigidBodyCollision(false);
+	DamageBoxRight->SetGenerateOverlapEvents(false);
 	DamageBoxRight->OnComponentBeginOverlap.AddDynamic(this, &AMGWarrior::OnDamageCollisionEnter);
 }
 
