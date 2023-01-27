@@ -88,7 +88,8 @@ void UMGPlayerAnimInstance::StateUpdate(float DeltaSeconds)
 	{
 		DamagedTimeAcc += DeltaSeconds;
 		
-		if (DamagedTimeAcc > 1.0f)
+		// 0.5f : Player stucked time
+		if (DamagedTimeAcc > 0.5f)
 		{
 			DamagedTimeAcc -= DamagedTimeAcc;
 			
