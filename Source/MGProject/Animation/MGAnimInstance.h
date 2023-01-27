@@ -27,6 +27,9 @@ protected:
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool	IsDamaged;
 	
+	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool	IsDeath;
+	
 public:
 	void SetMoving(bool Moving)
 	{
@@ -36,6 +39,11 @@ public:
 	void SetFire(bool Fire)
 	{
 		IsFire = Fire;
+	}
+	
+	void SetDeath(bool Death)
+	{
+		IsDeath = Death;
 	}
 	
 public:

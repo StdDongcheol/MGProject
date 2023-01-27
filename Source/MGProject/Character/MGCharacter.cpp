@@ -16,7 +16,16 @@ AMGCharacter::AMGCharacter()
 
 void AMGCharacter::AdjustHP(float _HP)
 {
-	HP += _HP;
+	if (HP <= 0.0f)
+	{
+		AnimInstance->SetDeath(true);
+		return;
+	}
+
+	else if(HP > 0.0f)
+	{
+		HP += _HP;
+	}
 
 	if (_HP < 0.0f)
 	{
