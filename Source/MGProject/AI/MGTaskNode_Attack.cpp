@@ -54,36 +54,27 @@ EBTNodeResult::Type UMGTaskNode_Attack::ExecuteTask(UBehaviorTreeComponent& Owne
 
 		if (AttackAnimTimeAcc >= AttackLength)
 		{
+			AnimInst->SetCurrentAttacking(false);
 			AttackAnimTimeAcc = 0.0f;
 
 			FVector Dir = (ActorTarget->GetActorLocation() - EnemyCharacter->GetActorLocation()).GetSafeNormal();
 			EnemyCharacter->SetLookAt(ActorTarget);
 		}
+
+		if (EnemyCharacter->GetCurrentHP() > 0.0f)
+			return EBTNodeResult::Succeeded;
 		
-		return EBTNodeResult::InProgress;
 	}
 
 	// Å¸°ÙÀÌ ¹Ù±ùÀ¸·Î ³ª°¬À» °æ¿ì
 	else
 	{
-		// Is Attacking?
+		// is attacking?
 		if (AnimInst->GetCurrentAttacking())
 		{
-
-			// is AnimEnd?
-			if (AttackAnimTimeAcc >= AttackLength)
-			{
-				AnimInst->SetCurrentAttacking(false);
-				AttackAnimTimeAcc = 0.0f;
-			}
-
-			else
-			{
-				return EBTNodeResult::InProgress;
-			}
+			AttackAnimTimeAcc = 0.0f;
+			AnimInst->SetCurrentAttacking(false);
 		}
-
-		return EBTNodeResult::Succeeded;
 	}
 
 	return EBTNodeResult::Succeeded;

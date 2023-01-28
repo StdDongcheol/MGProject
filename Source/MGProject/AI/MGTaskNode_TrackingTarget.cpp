@@ -6,6 +6,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "../MGEnemyController.h"
 #include "../Character/MGEnemyCharacter.h"
+#include "../Animation/MGEnemyAnimInstance.h"
 
 UMGTaskNode_TrackingTarget::UMGTaskNode_TrackingTarget()
 {
@@ -18,6 +19,7 @@ EBTNodeResult::Type UMGTaskNode_TrackingTarget::ExecuteTask(UBehaviorTreeCompone
 
 	AMGEnemyController* EnemyController = Cast<AMGEnemyController>(OwnerComp.GetAIOwner());
 	AMGEnemyCharacter* EnemyCharacter = EnemyController->GetPawn<AMGEnemyCharacter>();
+	UMGEnemyAnimInstance* AnimInst = EnemyCharacter->GetAnimInst<UMGEnemyAnimInstance>();
 
 	UObject* Target = OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName("TargetObject"));
 
@@ -32,15 +34,23 @@ EBTNodeResult::Type UMGTaskNode_TrackingTarget::ExecuteTask(UBehaviorTreeCompone
 
 		double AttackRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("AttackRange"));
 
+
+		// Transition to Attack_TaskNode
 		if (AttackRange > Dist)
 			return EBTNodeResult::Failed;
 		
 		else
-			return EBTNodeResult::InProgress;
+		{
+			if (EnemyCharacter->GetCurrentHP() > 0.0f)
+			{
+				AnimInst->SetCurrentAttacking(false);
+
+				return EBTNodeResult::InProgress;
+			}
+		}
 	}
 
-	else 
-		return EBTNodeResult::Succeeded;
+	return EBTNodeResult::Succeeded;
 }
 
 void UMGTaskNode_TrackingTarget::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
