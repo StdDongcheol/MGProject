@@ -22,7 +22,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty")
 	class UWidgetComponent* TargetingWidgetComponent;
 
-private:
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty", meta = (AllowPrivateAccess = "true"))
 	class UBehaviorTree* BehaviorTree;
 
@@ -30,6 +30,15 @@ private:
 	class UBlackboardData* BlackboardData;
 
 	class UMGEnemyWidget* EnemyWidget;
+
+protected:
+	const struct FMGEnemyStatusDataTable* EnemyData;
+
+public:
+	const FMGEnemyStatusDataTable* GetEnemyData()
+	{
+		return EnemyData;
+	}
 
 protected:
 	bool	IsTargetLock;

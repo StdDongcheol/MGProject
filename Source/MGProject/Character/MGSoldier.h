@@ -17,15 +17,6 @@ class MGPROJECT_API AMGSoldier : public AMGEnemyCharacter
 public:
 	AMGSoldier();
 
-private:
-	const struct FMGEnemyStatusDataTable* EnemyData;
-
-public:
-	const FMGEnemyStatusDataTable* GetEnemyData()
-	{
-		return EnemyData;
-	}
-
 protected:
 	void BeginPlay() override;
 

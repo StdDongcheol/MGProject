@@ -15,21 +15,12 @@ class MGPROJECT_API AMGWarrior : public AMGEnemyCharacter
 public:
 	AMGWarrior();
 
-private:
-	const struct FMGEnemyStatusDataTable* EnemyData;
-
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* DamageBoxLeft;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* DamageBoxRight;
-
-public:
-	const FMGEnemyStatusDataTable* GetEnemyData()
-	{
-		return EnemyData;
-	}
 
 protected:
 	void BeginPlay() override;
