@@ -324,16 +324,12 @@ void AMGPlayerController::QButtonRelease()
 
 		// 발사여부에 따라서 Aiming 상태를 유지할 것인지 설정해야함.
 		
+		int MissileCount = PlayerCharacter->GetMissileCount();
 		
-		// 발사함 : 로켓발사하는 동안 QAiming 상태를 유지.
-		if (!PlayerCharacter->IsTargetEmpty())
+		// 발사하는 동안 QAiming 상태를 유지.
+		if (!PlayerCharacter->IsTargetEmpty() && MissileCount > 0)
 		{
 			PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetBodyActionState(EPlayer_BodyAction::QFire);
-
-			// CameraArm Length 및 SocketOffset 조정
-			ArmComponent->TargetArmLength = 250.0f;
-			ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
-
 
 			PlayerQAimWidget->SetVisibility(ESlateVisibility::Hidden);
 			PlayerQAimWidget->SetScopeActivate(false);
@@ -341,7 +337,7 @@ void AMGPlayerController::QButtonRelease()
 
 		}
 
-		// 발사안함 : 그대로 Normal 상태로 돌아오기.
+		// 그대로 Normal 상태로 돌아오기.
 		else
 		{
 			// StateMachine내 ActionState 설정 
@@ -360,9 +356,6 @@ void AMGPlayerController::QButtonRelease()
 		break;
 	}
 
-	case EPlayer_ActionState::Normal:
-	case EPlayer_ActionState::Aiming:
-	case EPlayer_ActionState::EAiming:
 	default:
 		break;
 	}

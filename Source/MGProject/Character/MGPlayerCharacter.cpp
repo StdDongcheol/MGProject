@@ -27,6 +27,7 @@ AMGPlayerCharacter::AMGPlayerCharacter() :
 	BoxCollision->SetupAttachment(BoxRoot);
 	BoxCollision->SetCollisionProfileName(FName("PlayerAttack"));
 	BoxCollision->AddLocalOffset(FVector3d(-300.0f, 0.0f, 0.0f));
+	BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	DroneDeployParticle = CreateDefaultSubobject<UParticleSystemComponent>("DroneDeploy");
 	DroneDeployParticle->SetupAttachment(RootComponent);
@@ -275,6 +276,10 @@ void AMGPlayerCharacter::QFireEnd()
 		Enemy->SetLockonWidget(false);
 	}
 
+	// CameraArm Length ¹× SocketOffset Á¶Á¤
+	ArmSpring->TargetArmLength = 250.0f;
+	ArmSpring->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
+
 	TargetArray.Empty();
 }
 
@@ -293,6 +298,9 @@ void AMGPlayerCharacter::QSkillOnCollisionEnter(UPrimitiveComponent* _pComponent
 		AMGEnemyCharacter* TargetEnemy = Cast<AMGEnemyCharacter>(_pOtherActor);
 
 		if (!TargetEnemy || !TargetEnemy->IsValidLowLevel())
+			return;
+
+		else if (TargetEnemy->GetCurrentHP() <= 0.0f)
 			return;
 
 		TargetArray.Add(TargetEnemy);

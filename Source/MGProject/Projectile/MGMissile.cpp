@@ -3,6 +3,7 @@
 
 #include "MGMissile.h"
 #include "MGHitEffect.h"
+#include "../Character/MGCharacter.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -49,6 +50,23 @@ void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOt
 
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(HitEffect, GetActorLocation(), GetActorRotation());
 	Effect->SetStatus(3.0f);
+
+	FName OtherProfile = _OtherComp->GetCollisionProfileName();
+
+	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
+
+	if (!OtherCharacter || !OtherCharacter->IsValidLowLevel())
+	{
+		Destroy();
+		return;
+	}
+
+	if (OtherProfile == "Enemy")
+	{
+		OtherCharacter->AdjustHP(-10.0f);
+	}
+
+	OtherCharacter->SetStatus(ECharacter_Status::Status_Damaged);
 
 	Destroy();
 }
