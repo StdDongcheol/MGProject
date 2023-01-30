@@ -103,7 +103,9 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 			FRotator Rot = Dir.Rotation();
 
 			AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
-			Bullet->SetBulletProfile(TEXT("EnemyAttack"));
+
+			if (Bullet)
+				Bullet->SetBulletProfile(TEXT("EnemyAttack"));
 		}
 	}
 

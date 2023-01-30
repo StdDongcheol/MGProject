@@ -3,12 +3,13 @@
 
 #include "MGAnimNotifyState_SetCollision.h"
 
-void UMGAnimNotifyState_SetCollision::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
+void UMGAnimNotifyState_SetCollision::NotifyBegin(USkeletalMeshComponent* MeshComp, 
+	UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
 	USceneComponent* RootComponent = MeshComp->GetAttachmentRoot();
-
+	
 	if (!RootComponent)
 		return;
 
@@ -34,7 +35,8 @@ void UMGAnimNotifyState_SetCollision::NotifyBegin(USkeletalMeshComponent* MeshCo
 
 }
 
-void UMGAnimNotifyState_SetCollision::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
+void UMGAnimNotifyState_SetCollision::NotifyEnd(USkeletalMeshComponent* MeshComp, 
+	UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 

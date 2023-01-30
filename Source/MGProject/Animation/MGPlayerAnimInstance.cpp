@@ -98,9 +98,6 @@ void UMGPlayerAnimInstance::StateUpdate(float DeltaSeconds)
 
 			SetDamaged(false);
 		}
-
-		int32 Index = GetInstanceAssetPlayerIndex(TEXT("HitReact"), TEXT("HitReact"));
-
 	}
 
 }
