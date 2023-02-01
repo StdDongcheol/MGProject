@@ -12,7 +12,21 @@ AMGCrunch::AMGCrunch()
 
 const FMGEnemyStatusDataTable* AMGCrunch::InitEnemyData()
 {
-	return nullptr;
+	EnemyData = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetEnemyData(TEXT("Crunch"));
+
+	if (!EnemyData)
+		return nullptr;
+
+	SetAttackRange(EnemyData->AttackRange);
+	SetDetectRange(EnemyData->DetectionRange);
+	SetMaxHP(EnemyData->MaxHP);
+	SetCurrentHP(EnemyData->MaxHP);
+	SetMinAttack(EnemyData->MinAttack);
+	SetMaxAttack(EnemyData->MaxAttack);
+	SetAttackSpeed(EnemyData->AttackSpeed);
+	SetMoveSpeed(EnemyData->MoveSpeed);
+
+	return EnemyData;
 }
 
 void AMGCrunch::AdjustHP(float _HP)
