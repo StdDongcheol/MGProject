@@ -56,9 +56,9 @@ enum class EObject_Force : uint8
 UENUM()
 enum class ECharacter_Status : uint8
 {
-	Normal = 0x0000,
-	Status_Damaged = 0x0001,
-	Status_Slow = 0x0010,
+	Normal = 0b0000,
+	Status_Damaged = 0b0001,
+	Status_Slow = 0b0010,
 }; 
 
 inline ECharacter_Status operator&(ECharacter_Status l, ECharacter_Status r)
@@ -69,4 +69,24 @@ inline ECharacter_Status operator&(ECharacter_Status l, ECharacter_Status r)
 inline ECharacter_Status operator|(ECharacter_Status l, ECharacter_Status r)
 {
 	return (ECharacter_Status)((uint8)l | (uint8)r);
+}
+
+UENUM()
+enum class EAIAnimState : uint8
+{
+	Death = 0b0000,
+	Idle = 0b0001,
+	Rotate = 0b0010,
+	Attack = 0b0100,
+	Groggy = 0b1000,
+};
+
+inline EAIAnimState operator&(EAIAnimState l, EAIAnimState r)
+{
+	return (EAIAnimState)((uint8)l & (uint8)r);
+}
+
+inline EAIAnimState operator|(EAIAnimState l, EAIAnimState r)
+{
+	return (EAIAnimState)((uint8)l | (uint8)r);
 }
