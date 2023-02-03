@@ -15,11 +15,11 @@ class MGPROJECT_API UMGAnimNotifyState_StateUpdate : public UAnimNotifyState
 {
 	GENERATED_BODY()
 	
-public:
+private:
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	EPlayer_BodyAction State;
 
-	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
-
+	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, 
+		const FAnimNotifyEventReference& EventReference) override;
 
 };
