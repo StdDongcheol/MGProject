@@ -56,9 +56,9 @@ enum class EObject_Force : uint8
 UENUM()
 enum class ECharacter_Status : uint8
 {
-	Normal = 0b0000,
-	Status_Damaged = 0b0001,
-	Status_Slow = 0b0010,
+	Normal = 0b00000000,
+	Damaged = 0b00000001,
+	KnockOut = 0b00000010
 }; 
 
 inline ECharacter_Status operator&(ECharacter_Status l, ECharacter_Status r)
