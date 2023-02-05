@@ -106,7 +106,7 @@ public:
 
 
 public:
-	virtual void SetDamaged(bool Damaged);
+	virtual void SetDamaged(bool Damaged) override;
 
 public:
 	void NativeUpdateAnimation(float DeltaSeconds) override;

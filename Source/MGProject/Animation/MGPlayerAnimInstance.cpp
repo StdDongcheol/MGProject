@@ -84,20 +84,4 @@ void UMGPlayerAnimInstance::StateUpdate(float DeltaSeconds)
 		break;
 	}
 	
-	if (IsDamaged)
-	{
-		DamagedTimeAcc += DeltaSeconds;
-		
-		// 0.5f : Player stucked time
-		if (DamagedTimeAcc > 0.5f)
-		{
-			DamagedTimeAcc -= DamagedTimeAcc;
-			
-			AMGCharacter* Player = Cast<AMGCharacter>(GetOwningActor());
-			Player->SetStatus(ECharacter_Status::Normal);
-
-			SetDamaged(false);
-		}
-	}
-
 }
