@@ -167,6 +167,11 @@ FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance) const
 
 void AMGPlayerCharacter::AdjustHP(float _HP)
 {
+	ECharacter_Status CurrentStatus = GetAnimInst()->GetStatus();
+
+	if (CurrentStatus != ECharacter_Status::Normal)
+		return;
+
 	Super::AdjustHP(_HP);
 }
 

@@ -68,5 +68,5 @@ void AMGWarrior::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor
 		return;
 	
 	OtherCharacter->AdjustHP(-MinAttack);
-	OtherCharacter->SetStatus(ECharacter_Status::Status_Damaged);
+	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
 }

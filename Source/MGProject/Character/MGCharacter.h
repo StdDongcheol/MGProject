@@ -16,7 +16,7 @@ class MGPROJECT_API AMGCharacter : public ACharacter
 public:
 	AMGCharacter();
 
-private:
+protected:
 	UMGAnimInstance* AnimInstance;
 
 protected:
@@ -26,7 +26,6 @@ protected:
 	double		MaxAttack;
 	double		AttackSpeed;
 	double		MoveSpeed;
-	ECharacter_Status	Status;
 
 protected:
 	class UCapsuleComponent* Capsule;
@@ -77,7 +76,7 @@ public:
 	
 	void SetStatus(ECharacter_Status _Status)
 	{
-		Status = _Status;
+		AnimInstance->SetStatus(_Status);
 	}
 
 public:
@@ -109,11 +108,6 @@ public:
 	double GetMoveSpeed() const
 	{
 		return MoveSpeed;
-	}
-	
-	ECharacter_Status GetStatus() const
-	{
-		return Status;
 	}
 
 public:

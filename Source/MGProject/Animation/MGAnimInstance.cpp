@@ -6,6 +6,7 @@
 
 UMGAnimInstance::UMGAnimInstance()
 {
+	Status = ECharacter_Status::Normal;
 }
 
 void UMGAnimInstance::SetDamaged(bool Damaged)

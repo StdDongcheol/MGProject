@@ -76,7 +76,7 @@ void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOth
 		OtherCharacter->AdjustHP(-10.0f);
 	}
 
-	OtherCharacter->SetStatus(ECharacter_Status::Status_Damaged);
+	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
 
 	Destroy();
 }

@@ -56,7 +56,7 @@ void AMGPlayerController::MoveFront(float Value)
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	bool bCheck = (bool)(PlayerCharacter->GetStatus() & ECharacter_Status::Status_Damaged);
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 
 	if (bCheck)
 	{
@@ -81,7 +81,7 @@ void AMGPlayerController::MoveLeft(float Value)
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	bool bCheck = (bool)(PlayerCharacter->GetStatus() & ECharacter_Status::Status_Damaged);
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 
 	if (bCheck)
 	{
@@ -106,7 +106,7 @@ void AMGPlayerController::MoveRight(float Value)
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	bool bCheck = (bool)(PlayerCharacter->GetStatus() & ECharacter_Status::Status_Damaged);
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 
 	if (bCheck)
 	{
@@ -129,7 +129,7 @@ void AMGPlayerController::MoveBack(float Value)
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	bool bCheck = (bool)(PlayerCharacter->GetStatus() & ECharacter_Status::Status_Damaged);
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 
 	if (bCheck)
 	{
@@ -179,6 +179,13 @@ void AMGPlayerController::MouseYMove(float Value)
 
 void AMGPlayerController::LeftMouseButtonClick()
 {
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
+
+	if (bCheck)
+	{
+		return;
+	}
+
 	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
 
 	switch (ActionState)
@@ -201,6 +208,13 @@ void AMGPlayerController::LeftMouseButtonClick()
 
 void AMGPlayerController::RightMouseButtonClick()
 {
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
+
+	if (bCheck)
+	{
+		return;
+	}
+
 	bRightMouseButtonPress = !bRightMouseButtonPress;
 
 	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
@@ -274,6 +288,13 @@ void AMGPlayerController::RightMouseButtonRelease()
 
 void AMGPlayerController::QButtonPress()
 {
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
+
+	if (bCheck)
+	{
+		return;
+	}
+
 	bQButtonPress = !bQButtonPress;
 
 	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
@@ -363,6 +384,13 @@ void AMGPlayerController::QButtonRelease()
 
 void AMGPlayerController::EButtonPress()
 {
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
+
+	if (bCheck)
+	{
+		return;
+	}
+
 	bEButtonPress = !bEButtonPress;
 
 	if (PlayerCharacter->IsDroneReady())

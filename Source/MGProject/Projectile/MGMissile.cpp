@@ -66,7 +66,7 @@ void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOt
 		OtherCharacter->AdjustHP(-10.0f);
 	}
 
-	OtherCharacter->SetStatus(ECharacter_Status::Status_Damaged);
+	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
 
 	Destroy();
 }

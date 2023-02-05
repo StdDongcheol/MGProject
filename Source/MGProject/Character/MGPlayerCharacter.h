@@ -112,6 +112,11 @@ public:
 		return IsDroneDeployable;
 	}
 
+	ECharacter_Status GetStatus() const
+	{
+		return AnimInstance->GetStatus();
+	}
+
 public:
 	int GetMissileCount() const;
 	int GetMissileCount(int UsingCount);
