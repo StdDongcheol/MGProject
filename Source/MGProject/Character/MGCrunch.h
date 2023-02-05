@@ -17,6 +17,13 @@ class MGPROJECT_API AMGCrunch : public AMGEnemyBoss
 public:
 	AMGCrunch();
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBoxComponent* DamageBoxLeft;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBoxComponent* DamageBoxRight;
+
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData() override;
 	virtual void AdjustHP(float _HP) override;
@@ -26,4 +33,10 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	UFUNCTION()
+	void OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
+	int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit);
+
 };
