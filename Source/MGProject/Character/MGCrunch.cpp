@@ -5,6 +5,7 @@
 #include "../MGEnemyController.h"
 #include "../MGBlueprintFunctionLibrary.h"
 #include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
 
 AMGCrunch::AMGCrunch()
 {
@@ -71,10 +72,25 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 	}
 
 	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
-
+	
 	if (!OtherCharacter || !OtherCharacter->IsValidLowLevel())
 		return;
 
 	OtherCharacter->AdjustHP(-MinAttack);
-	OtherCharacter->SetStatus(ECharacter_Status::KnockOut);
+
+	if (OtherCharacter->GetStatus() == ECharacter_Status::Normal)
+	{
+		OtherCharacter->SetStatus(ECharacter_Status::KnockOut);
+
+		FVector HandPos = _pComponent->GetComponentLocation();
+		HandPos.Z -= 250.0f;
+
+		OtherCharacter->GetCapsuleComponent()->SetSimulatePhysics(true);
+		//_pComponent->AddVelocityChangeImpulseAtLocation(FVector::UpVector * 10000.0f, _pComponent->GetComponentLocation());
+
+		DrawDebugSphere(GetWorld(), HandPos, 500.0f, 50, FColor::Red, false, 2.0f);
+
+		OtherCharacter->GetCapsuleComponent()->AddRadialImpulse(HandPos, 500.0f, 700.0f, ERadialImpulseFalloff::RIF_Constant, true);
+		
+	}
 }
