@@ -2,6 +2,7 @@
 
 
 #include "MGAnimNotifyState_SetStatus.h"
+#include "Components/CapsuleComponent.h"
 #include "../Character/MGCharacter.h"
 
 void UMGAnimNotifyState_SetStatus::NotifyBegin(USkeletalMeshComponent* MeshComp, 
@@ -13,6 +14,12 @@ void UMGAnimNotifyState_SetStatus::NotifyBegin(USkeletalMeshComponent* MeshComp,
 
 	if (!AnimInst || !AnimInst->IsValidLowLevel())
 		return;
+
+	if (CharacterStatus == ECharacter_Status::Normal)
+	{
+		AMGCharacter* Character = Cast<AMGCharacter>(MeshComp->GetOwner());
+		Character->GetCapsuleComponent()->SetSimulatePhysics(false);
+	}
 
 	AnimInst->SetStatus(CharacterStatus);
 }

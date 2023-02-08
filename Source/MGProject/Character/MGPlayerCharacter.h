@@ -135,8 +135,6 @@ private:
 
 public:
 	void SetQSkillCollision(bool bEnable);
-
-public:
 	void QFireEnd();
 
 protected:
@@ -147,6 +145,10 @@ protected:
 	UFUNCTION()
 	void QSkillOnCollisionEnd(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
 		int32 _OtherBodyIndex);
+
+	UFUNCTION()
+	void OnCollisionGroundHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+		FVector NormalImpulse, const FHitResult& Hit);
 
 
 };

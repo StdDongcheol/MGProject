@@ -6,6 +6,7 @@
 #include "../Animation/MGPlayerAnimInstance.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 #include "Camera/CameraComponent.h"
 
 AMGPlayerCharacter::AMGPlayerCharacter() :
@@ -289,7 +290,9 @@ void AMGPlayerCharacter::QFireEnd()
 	TargetArray.Empty();
 }
 
-void AMGPlayerCharacter::QSkillOnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
+void AMGPlayerCharacter::QSkillOnCollisionEnter(UPrimitiveComponent* _pComponent, 
+	AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, 
+	bool _bFromSweep, const FHitResult& _Hit)
 {
 	UCapsuleComponent* Component = _pOtherActor->FindComponentByClass<UCapsuleComponent>();
 	
@@ -314,7 +317,8 @@ void AMGPlayerCharacter::QSkillOnCollisionEnter(UPrimitiveComponent* _pComponent
 	}
 }
 
-void AMGPlayerCharacter::QSkillOnCollisionEnd(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex)
+void AMGPlayerCharacter::QSkillOnCollisionEnd(UPrimitiveComponent* _pComponent, 
+	AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex)
 {
 	UCapsuleComponent* Component = _pOtherActor->FindComponentByClass<UCapsuleComponent>();
 
@@ -349,4 +353,13 @@ void AMGPlayerCharacter::QSkillOnCollisionEnd(UPrimitiveComponent* _pComponent, 
 		}
 	}
 	
+}
+
+void AMGPlayerCharacter::OnCollisionGroundHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherComp->GetCollisionProfileName() == TEXT("WorldObject") && 
+		GetAnimInst()->GetStatus() & ECharacter_Status::KnockOut)
+	{
+		GetAnimInst()->SetFalling(false);
+	}
 }

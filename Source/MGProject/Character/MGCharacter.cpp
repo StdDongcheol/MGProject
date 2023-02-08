@@ -2,9 +2,9 @@
 
 
 #include "MGCharacter.h"
+#include "../MGBlueprintFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "../MGBlueprintFunctionLibrary.h"
 
 AMGCharacter::AMGCharacter()
 {
@@ -89,14 +89,17 @@ void AMGCharacter::StateUpdate(float DeltaTime)
 	if (!AnimInstance || !AnimInstance->IsValidLowLevel())
 		return;
 
-	if (Velocity.Length() > 0.f)
+	if (AnimInstance->GetStatus() == ECharacter_Status::Normal)
 	{
-		AnimInstance->SetMoving(true);
-	}
+		if (Velocity.Length() > 0.f)
+		{
+			AnimInstance->SetMoving(true);
+		}
 	
-	else
-	{
-		AnimInstance->SetMoving(false);
+		else
+		{
+			AnimInstance->SetMoving(false);
+		}
 	}
 }
 

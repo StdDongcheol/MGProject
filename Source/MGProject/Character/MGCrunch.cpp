@@ -91,6 +91,6 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 		DrawDebugSphere(GetWorld(), HandPos, 500.0f, 50, FColor::Red, false, 2.0f);
 
 		OtherCharacter->GetCapsuleComponent()->AddRadialImpulse(HandPos, 500.0f, 700.0f, ERadialImpulseFalloff::RIF_Constant, true);
-		
+		OtherCharacter->GetAnimInst()->SetFalling(true);
 	}
 }
