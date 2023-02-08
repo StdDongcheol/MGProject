@@ -61,14 +61,14 @@ enum class ECharacter_Status : uint8
 	KnockOut = 0b00000010
 }; 
 
-inline ECharacter_Status operator&(ECharacter_Status l, ECharacter_Status r)
+inline bool operator&(ECharacter_Status l, ECharacter_Status r)
 {
-	return (ECharacter_Status)((uint8)l & (uint8)r);
+	return (bool)((uint8)l & (uint8)r);
 }
 
-inline ECharacter_Status operator|(ECharacter_Status l, ECharacter_Status r)
+inline bool operator|(ECharacter_Status l, ECharacter_Status r)
 {
-	return (ECharacter_Status)((uint8)l | (uint8)r);
+	return (bool)((uint8)l | (uint8)r);
 }
 
 UENUM()
