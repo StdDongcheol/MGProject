@@ -15,7 +15,7 @@ AMGEnemyCharacter::AMGEnemyCharacter()
 
 	Tags.Add("Enemy");
 
-	Capsule->SetCollisionProfileName(FName("Enemy"));
+	CapsuleComponent->SetCollisionProfileName(FName("Enemy"));
 
 	TargetingWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Lockon Widget"));
 	TargetingWidgetComponent->SetupAttachment(RootComponent);
