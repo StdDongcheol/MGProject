@@ -29,6 +29,9 @@ protected:
 	
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool	IsDeath;
+	
+	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool	IsFalling;
 
 	UPROPERTY(Category = "CharacterState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	ECharacter_Status	Status;
@@ -48,6 +51,11 @@ public:
 	{
 		IsDeath = Death;
 	}
+	
+	void SetFalling(bool Falling)
+	{
+		IsFalling = Falling;
+	}
 
 	void SetStatus(ECharacter_Status _Status)
 	{
@@ -55,10 +63,16 @@ public:
 	}
 
 public:
+	bool GetFalling() const
+	{
+		return IsFalling;
+	}
+
 	ECharacter_Status GetStatus() const
 	{
 		return Status;
 	}
+
 public:
 	virtual void SetDamaged(bool Damaged);
 
