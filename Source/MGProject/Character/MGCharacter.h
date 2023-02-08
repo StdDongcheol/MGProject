@@ -110,6 +110,11 @@ public:
 		return MoveSpeed;
 	}
 
+	ECharacter_Status GetStatus() const
+	{
+		return AnimInstance->GetStatus();
+	}
+
 public:
 	virtual void AdjustHP(float _HP);
 
