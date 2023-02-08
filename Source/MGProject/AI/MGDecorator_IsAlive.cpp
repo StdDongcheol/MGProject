@@ -15,7 +15,7 @@ bool UMGDecorator_IsAlive::CalculateRawConditionValue(UBehaviorTreeComponent& Ow
 
 	AMGEnemyController* Controller = Cast<AMGEnemyController>(OwnerComp.GetAIOwner());
 	AMGEnemyCharacter* Character = Cast<AMGEnemyCharacter>(Controller->GetPawn());
-
+	
 	if (Character->GetCurrentHP() <= 0.0f)
 	{
 		return false;

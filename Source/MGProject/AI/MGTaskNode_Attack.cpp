@@ -41,7 +41,7 @@ EBTNodeResult::Type UMGTaskNode_Attack::ExecuteTask(UBehaviorTreeComponent& Owne
 
 	double AttackRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("AttackRange"));
 	double Dist = (ActorTarget->GetActorLocation() - EnemyCharacter->GetActorLocation()).Length();
-	
+
 
 	// 타겟이 범위 안에 존재할 경우
 	if (Dist <= AttackRange)

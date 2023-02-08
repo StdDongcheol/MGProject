@@ -6,6 +6,8 @@
 UMGEnemyAnimInstance::UMGEnemyAnimInstance()
 {
 	IsAttacking = false;
+
+	AnimState = EAIAnimState::Idle;
 }
 
 void UMGEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
