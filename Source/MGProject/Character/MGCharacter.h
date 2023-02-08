@@ -28,7 +28,7 @@ protected:
 	double		MoveSpeed;
 
 protected:
-	class UCapsuleComponent* Capsule;
+	class UCapsuleComponent* CapsuleComponent;
 
 public:
 	UMGAnimInstance* GetAnimInst() const

@@ -18,7 +18,8 @@ AMGPlayerCharacter::AMGPlayerCharacter() :
 {
 	Tags.Add(TEXT("Player"));
 
-	Capsule->SetCollisionProfileName(FName("Player"));
+	CapsuleComponent->SetCollisionProfileName(FName("Player"));
+	CapsuleComponent->OnComponentHit.AddDynamic(this, &AMGPlayerCharacter::OnCollisionGroundHit);
 
 	BoxRoot = CreateDefaultSubobject<USceneComponent>("QAimSceneComponent");
 	BoxRoot->SetupAttachment(RootComponent);

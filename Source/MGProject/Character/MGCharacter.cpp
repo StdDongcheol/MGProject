@@ -10,8 +10,8 @@ AMGCharacter::AMGCharacter()
 {
  	PrimaryActorTick.bCanEverTick = true;
 
-	Capsule = FindComponentByClass<UCapsuleComponent>();
-	SetRootComponent(Capsule);
+	CapsuleComponent = FindComponentByClass<UCapsuleComponent>();
+	SetRootComponent(CapsuleComponent);
 }
 
 void AMGCharacter::AdjustHP(float _HP)
