@@ -82,8 +82,7 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 	{
 		OtherCharacter->SetStatus(ECharacter_Status::KnockOut);
 
-		FVector HandPos = _pComponent->GetComponentLocation();
-		HandPos.Z -= 250.0f;
+		FVector HandPos = _pComponent->GetComponentLocation() - FVector(0.0f, 0.0f, 250.f);
 
 		OtherCharacter->GetCapsuleComponent()->SetSimulatePhysics(true);
 		//_pComponent->AddVelocityChangeImpulseAtLocation(FVector::UpVector * 10000.0f, _pComponent->GetComponentLocation());
