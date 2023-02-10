@@ -54,6 +54,14 @@ enum class EObject_Force : uint8
 };
 
 UENUM()
+enum class EParticle_Type: uint8
+{
+	None,
+	CascadeParticle,
+	NiagaraParticle
+};
+
+UENUM()
 enum class ECharacter_Status : uint8
 {
 	Normal = 0b00000000,

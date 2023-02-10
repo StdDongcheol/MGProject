@@ -25,7 +25,11 @@ private:
 	UPROPERTY()
 	TSoftObjectPtr<class UDataTable>	BulletDataTable;
 
+	UPROPERTY()
+	TSoftObjectPtr<class UDataTable>	ParticleDataTable;
+
 public:
 	const FMGEnemyStatusDataTable* GetEnemyData(FName _Name) const;
 	const FMGBulletDataTable* GetBulletData(FName _Name) const;
+	const FHitParticleDataTable* GetParticleData(FName _Name) const;
 };

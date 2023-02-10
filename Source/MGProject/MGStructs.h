@@ -19,6 +19,22 @@ class MGPROJECT_API UMGStructs : public UObject
 };
 
 USTRUCT(Atomic, BlueprintType)
+struct FHitParticleDataTable : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EParticle_Type ParticleType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UParticleSystem> CascadeParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UNiagaraSystem> NiagaraParticle;
+};
+
+USTRUCT(Atomic, BlueprintType)
 struct FMGBulletDataTable : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()

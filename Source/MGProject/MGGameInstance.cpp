@@ -19,13 +19,24 @@ UMGGameInstance::UMGGameInstance()
 	}
 
 	{
-		FString BulletDataPath = TEXT("DataTable'/Game/Play/Data/BulletDataTable.BulletDataTable'");
+		FString DataPath = TEXT("DataTable'/Game/Play/Data/BulletDataTable.BulletDataTable'");
 
-		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*BulletDataPath);
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
 
 		if (DataTable.Succeeded())
 		{
 			BulletDataTable = DataTable.Object;
+		}
+	}
+
+	{
+		FString DataPath = TEXT("DataTable'/Game/Play/Data/HitParticleDataTable.HitParticleDataTable'");
+
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
+
+		if (DataTable.Succeeded())
+		{
+			ParticleDataTable = DataTable.Object;
 		}
 	}
 }
@@ -48,10 +59,23 @@ const FMGBulletDataTable* UMGGameInstance::GetBulletData(FName _Name) const
 	if (!BulletDataTable)
 		return nullptr;
 
-	FMGBulletDataTable* EnemyDataInfo = BulletDataTable->FindRow<FMGBulletDataTable>(_Name, _Name.ToString());
+	FMGBulletDataTable* BulletDataInfo = BulletDataTable->FindRow<FMGBulletDataTable>(_Name, _Name.ToString());
 
-	if (!EnemyDataInfo)
+	if (!BulletDataInfo)
 		return nullptr;
 
-	return EnemyDataInfo;
+	return BulletDataInfo;
+}
+
+const FHitParticleDataTable* UMGGameInstance::GetParticleData(FName _Name) const
+{
+	if (!ParticleDataTable)
+		return nullptr;
+
+	FHitParticleDataTable* ParticleDataInfo = ParticleDataTable->FindRow<FHitParticleDataTable>(_Name, _Name.ToString());
+
+	if (!ParticleDataInfo)
+		return nullptr;
+
+	return ParticleDataInfo;
 }
