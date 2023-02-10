@@ -11,6 +11,6 @@ void UMGAnimNotifyState_SetRagdoll::NotifyBegin(USkeletalMeshComponent* MeshComp
 
 	AMGCharacter* Character = Cast<AMGCharacter>(MeshComp->GetOwner());
 
-	MeshComp->SetAllBodiesBelowSimulatePhysics(TEXT("pelvis"), true);
-	MeshComp->SetAllBodiesBelowPhysicsBlendWeight(TEXT("pelvis"), 1.0f);
+	MeshComp->SetAllBodiesBelowSimulatePhysics(TEXT("root"), true);
+	MeshComp->SetAllBodiesBelowPhysicsBlendWeight(TEXT("root"), 1.0f);
 }
