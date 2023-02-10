@@ -24,12 +24,23 @@ void AMGHitEffect::SetStatus(float fLifetime, USceneComponent* Component)
 		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
+void AMGHitEffect::SetParticle(UParticleSystem* CascadeParticle)
+{
+	HitParticle->SetTemplate(CascadeParticle);
+}
+
+void AMGHitEffect::SetParticleNiagara(const UNiagaraSystem* NiagaraParticle)
+{
+	return;
+}
+
 void AMGHitEffect::BeginPlay()
 {
 	Super::BeginPlay();
 
 	if (Sound->GetSound())
 		Sound->Play();
+	
 }
 
 void AMGHitEffect::Tick(float DeltaTime)

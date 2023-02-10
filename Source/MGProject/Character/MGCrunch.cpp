@@ -4,6 +4,7 @@
 #include "MGCrunch.h"
 #include "../MGEnemyController.h"
 #include "../MGBlueprintFunctionLibrary.h"
+#include "../Projectile/MGHitEffect.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -80,16 +81,47 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 
 	if (OtherCharacter->GetStatus() == ECharacter_Status::Normal)
 	{
+
+		/// Player Knockout Start.
 		OtherCharacter->SetStatus(ECharacter_Status::KnockOut);
 
 		FVector HandPos = _pComponent->GetComponentLocation() - FVector(0.0f, 0.0f, 250.f);
-
-		OtherCharacter->GetCapsuleComponent()->SetSimulatePhysics(true);
-		//_pComponent->AddVelocityChangeImpulseAtLocation(FVector::UpVector * 10000.0f, _pComponent->GetComponentLocation());
-
+		
+		// Debugging sphere
 		DrawDebugSphere(GetWorld(), HandPos, 500.0f, 50, FColor::Red, false, 2.0f);
 
+		OtherCharacter->GetCapsuleComponent()->SetSimulatePhysics(true);
 		OtherCharacter->GetCapsuleComponent()->AddRadialImpulse(HandPos, 500.0f, 700.0f, ERadialImpulseFalloff::RIF_Constant, true);
 		OtherCharacter->GetAnimInst()->SetFalling(true);
+		/// Player Knockout End.
+
+		/// Melee Particle Start.
+		FVector HitPos = _pComponent->GetComponentLocation();
+
+		const FHitParticleDataTable* ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("WarriorMelee"));
+
+		AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(AMGHitEffect::StaticClass(), HitPos, GetActorRotation());
+		Effect->SetStatus(2.0f);
+
+		switch (ParticleTable->ParticleType)
+		{
+		case EParticle_Type::CascadeParticle:
+		{
+			Effect->SetParticle(ParticleTable->CascadeParticle);
+			break;
+		}
+		case EParticle_Type::NiagaraParticle:
+		{
+			Effect->SetParticleNiagara(ParticleTable->NiagaraParticle);
+			break;
+		}
+		default:
+		{
+			UE_LOG(LogTemp, Error, TEXT("Particle not selected type. Please select particle type."));
+			break;
+		}
+		}
+		/// Melee Particle End.
+
 	}
 }

@@ -26,6 +26,8 @@ public:
 
 public:
 	void SetStatus(float fLifetime = 1.0f, USceneComponent* Component = nullptr);
+	void SetParticle(class UParticleSystem* CascadeParticle);
+	void SetParticleNiagara(const class UNiagaraSystem* NiagaraParticle);
 
 protected:
 	virtual void BeginPlay() override;

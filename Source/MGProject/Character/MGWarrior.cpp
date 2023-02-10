@@ -4,6 +4,7 @@
 #include "MGWarrior.h"
 #include "../MGEnemyController.h"
 #include "../MGBlueprintFunctionLibrary.h"
+#include "../Projectile/MGHitEffect.h"
 #include "Components/BoxComponent.h"
 
 AMGWarrior::AMGWarrior()
@@ -69,4 +70,30 @@ void AMGWarrior::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor
 	
 	OtherCharacter->AdjustHP(-MinAttack);
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
+
+	FVector HitPos = _pComponent->GetComponentLocation();
+
+	const FHitParticleDataTable* ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("WarriorMelee"));
+	
+	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(AMGHitEffect::StaticClass(), HitPos, GetActorRotation());
+	Effect->SetStatus(2.0f);
+
+	switch (ParticleTable->ParticleType)
+	{
+	case EParticle_Type::CascadeParticle:
+	{
+		Effect->SetParticle(ParticleTable->CascadeParticle);
+		break;
+	}
+	case EParticle_Type::NiagaraParticle:
+	{
+		Effect->SetParticleNiagara(ParticleTable->NiagaraParticle);
+		break;
+	}
+	default:
+	{
+		UE_LOG(LogTemp, Error, TEXT("Particle not selected type. Please select particle type."));
+		break;
+	}
+	}
 }
