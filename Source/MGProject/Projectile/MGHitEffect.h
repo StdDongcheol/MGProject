@@ -29,6 +29,7 @@ private:
 
 public:
 	void SetStatus(float fLifetime = 1.0f, USceneComponent* AttachComponent = nullptr);
+	void SetSound(USoundBase* SoundBase);
 	void SetParticle(class UParticleSystem* CascadeParticle);
 	void SetParticleNiagara(const class UNiagaraSystem* NiagaraParticle);
 

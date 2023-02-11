@@ -74,9 +74,11 @@ void AMGWarrior::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor
 	FVector HitPos = _pComponent->GetComponentLocation();
 
 	const FHitParticleDataTable* ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("WarriorMelee"));
-	
+
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(AMGHitEffect::StaticClass(), HitPos, GetActorRotation());
-	Effect->SetStatus(2.0f);
+	Effect->SetStatus(2.0f, _pOtherActor->GetRootComponent());
+	Effect->SetSound(ParticleTable->HitSound);
+
 
 	switch (ParticleTable->ParticleType)
 	{

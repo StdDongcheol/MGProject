@@ -96,18 +96,20 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 		/// Player Knockout End.
 
 		/// Melee Particle Start.
-		FVector HitPos = _pComponent->GetComponentLocation();
+		FVector HitPos = _pOtherActor->GetActorLocation();
 
-		const FHitParticleDataTable* ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("WarriorMelee"));
+		const FHitParticleDataTable* ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("CrunchMelee"));
 
 		AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(AMGHitEffect::StaticClass(), HitPos, GetActorRotation());
-		Effect->SetStatus(2.0f);
+		Effect->SetStatus(2.0f, _pOtherActor->GetRootComponent());
+		Effect->SetSound(ParticleTable->HitSound);
 
 		switch (ParticleTable->ParticleType)
 		{
 		case EParticle_Type::CascadeParticle:
 		{
 			Effect->SetParticle(ParticleTable->CascadeParticle);
+			
 			break;
 		}
 		case EParticle_Type::NiagaraParticle:

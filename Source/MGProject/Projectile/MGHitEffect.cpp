@@ -28,6 +28,10 @@ void AMGHitEffect::SetStatus(float fLifetime, USceneComponent* AttachComponent)
 		AttachToOtherComponent = true;
 	}
 }
+
+void AMGHitEffect::SetSound(USoundBase* SoundBase)
+{
+	AudioComponent->SetSound(SoundBase);
 }
 
 void AMGHitEffect::SetParticle(UParticleSystem* CascadeParticle)
@@ -43,14 +47,17 @@ void AMGHitEffect::SetParticleNiagara(const UNiagaraSystem* NiagaraParticle)
 void AMGHitEffect::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (Sound->GetSound())
-		Sound->Play();
-	
 }
 
 void AMGHitEffect::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (!IsSoundPlayed && AudioComponent->GetSound())
+	{
+		IsSoundPlayed = true;
+
+		AudioComponent->Play();
+	}
 }
 
