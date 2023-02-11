@@ -37,10 +37,15 @@ void UMGPlayerAnimInstance::NativeBeginPlay()
 
 void UMGPlayerAnimInstance::MGUpdateRotate(float DeltaSeconds)
 {
+	// false -> Normal 상태.
+	// true -> 이상상태인 경우.
+	bool IsRotatable = !(Status | ECharacter_Status::Normal) ? true : false;
+
+	if (!IsRotatable)
+		return;
+
 	if (IsMoving ||
-		ActionState == EPlayer_ActionState::Aiming ||
-		ActionState == EPlayer_ActionState::QAiming ||
-		ActionState == EPlayer_ActionState::EAiming)
+		ActionState != EPlayer_ActionState::Normal)
 	{
 		RootBoneYaw = CharacterAimRotation.Yaw;
 	}
