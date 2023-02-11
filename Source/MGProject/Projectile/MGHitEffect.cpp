@@ -12,16 +12,22 @@ AMGHitEffect::AMGHitEffect()
 	HitParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle"));
 	RootComponent = HitParticle;
 
-	Sound = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound"));
-	Sound->SetupAttachment(RootComponent); 
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Sound"));
+	AudioComponent->SetupAttachment(RootComponent);
+
+	IsSoundPlayed = false;
 }
 
-void AMGHitEffect::SetStatus(float fLifetime, USceneComponent* Component)
+void AMGHitEffect::SetStatus(float fLifetime, USceneComponent* AttachComponent)
 {
 	SetLifeSpan(fLifetime);
 
-	if (Component != nullptr)
-		AttachToComponent(Component, FAttachmentTransformRules::KeepRelativeTransform);
+	if (AttachComponent != nullptr)
+	{
+		AttachToComponent(AttachComponent, FAttachmentTransformRules::KeepWorldTransform);
+		AttachToOtherComponent = true;
+	}
+}
 }
 
 void AMGHitEffect::SetParticle(UParticleSystem* CascadeParticle)

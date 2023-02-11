@@ -14,18 +14,21 @@ class MGPROJECT_API AMGHitEffect : public AActor
 public:	
 	AMGHitEffect();
 
-public:
+private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Effect")
 	class UParticleSystemComponent* HitParticle;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Effect")
-	class UAudioComponent* Sound;
+	class UAudioComponent* AudioComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "Effect")
 	bool	AttachToOtherComponent = false;
 
+private:
+	bool	IsSoundPlayed;
+
 public:
-	void SetStatus(float fLifetime = 1.0f, USceneComponent* Component = nullptr);
+	void SetStatus(float fLifetime = 1.0f, USceneComponent* AttachComponent = nullptr);
 	void SetParticle(class UParticleSystem* CascadeParticle);
 	void SetParticleNiagara(const class UNiagaraSystem* NiagaraParticle);
 
