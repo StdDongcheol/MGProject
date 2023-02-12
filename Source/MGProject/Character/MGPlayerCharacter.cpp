@@ -61,6 +61,8 @@ void AMGPlayerCharacter::BeginPlay()
 	// Character status setting start
 	HP = 75.0f;
 	HPMax = 100.0f;
+	MinAttack = 10.0f;
+	MaxAttack = 20.0f;
 	IsDroneDeployable = true;
 }
 
@@ -267,9 +269,15 @@ void AMGPlayerCharacter::ESkillTrace()
 void AMGPlayerCharacter::SetQSkillCollision(bool bEnable)
 {
 	if (!bEnable)
+	{
 		BoxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
 	else
+	{
 		BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		BoxCollision->SetCollisionProfileName(FName("PlayerAttack"));
+	}
 }
 
 void AMGPlayerCharacter::QFireEnd()
