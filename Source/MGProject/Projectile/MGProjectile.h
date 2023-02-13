@@ -31,6 +31,7 @@ protected:
 	EObject_Force Force;
 	float		  Range;
 	float		  Speed;
+	float		  Damage;
 
 public:
 	void SetForce(EObject_Force _Force)

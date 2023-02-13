@@ -3,10 +3,9 @@
 
 #include "MGProjectile.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GameFramework/Actor.h"
-#include "Components/StaticMeshComponent.h"
-//#include "NiagaraComponent.h"
 
 AMGProjectile::AMGProjectile() :
 	Speed(2400.f)
