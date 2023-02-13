@@ -20,52 +20,102 @@ AMGMissile::AMGMissile()
 	DamageCollider->OnComponentBeginOverlap.AddDynamic(this, &AMGMissile::OnCollisionEnter);
 }
 
-void AMGMissile::SetTarget(USceneComponent* TargetComponent)
+void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetComponent,
+	float _Damage, float _BoostTime, float _ForgetTime)
 {
-	ProjectileComponent->HomingTargetComponent = TargetComponent;
-	ProjectileComponent->bIsHomingProjectile = true;
+	DamageCollider->SetCollisionProfileName(_CollisionName);
+	
+	Damage = _Damage;
+	target = _TargetComponent;
+	BoostTime = _BoostTime;
+	ForgetTime = _ForgetTime;
+
+	if (_CollisionName == FName("PlayerAttack"))
+	{
+		ProjectileComponent->InitialSpeed = 1000.f;
+		ProjectileComponent->MaxSpeed = 1500.f;
+		ProjectileComponent->HomingAccelerationMagnitude = 35000.f;
+
+		ProjectileComponent->HomingTargetComponent = target;
+		ProjectileComponent->bIsHomingProjectile = true;
+	}
+
+	else if (_CollisionName == FName("EnemyAttack"))
+	{
+		ProjectileComponent->InitialSpeed = 500.f;
+		ProjectileComponent->MaxSpeed = 5000.f;
+		ProjectileComponent->HomingAccelerationMagnitude = 25000.f;
+	}
 }
 
 void AMGMissile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ProjectileComponent->InitialSpeed = 1000.f;
-	ProjectileComponent->MaxSpeed = 4000.f;
-	ProjectileComponent->bRotationFollowsVelocity = true;
-	ProjectileComponent->HomingAccelerationMagnitude = 3500.f;
 	ProjectileComponent->ProjectileGravityScale = 0.f;
+	ProjectileComponent->bRotationFollowsVelocity = true;
 	ProjectileComponent->bShouldBounce = true;
+
+	MissileStateTimeAcc = 0.0f;
 }
 
 void AMGMissile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	MissileStateTimeAcc += DeltaTime;
+
+	if (!(MissileState & EMissile_State::Launch))
+	{
+		MissileState = MissileState | EMissile_State::Launch;
+
+		ProjectileComponent->Velocity = RootComponent->GetForwardVector() * ProjectileComponent->InitialSpeed;
+	}
+
+	if (MissileStateTimeAcc >= BoostTime && !(MissileState & EMissile_State::Boost))
+	{
+		MissileStateTimeAcc -= MissileStateTimeAcc;
+
+		MissileState = MissileState | EMissile_State::Boost;
+
+		ProjectileComponent->HomingTargetComponent = target;
+		ProjectileComponent->bIsHomingProjectile = true;
+	}
+
+	if (MissileStateTimeAcc >= ForgetTime &&
+		(MissileState & EMissile_State::Boost) && 
+		!(MissileState & EMissile_State::ForgetTarget))
+	{
+		MissileStateTimeAcc -= MissileStateTimeAcc;
+
+		MissileState = MissileState | EMissile_State::ForgetTarget;
+
+		ProjectileComponent->HomingTargetComponent = nullptr;
+		ProjectileComponent->bIsHomingProjectile = false;
+	}
 }
 
 void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
 {
-	ProjectileComponent->StopSimulating(_Hit);
+	FName OtherProfile = _OtherComp->GetCollisionProfileName();
+
+	if (OtherProfile == "PlayerAttack" || OtherProfile == "EnemyAttack")
+		return;
 
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(HitEffect, GetActorLocation(), GetActorRotation());
 	Effect->SetStatus(3.0f);
-
-	FName OtherProfile = _OtherComp->GetCollisionProfileName();
-
+	//
 	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
-
+	
 	if (!OtherCharacter || !OtherCharacter->IsValidLowLevel())
 	{
 		Destroy();
 		return;
 	}
-
-	if (OtherProfile == "Enemy")
-	{
-		OtherCharacter->AdjustHP(-10.0f);
-	}
-
+	
+	OtherCharacter->AdjustHP(-Damage);
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
-
+	
 	Destroy();
 }
+

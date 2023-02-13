@@ -50,6 +50,10 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 			FRotator Rot = Dir.Rotation();
 
 			AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
+
+			if (!Bullet || !Bullet->IsValidLowLevel())
+				return;
+
 			Bullet->SetBulletProfile(TEXT("PlayerAttack"));
 			break;
 		}
@@ -59,8 +63,11 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 
 			if (!Missile || !Missile->IsValidLowLevel())
 				return;
+			
+			Missile->SetActorScale3D(Missile->GetActorScale3D() / 5.0f);
+			Missile->SetStatus(TEXT("PlayerAttack"), PlayerCharacter->GetTarget(), 
+				PlayerCharacter->GetMinAttack(), 0.0f, 8.f);
 
-			Missile->SetTarget(PlayerCharacter->GetTarget());
 			break;
 		}
 		case EPlayer_BodyAction::EThrowing:
@@ -95,18 +102,33 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 		FRotator SpawnRotation = MeshTransform.Rotator();
 
 		AActor* PlayerActor = EnemyCharacter->FindTarget("Player", EnemyCharacter->GetDetectRange());
-
+		
 		if (PlayerActor)
 		{
 			FVector PlayerPos = PlayerActor->GetActorLocation();
 			FVector Dir = PlayerPos - SpawnPosition;
 			FRotator Rot = Dir.Rotation();
 
-			AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
+			if (TargetActor->IsChildOf(AMGMissile::StaticClass()))
+			{
+				AMGMissile* Missile = MeshComp->GetWorld()->SpawnActor<AMGMissile>(TargetActor, SpawnPosition, SpawnRotation);
 
-			if (Bullet)
+				if (!Missile || !Missile->IsValidLowLevel())
+					return;
+
+				Missile->SetStatus(TEXT("EnemyAttack"), PlayerActor->GetRootComponent(), 
+					EnemyCharacter->GetMinAttack(), 0.40f, 0.30f);
+			}
+
+			else if (TargetActor->IsChildOf(AMGBullet::StaticClass()))
+			{
+				AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
+
+				if (!Bullet || !Bullet->IsValidLowLevel())
+					return;
+
 				Bullet->SetBulletProfile(TEXT("EnemyAttack"));
+			}
 		}
 	}
-
 }

@@ -9,6 +9,7 @@
 /**
  * 
  */
+
 UCLASS()
 class MGPROJECT_API AMGMissile : public AMGProjectile
 {
@@ -23,10 +24,19 @@ protected:
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
 	class USphereComponent* DamageCollider;
+	
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
+	TObjectPtr<class USceneComponent> target;
 
+private:
+	float	BoostTime;
+	float	ForgetTime;
+	float	MissileStateTimeAcc;
+	EMissile_State	MissileState;
 
 public:
-	void SetTarget(USceneComponent* TargetComponent);
+	void SetStatus(FName _CollisionName, USceneComponent* _TargetComponent, 
+		float _Damage, float _BoostTime, float _ForgetTime);
 
 protected:
 	virtual void BeginPlay() override;
