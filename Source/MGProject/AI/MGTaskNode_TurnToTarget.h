@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "../MGFlag.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "MGTaskNode_TurnToTarget.generated.h"
 
@@ -19,9 +20,10 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* AttackMontage;
-
+	TArray<EAIAnimState> AttackPattern;
+	
 private:
+	int		PatternIndex;
 	double	TurnAnimTimeAcc;
 
 protected:
