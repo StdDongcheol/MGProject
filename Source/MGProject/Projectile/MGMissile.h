@@ -22,7 +22,7 @@ protected:
 	class USkeletalMesh* SkeletalMesh;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
-	class USphereComponent* SphereCollider;
+	class USphereComponent* DamageCollider;
 
 
 public:

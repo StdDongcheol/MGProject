@@ -13,12 +13,11 @@ AMGMissile::AMGMissile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	SphereCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollider"));
-	SphereCollider->SetupAttachment(RootComponent);
-	SphereCollider->SetCollisionProfileName(TEXT("PlayerAttack"));
-	SphereCollider->SetNotifyRigidBodyCollision(true);
-	SphereCollider->SetRelativeLocation(FVector(30.0f, 0.0f, 0.0f));
-	SphereCollider->OnComponentBeginOverlap.AddDynamic(this, &AMGMissile::OnCollisionEnter);
+	DamageCollider = CreateDefaultSubobject<USphereComponent>(TEXT("DamageCollider"));
+	DamageCollider->SetupAttachment(RootComponent);
+	DamageCollider->SetNotifyRigidBodyCollision(true);
+	DamageCollider->SetRelativeLocation(FVector(30.0f, 0.0f, 0.0f));
+	DamageCollider->OnComponentBeginOverlap.AddDynamic(this, &AMGMissile::OnCollisionEnter);
 }
 
 void AMGMissile::SetTarget(USceneComponent* TargetComponent)
