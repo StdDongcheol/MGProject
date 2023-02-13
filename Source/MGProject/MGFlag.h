@@ -83,10 +83,11 @@ UENUM()
 enum class EAIAnimState : uint8
 {
 	Death = 0b0000,
-	Idle = 0b0001,
-	Rotate = 0b0010,
-	Attack = 0b0100,
-	Groggy = 0b1000,
+	Idle = 0b00000001,
+	Rotate = 0b00000010,
+	Attack1 = 0b00000100,
+	Attack2 = 0b00001000,
+	Groggy = 0b00010000,
 };
 
 inline EAIAnimState operator&(EAIAnimState l, EAIAnimState r)
@@ -97,4 +98,29 @@ inline EAIAnimState operator&(EAIAnimState l, EAIAnimState r)
 inline EAIAnimState operator|(EAIAnimState l, EAIAnimState r)
 {
 	return (EAIAnimState)((uint8)l | (uint8)r);
+}
+
+
+UENUM()
+enum class EMissile_State : uint8
+{
+	None = 0b0000,
+	Launch = 0b0001,
+	Boost = 0b0010,
+	ForgetTarget = 0b0100
+};
+
+inline bool operator&(EMissile_State l, EMissile_State r)
+{
+	return (bool)((uint8)l & (uint8)r);
+}
+
+inline EMissile_State operator|(EMissile_State l, EMissile_State r)
+{
+	return (EMissile_State)((uint8)l | (uint8)r);
+}
+
+inline EMissile_State operator|=(EMissile_State l, EMissile_State r)
+{
+	return (EMissile_State)((uint8)l | (uint8)r);
 }
