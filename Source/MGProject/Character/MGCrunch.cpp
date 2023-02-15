@@ -2,7 +2,6 @@
 
 
 #include "MGCrunch.h"
-#include "../MGEnemyController.h"
 #include "../MGBlueprintFunctionLibrary.h"
 #include "../Projectile/MGHitEffect.h"
 #include "Components/BoxComponent.h"
@@ -10,8 +9,6 @@
 
 AMGCrunch::AMGCrunch()
 {
-	AIControllerClass = AMGEnemyController::StaticClass();
-
 	DamageBoxLeft = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxLeft"));
 	DamageBoxLeft->SetupAttachment(GetMesh(), TEXT("Muzzle_02"));
 	DamageBoxLeft->SetCollisionProfileName(FName("EnemyAttack"));

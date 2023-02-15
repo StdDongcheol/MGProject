@@ -2,9 +2,11 @@
 
 
 #include "MGEnemyBoss.h"
+#include "../MGBossController.h"
 
 AMGEnemyBoss::AMGEnemyBoss()
 {
+	AIControllerClass = AMGBossController::StaticClass();
 }
 
 const FMGEnemyStatusDataTable* AMGEnemyBoss::InitEnemyData()
