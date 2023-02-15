@@ -54,7 +54,7 @@ EBTNodeResult::Type UMGTaskNode_TurnToTarget::ExecuteTask(UBehaviorTreeComponent
 		AnimInst->SetAIAnimState(AttackPattern[PatternIndex]);
 		++PatternIndex;
 
-		// reset PatternIndex
+		// Reset index
 		if (PatternIndex > AttackPattern.Num() - 1)
 			PatternIndex -= PatternIndex;
 

@@ -73,7 +73,7 @@ EBTNodeResult::Type UMGTaskNode_Attack::ExecuteTask(UBehaviorTreeComponent& Owne
 		if (AnimInst->GetCurrentAttacking())
 		{
 			AttackAnimTimeAcc = 0.0f;
-			AnimInst->SetCurrentAttacking(false);
+			AnimInst->SetCurrentAttacking(false); 
 		}
 	}
 

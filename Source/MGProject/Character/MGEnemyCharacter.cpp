@@ -19,7 +19,6 @@ AMGEnemyCharacter::AMGEnemyCharacter()
 
 	TargetingWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Lockon Widget"));
 	TargetingWidgetComponent->SetupAttachment(RootComponent);
-
 	TargetingWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 
 	static ConstructorHelpers::FObjectFinder<UBlueprint> BPObject(TEXT("WidgetBlueprint'/Game/Play/UI/Enemy/WBP_EnemyWidget.WBP_EnemyWidget'")); // PATH is blueprint object path

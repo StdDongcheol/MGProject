@@ -15,6 +15,6 @@ class MGPROJECT_API AMGEnemyController : public AMGAIController
 	GENERATED_BODY()
 
 protected:
-	void OnPossess(APawn* _Mon) override;
+	virtual void OnPossess(APawn* _Mon) override;
 	
 };

@@ -4,9 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "UI/MGAimWidget.h"
-#include "UI/MGNormalAimWidget.h"
-#include "UI/MGPlayerWidget.h"
 #include "Character/MGPlayerCharacter.h"
 #include "MGPlayerController.generated.h"
 
@@ -32,9 +29,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> PlayerStatusWBP;
 
-	UMGAimWidget* PlayerQAimWidget;
-	UMGNormalAimWidget* PlayerNormalAimWidget;
-	UMGPlayerWidget* PlayerStatusWidget;
+	class UMGAimWidget* PlayerQAimWidget;
+	class UMGNormalAimWidget* PlayerNormalAimWidget;
+	class UMGPlayerWidget* PlayerStatusWidget;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
