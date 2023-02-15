@@ -4,6 +4,7 @@
 #include "MGCrunch.h"
 #include "../MGBlueprintFunctionLibrary.h"
 #include "../Projectile/MGHitEffect.h"
+#include "../UI/MGBossStatusWidget.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -46,6 +47,8 @@ const FMGEnemyStatusDataTable* AMGCrunch::InitEnemyData()
 void AMGCrunch::AdjustHP(float _HP)
 {
 	Super::AdjustHP(_HP);
+
+	StatusWidget->SetHPBar(HP);
 }
 
 void AMGCrunch::BeginPlay()

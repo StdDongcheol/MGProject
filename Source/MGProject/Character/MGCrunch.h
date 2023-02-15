@@ -23,6 +23,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* DamageBoxRight;
+	
 
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData() override;
