@@ -3,6 +3,8 @@
 
 #include "MGEnemyBoss.h"
 #include "../MGBossController.h"
+#include "../UI/MGBossStatusWidget.h"
+#include "Components/WidgetComponent.h"
 
 AMGEnemyBoss::AMGEnemyBoss()
 {
@@ -22,6 +24,14 @@ void AMGEnemyBoss::AdjustHP(float _HP)
 void AMGEnemyBoss::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	AMGBossController* BossController = GetController<AMGBossController>();
+
+	if (BossController)
+	{
+		StatusWidget = BossController->GetStatusWidget();
+		StatusWidget->SetCharacter(this);
+	}
 }
 
 void AMGEnemyBoss::Tick(float DeltaTime)

@@ -17,6 +17,9 @@ class MGPROJECT_API AMGEnemyBoss : public AMGEnemyCharacter
 public:
 	AMGEnemyBoss();
 
+protected:
+	class UMGBossStatusWidget* StatusWidget;
+
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData();
 	virtual void AdjustHP(float _HP);
