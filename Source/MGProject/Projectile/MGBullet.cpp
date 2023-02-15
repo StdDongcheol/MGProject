@@ -50,13 +50,15 @@ void AMGBullet::SetBulletProfile(FName _Name)
 void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, 
 	UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
 {
+	FName OtherProfile = _OtherComp->GetCollisionProfileName();
+
+	if (OtherProfile == "PlayerAttack" || OtherProfile == "EnemyAttack")
+		return;
+
 	ProjectileComponent->StopSimulating(_Hit);
 	
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(HitEffect, GetActorLocation(), GetActorRotation());
 	Effect->SetStatus(3.0f);
-
-	FName OtherProfile = _OtherComp->GetCollisionProfileName();
-
 
 	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
 
