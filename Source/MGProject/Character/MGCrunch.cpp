@@ -57,6 +57,8 @@ const FMGEnemyStatusDataTable* AMGCrunch::InitEnemyData()
 	SetAttackSpeed(EnemyData->AttackSpeed);
 	SetMoveSpeed(EnemyData->MoveSpeed);
 
+	MaxStunGauge = 30.0f;
+
 	return EnemyData;
 }
 

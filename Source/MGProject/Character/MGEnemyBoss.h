@@ -20,6 +20,10 @@ public:
 protected:
 	class UMGBossStatusWidget* StatusWidget;
 
+protected:
+	double	CurrentStunGauge;
+	double	MaxStunGauge;
+
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData();
 	virtual void SetDamage(float _Damage, bool _IsWeakpoint = false);
