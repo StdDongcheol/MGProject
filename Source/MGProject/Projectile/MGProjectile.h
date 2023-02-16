@@ -44,6 +44,11 @@ public:
 	{
 		return Force;
 	}
+	
+	float GetProjectileDamage() const
+	{
+		return Damage;
+	}
 
 protected:
 	virtual void BeginPlay() override;
