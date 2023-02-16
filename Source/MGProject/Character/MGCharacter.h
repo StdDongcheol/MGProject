@@ -117,6 +117,7 @@ public:
 
 public:
 	virtual void AdjustHP(float _HP);
+	virtual void SetDamage(float _Damage, bool _IsWeakpoint = false);
 
 public:
 	AActor* FindTarget(FName _TargetTag, double _Range = 0.0f);

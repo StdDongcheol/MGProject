@@ -30,6 +30,11 @@ void AMGCharacter::AdjustHP(float _HP)
 	}
 }
 
+void AMGCharacter::SetDamage(float _Damage, bool _IsWeakpoint)
+{
+	AdjustHP(_Damage);
+}
+
 AActor* AMGCharacter::FindTarget(FName _TargetTag, double _Range)
 {
 	TArray<AActor*> ActorsInLevel;

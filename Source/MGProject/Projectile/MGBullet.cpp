@@ -73,11 +73,7 @@ void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOth
 		OtherCharacter->AdjustHP(-10.0f);
 	}
 
-	else if (OtherProfile == "Enemy")
-	{
-		OtherCharacter->AdjustHP(-10.0f);
-	}
-
+	OtherCharacter->SetDamage(-10.0f, IsWeakPoint);
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
 
 	Destroy();

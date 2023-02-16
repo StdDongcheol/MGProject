@@ -27,7 +27,7 @@ protected:
 
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData() override;
-	virtual void AdjustHP(float _HP) override;
+	virtual void SetDamage(float _Damage, bool _IsWeakpoint = false) override;
 
 protected:
 	virtual void BeginPlay() override;

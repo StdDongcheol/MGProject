@@ -44,11 +44,37 @@ const FMGEnemyStatusDataTable* AMGCrunch::InitEnemyData()
 	return EnemyData;
 }
 
-void AMGCrunch::AdjustHP(float _HP)
+void AMGCrunch::SetDamage(float _Damage, bool _IsWeakpoint)
 {
-	Super::AdjustHP(_HP);
+	Super::SetDamage(_Damage, _IsWeakpoint);
 
 	StatusWidget->SetHPBar(HP);
+
+	if (_IsWeakpoint)
+	{
+		WeakpointHit(_Damage);
+	}
+}
+
+void AMGCrunch::WeakpointHit(float _Damage)
+{
+	float HitDamage = FMath::Abs(_Damage);
+	
+	EAIAnimState CurrentState = GetAnimInst<UMGEnemyAnimInstance>()->GetAIAnimState();
+
+	if (CurrentState & EAIAnimState::Groggy)
+	{
+		return;
+	}
+
+	CurrentStunGauge += HitDamage;
+
+	if (CurrentStunGauge >= MaxStunGauge)
+	{
+		CurrentStunGauge -= CurrentStunGauge;
+		
+		GetAnimInst<UMGEnemyAnimInstance>()->SetAIAnimState(EAIAnimState::Groggy);
+	}
 }
 
 void AMGCrunch::BeginPlay()

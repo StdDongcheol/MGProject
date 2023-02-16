@@ -59,9 +59,9 @@ const FMGEnemyStatusDataTable* AMGEnemyCharacter::InitEnemyData()
 	return nullptr;
 }
 
-void AMGEnemyCharacter::AdjustHP(float _HP)
+void AMGEnemyCharacter::SetDamage(float _Damage, bool _IsWeakpoint)
 {
-	Super::AdjustHP(_HP);
+	Super::SetDamage(_Damage, _IsWeakpoint);
 }
 
 void AMGEnemyCharacter::BeginPlay()
