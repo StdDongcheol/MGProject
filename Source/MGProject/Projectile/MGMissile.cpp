@@ -112,8 +112,10 @@ void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOt
 		Destroy();
 		return;
 	}
-	
-	OtherCharacter->AdjustHP(-Damage);
+
+	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
+
+	OtherCharacter->SetDamage(-Damage, IsWeakPoint);
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
 	
 	Destroy();

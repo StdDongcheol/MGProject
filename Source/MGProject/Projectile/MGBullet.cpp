@@ -68,10 +68,7 @@ void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOth
 		return;
 	}
 
-	if (OtherProfile == "Player")
-	{
-		OtherCharacter->AdjustHP(-10.0f);
-	}
+	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
 
 	OtherCharacter->SetDamage(-10.0f, IsWeakPoint);
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
