@@ -24,10 +24,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* DamageBoxRight;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBoxComponent* WeakBoxHead;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBoxComponent* WeakBoxBack;
+	
 
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData() override;
 	virtual void SetDamage(float _Damage, bool _IsWeakpoint = false) override;
+
+private:
+	void WeakpointHit(float _Damage);
 
 protected:
 	virtual void BeginPlay() override;

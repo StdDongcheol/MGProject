@@ -4,7 +4,9 @@
 #include "MGCrunch.h"
 #include "../MGBlueprintFunctionLibrary.h"
 #include "../Projectile/MGHitEffect.h"
+#include "../Projectile/MGProjectile.h"
 #include "../UI/MGBossStatusWidget.h"
+#include "../Animation/MGEnemyAnimInstance.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -23,6 +25,20 @@ AMGCrunch::AMGCrunch()
 	DamageBoxRight->SetBoxExtent(FVector(80.0f, 50.0f, 50.0f));
 	DamageBoxRight->SetGenerateOverlapEvents(false);
 	DamageBoxRight->OnComponentBeginOverlap.AddDynamic(this, &AMGCrunch::OnDamageCollisionEnter);
+
+	WeakBoxHead = CreateDefaultSubobject<UBoxComponent>(TEXT("WeakPointHead"));
+	WeakBoxHead->SetupAttachment(GetMesh(), TEXT("FX_UltSteam_Back"));
+	WeakBoxHead->SetCollisionProfileName(FName("Enemy"));
+	WeakBoxHead->SetBoxExtent(FVector(30.0f, 25.0f, 25.0f));
+	WeakBoxHead->SetGenerateOverlapEvents(true);
+	WeakBoxHead->ComponentTags.Add(TEXT("WeakPoint"));
+
+	WeakBoxBack = CreateDefaultSubobject<UBoxComponent>(TEXT("WeakPointBack"));
+	WeakBoxBack->SetupAttachment(GetMesh(), TEXT("FX_Head"));
+	WeakBoxBack->SetCollisionProfileName(FName("Enemy"));
+	WeakBoxBack->SetBoxExtent(FVector(40.0f, 25.0f, 25.0f));
+	WeakBoxBack->SetGenerateOverlapEvents(true);
+	WeakBoxHead->ComponentTags.Add(TEXT("WeakPoint"));
 }
 
 const FMGEnemyStatusDataTable* AMGCrunch::InitEnemyData()
