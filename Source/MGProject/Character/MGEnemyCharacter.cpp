@@ -7,6 +7,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "../UI/MGEnemyWidget.h"
+#include "../Animation/MGEnemyAnimInstance.h"
 
 AMGEnemyCharacter::AMGEnemyCharacter()
 {
@@ -62,6 +63,9 @@ const FMGEnemyStatusDataTable* AMGEnemyCharacter::InitEnemyData()
 void AMGEnemyCharacter::SetDamage(float _Damage, bool _IsWeakpoint)
 {
 	Super::SetDamage(_Damage, _IsWeakpoint);
+
+	if (HP <= 0.0f)
+		GetAnimInst<UMGEnemyAnimInstance>()->SetAIAnimState(EAIAnimState::Death);
 }
 
 void AMGEnemyCharacter::BeginPlay()
