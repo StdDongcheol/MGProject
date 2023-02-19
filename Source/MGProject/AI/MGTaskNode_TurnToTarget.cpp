@@ -36,6 +36,11 @@ EBTNodeResult::Type UMGTaskNode_TurnToTarget::ExecuteTask(UBehaviorTreeComponent
 	int32 RotateStateIndex = AnimInst->GetInstanceAssetPlayerIndex(TEXT("Locomotion"), TEXT("Rotate"));
 	float RotateLength = AnimInst->GetInstanceAssetPlayerLength(RotateStateIndex);
 
+	if (AnimInst->GetAIAnimState() & EAIAnimState::Groggy)
+	{
+		TurnAnimTimeAcc -= TurnAnimTimeAcc;
+		return EBTNodeResult::Failed;
+	}
 
 	if (RotateLength >= TurnAnimTimeAcc)
 	{

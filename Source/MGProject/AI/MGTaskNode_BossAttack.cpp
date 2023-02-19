@@ -19,6 +19,9 @@ EBTNodeResult::Type UMGTaskNode_BossAttack::ExecuteTask(UBehaviorTreeComponent& 
 	AMGEnemyCharacter* EnemyCharacter = EnemyController->GetPawn<AMGEnemyCharacter>();
 	UMGEnemyAnimInstance* AnimInst = EnemyCharacter->GetAnimInst<UMGEnemyAnimInstance>();
 
+	if (AnimInst->GetAIAnimState() & EAIAnimState::Groggy)
+		return EBTNodeResult::Failed;
+
 	// attacking now...
 	if (AnimInst->GetAIAnimState() == EAIAnimState::Attack1 || 
 		AnimInst->GetAIAnimState() == EAIAnimState::Attack2)

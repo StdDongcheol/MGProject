@@ -22,7 +22,7 @@ EBTNodeResult::Type UMGTaskNode_Spawn::ExecuteTask(UBehaviorTreeComponent& Owner
 
 	if (AnimInst->IsSpawnCompleted())
 	{
-		return EBTNodeResult::Failed;
+		return EBTNodeResult::Succeeded;
 	}
 
 	return EBTNodeResult::InProgress;
@@ -47,7 +47,7 @@ void UMGTaskNode_Spawn::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 		if (SpawnedTimeAcc >= SpawnLength)
 		{
 			SpawnedTimeAcc -= SpawnedTimeAcc;
-			AnimInst->SetAIAnimState(EAIAnimState::Rotate);
+			AnimInst->SetAIAnimState(EAIAnimState::Idle);
 			AnimInst->SetSpawned(true);
 		}
 	}

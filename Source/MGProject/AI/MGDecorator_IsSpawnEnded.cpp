@@ -25,8 +25,8 @@ bool UMGDecorator_IsSpawnEnded::CalculateRawConditionValue(UBehaviorTreeComponen
 
 	if (AnimInst->IsSpawnCompleted())
 	{
-		return false;
+		return true;
 	}
 
-	return true;
+	return false;
 }

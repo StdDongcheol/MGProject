@@ -19,7 +19,7 @@ bool UMGDecorator_CheckAIStatus::CalculateRawConditionValue(UBehaviorTreeCompone
 	UMGEnemyAnimInstance* AnimInst = Character->GetAnimInst<UMGEnemyAnimInstance>();
 
 	if (CheckStatus & AnimInst->GetAIAnimState())
-		return false;
+		return true;
 
-	return true;
+	return false;
 }
