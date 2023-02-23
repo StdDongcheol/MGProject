@@ -90,9 +90,9 @@ enum class EAIAnimState : uint8
 	Groggy = 0b00010000,
 };
 
-inline EAIAnimState operator&(EAIAnimState l, EAIAnimState r)
+inline bool operator&(EAIAnimState l, EAIAnimState r)
 {
-	return (EAIAnimState)((uint8)l & (uint8)r);
+	return (bool)((uint8)l & (uint8)r);
 }
 
 inline EAIAnimState operator|(EAIAnimState l, EAIAnimState r)
