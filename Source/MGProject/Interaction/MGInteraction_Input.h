@@ -18,12 +18,22 @@ public:
 	AMGInteraction_Input();
 
 public:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UBoxComponent>	TriggerBox;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UWidgetComponent>	InteractionWidget;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget>	InteractionWidgetClass;
+
+	class UMGInteractionWidget* InteractionPtr;
 
 private:
 	TArray<TObjectPtr<AMGInteraction>>	InteractComponents;
 	TArray<TObjectPtr<AMGInteraction>>	WaveEndInteractComponents;
+	
+	TObjectPtr<class UMGSpawnComponent>		SpawnComponent;
 	
 	UPROPERTY(EditAnywhere, Category = "Interaction TagName", meta = (AllowPrivateAccess = "true"))
 	FName	WaveEndTag;
@@ -39,12 +49,18 @@ private:
 
 	bool	IsWaveStart;
 	bool	IsEntered;
+	bool	IsPlayerPushed;
 	float	Gauge;
 
-	TObjectPtr<class UMGSpawnComponent>		SpawnComponent;
+public:
+	bool IsPlayerEntered() const
+	{
+		return IsEntered;
+	}
 
 public:
 	void SetSpawnComponent(class UMGSpawnComponent* Component);
+	void SetProgressing(bool bEnable);
 
 protected:
 	virtual void BeginPlay() override;
