@@ -3,6 +3,8 @@
 
 #include "MGInteraction_Input.h"
 #include "../Component/MGSpawnComponent.h"
+#include "../UI/MGInteractionWidget.h"
+#include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
 
@@ -16,6 +18,10 @@ AMGInteraction_Input::AMGInteraction_Input()
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AMGInteraction_Input::OnCollisionEnd);
 
 	RootComponent = TriggerBox;
+
+	InteractionWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionWidget"));
+	InteractionWidget->SetupAttachment(RootComponent);
+	InteractionWidget->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 void AMGInteraction_Input::SetSpawnComponent(UMGSpawnComponent* Component)
@@ -24,9 +30,24 @@ void AMGInteraction_Input::SetSpawnComponent(UMGSpawnComponent* Component)
 		SpawnComponent = Component;
 }
 
+void AMGInteraction_Input::SetProgressing(bool bEnable)
+{
+	IsPlayerPushed = bEnable;
+
+	if (!bEnable && !InteractionPtr->IsCompleted())
+	{
+		InputTimeAcc = 0.0f;
+		InteractionPtr->SetProgress(0.0f);
+	}
+}
+
 void AMGInteraction_Input::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InteractionWidget->SetWidgetClass(InteractionWidgetClass);
+
+	InteractionPtr = Cast<UMGInteractionWidget>(InteractionWidget->GetWidget());
 
 	Gauge = 0.0f;
 	InputTime = 3.0f;
@@ -45,9 +66,11 @@ void AMGInteraction_Input::Tick(float DeltaTime)
 		{
 			if (OutActor->ActorHasTag(TEXT("Player")))
 			{
-				InputTimeAcc += DeltaTime;
-				
-				UE_LOG(LogTemp, Error, TEXT("Charging.... %d"), InputTimeAcc);
+				if (IsPlayerPushed)
+				{
+					InputTimeAcc += DeltaTime;
+					InteractionPtr->SetProgress(InputTimeAcc / InputTime);
+				}
 
 				if (InputTimeAcc >= InputTime)
 				{
@@ -103,6 +126,11 @@ void AMGInteraction_Input::OnCollisionEnter(UPrimitiveComponent* _pComponent, AA
 		return;
 	}
 
+	if (InteractionPtr)
+	{
+		InteractionPtr->SetPlayerOn(true);
+	}
+
 	IsEntered = true;
 }
 
@@ -117,5 +145,12 @@ void AMGInteraction_Input::OnCollisionEnd(UPrimitiveComponent* _pComponent, AAct
 	}
 
 	IsEntered = false;
+	IsPlayerPushed = false;
+
+	if (InteractionPtr)
+	{
+		InteractionPtr->SetPlayerOn(false);
+	}
+
 	InputTimeAcc = 0.0f;
 }

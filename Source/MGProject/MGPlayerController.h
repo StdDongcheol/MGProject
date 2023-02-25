@@ -87,4 +87,6 @@ private:
 	void QButtonRelease();
 	void EButtonPress();
 	void EButtonRelease();
+	void FButtonPress();
+	void FButtonRelease();
 };

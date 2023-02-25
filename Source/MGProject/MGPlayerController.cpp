@@ -3,6 +3,8 @@
 #include "MGPlayerController.h"
 #include "MGFlag.h"
 #include "MGBlueprintFunctionLibrary.h"
+#include "Interaction/MGInteraction_Input.h"
+#include "Components/CapsuleComponent.h"
 #include "UI/MGAimWidget.h"
 #include "UI/MGNormalAimWidget.h"
 #include "UI/MGPlayerWidget.h"
@@ -30,6 +32,8 @@ void AMGPlayerController::InitInputSystem()
 	InputComponent->BindAction(FName("SkillQ"), EInputEvent::IE_Released, this, &AMGPlayerController::QButtonRelease);
 	InputComponent->BindAction(FName("SkillE"), EInputEvent::IE_Pressed, this, &AMGPlayerController::EButtonPress);
 	InputComponent->BindAction(FName("SkillE"), EInputEvent::IE_Released, this, &AMGPlayerController::EButtonRelease);
+	InputComponent->BindAction(FName("Interaction"), EInputEvent::IE_Pressed, this, &AMGPlayerController::FButtonPress);
+	InputComponent->BindAction(FName("Interaction"), EInputEvent::IE_Released, this, &AMGPlayerController::FButtonRelease);
 }
 
 void AMGPlayerController::BeginPlay()	
@@ -463,4 +467,60 @@ void AMGPlayerController::EButtonRelease()
 	default:
 		break;
 	}
+}
+
+void AMGPlayerController::FButtonPress()
+{
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
+		return;
+
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
+
+	if (bCheck)
+	{
+		return;
+	}
+
+	TArray<TObjectPtr<AActor>> ActorsArray;
+
+	UCapsuleComponent* Component = PlayerCharacter->FindComponentByClass<UCapsuleComponent>();
+	Component->GetOverlappingActors(ActorsArray, AMGInteraction_Input::StaticClass());
+
+	if (ActorsArray.IsEmpty())
+		return;
+
+	AMGInteraction_Input* InteractionInput = Cast<AMGInteraction_Input>(ActorsArray[0]);
+
+	if (InteractionInput)
+	{
+		InteractionInput->SetProgressing(true);
+	}
+}
+
+void AMGPlayerController::FButtonRelease()
+{
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
+		return;
+
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
+
+	if (bCheck)
+	{
+		return;
+	}
+
+	TArray<TObjectPtr<AActor>> ActorsArray;
+
+	UCapsuleComponent* Component = PlayerCharacter->FindComponentByClass<UCapsuleComponent>();
+	Component->GetOverlappingActors(ActorsArray, AMGInteraction_Input::StaticClass());
+
+	if (ActorsArray.IsEmpty())
+		return;
+
+	AMGInteraction_Input* InteractionInput = Cast<AMGInteraction_Input>(ActorsArray[0]);
+
+	if (!InteractionInput)
+		return;
+
+	InteractionInput->SetProgressing(false);
 }
