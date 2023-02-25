@@ -9,8 +9,6 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AMGPlayerDrone::AMGPlayerDrone() :
-	IsHealActivated(false),
-	IsActivated(false),
 	ActivatedTime(10.0f),
 	HealTime(0.2f),
 	HealTimeAcc(0.0f)
@@ -52,7 +50,8 @@ void AMGPlayerDrone::BeginPlay()
 	Super::BeginPlay();
 
 	SetLifeSpan(0.0f);
-
+	IsHealActivated = false;
+	IsActivated = false;
 }
 
 void AMGPlayerDrone::Tick(float DeltaTime)

@@ -42,7 +42,6 @@ private:
 
 public:
 	void SetHPBar(float HP);
-	void SetMissileBar(float HP);
 
 protected:
 	virtual void NativeOnInitialized() override;
