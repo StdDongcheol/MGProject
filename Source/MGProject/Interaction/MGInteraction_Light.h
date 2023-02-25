@@ -24,7 +24,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool	LightOnAtPlay;
 	UPROPERTY(EditAnywhere)
-	bool	IsActivateLightOn;
+	bool	SetLightAfterInteraction;
+	UPROPERTY(EditAnywhere)
+	bool	ChangeColorAfterInteraction;
+	UPROPERTY(EditAnywhere)
+	FColor	LightColorAfterInteraction;
 
 protected:
 	virtual void BeginPlay() override;

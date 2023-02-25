@@ -34,7 +34,10 @@ void AMGInteraction_Light::InteractionActivate()
 
 	for (ULightComponent* LightComp : LightComponentArray)
 	{
-		LightComp->SetVisibility(IsActivateLightOn);
+		LightComp->SetVisibility(SetLightAfterInteraction);
+
+		if (ChangeColorAfterInteraction)
+			LightComp->SetLightColor(LightColorAfterInteraction.ReinterpretAsLinear());
 	}
 }
 
@@ -44,6 +47,6 @@ void AMGInteraction_Light::InteractionComplete()
 
 	for (ULightComponent* LightComp : LightComponentArray)
 	{
-		LightComp->SetVisibility(!IsActivateLightOn);
+		LightComp->SetVisibility(!SetLightAfterInteraction);
 	}
 }
