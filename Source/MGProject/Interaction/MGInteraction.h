@@ -22,6 +22,9 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Interaction TagName", meta = (AllowPrivateAccess = "true"))
 	FName	InteractionTag;
+	
+	UPROPERTY(EditAnywhere, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class USoundBase> ActivateSound;
 
 protected:
 	bool	IsDelay;

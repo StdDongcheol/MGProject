@@ -2,7 +2,7 @@
 
 
 #include "MGInteraction.h"
-
+#include "Kismet/GameplayStatics.h"
 
 AMGInteraction::AMGInteraction()
 {
@@ -44,6 +44,9 @@ void AMGInteraction::Tick(float DeltaTime)
 void AMGInteraction::InteractionActivate()
 {
 	IsActivate = true;
+
+	if (ActivateSound)
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ActivateSound, GetActorLocation());
 
 	return;
 }
