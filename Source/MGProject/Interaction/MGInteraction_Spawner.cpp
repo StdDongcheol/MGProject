@@ -45,15 +45,7 @@ void AMGInteraction_Spawner::Spawn()
 
 	FTransform SpawnTransform = FTransform(GetActorLocation());
 
-	if (MonsterArray[Index]->IsChildOf(AMGWarrior::StaticClass()))
-	{
-		GetWorld()->SpawnActor<AMGWarrior>(MonsterArray[Index], SpawnTransform);
-	}
-
-	else if (MonsterArray[Index]->IsChildOf(AMGSoldier::StaticClass()))
-	{
-		GetWorld()->SpawnActor<AMGSoldier>(MonsterArray[Index], SpawnTransform);
-	}
+	GetWorld()->SpawnActor<AMGEnemyCharacter>(MonsterArray[Index], SpawnTransform);	
 }
 
 void AMGInteraction_Spawner::InteractionActivate()
