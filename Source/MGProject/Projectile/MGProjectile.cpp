@@ -20,6 +20,7 @@ AMGProjectile::AMGProjectile() :
 
 	ProjectileComponent = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMovement"));
 	ProjectileComponent->SetUpdatedComponent(RootComponent);
+	ProjectileComponent->ProjectileGravityScale = 0.0f;
 }
 
 void AMGProjectile::BeginPlay()

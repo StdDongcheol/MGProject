@@ -54,7 +54,22 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 			if (!Bullet || !Bullet->IsValidLowLevel())
 				return;
 
-			Bullet->SetBulletProfile(TEXT("PlayerAttack"));
+			Bullet->SetBulletProfile(TEXT("PlayerAttack"), 2500.0f, PlayerCharacter->GetMaxAttack());
+			break;
+		}
+		case EPlayer_BodyAction::RapidFire:
+		{			
+			FVector HitPos = PlayerCharacter->GetTrace();
+
+			FVector Dir = HitPos - SpawnPosition;
+			FRotator Rot = Dir.Rotation();
+
+			AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
+
+			if (!Bullet || !Bullet->IsValidLowLevel())
+				return;
+
+			Bullet->SetBulletProfile(TEXT("PlayerAttack"), 5000.0f, PlayerCharacter->GetMinAttack());
 			break;
 		}
 		case EPlayer_BodyAction::QFire:
@@ -127,7 +142,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 				if (!Bullet || !Bullet->IsValidLowLevel())
 					return;
 
-				Bullet->SetBulletProfile(TEXT("EnemyAttack"));
+				Bullet->SetBulletProfile(TEXT("EnemyAttack"), 3500.0f, EnemyCharacter->GetMinAttack());
 			}
 		}
 	}

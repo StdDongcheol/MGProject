@@ -26,9 +26,13 @@ void AMGBullet::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AMGBullet::SetBulletProfile(FName _Name)
+void AMGBullet::SetBulletProfile(FName _Name, float _Speed, float _Damage)
 {
 	Mesh->SetCollisionProfileName(_Name);
+	Speed = _Speed;
+	Damage = _Damage;
+
+	ProjectileComponent->Velocity = GetActorForwardVector() * Speed;
 
 	if (_Name == "PlayerAttack")
 	{
@@ -70,7 +74,7 @@ void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOth
 
 	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
 
-	OtherCharacter->SetDamage(-10.0f, IsWeakPoint);
+	OtherCharacter->SetDamage(-Damage, IsWeakPoint);
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
 
 	Destroy();

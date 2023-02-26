@@ -24,7 +24,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	void SetBulletProfile(FName _Name);
+	void SetBulletProfile(FName _Name, float _Speed, float _Damage);
 
 protected:
 	UFUNCTION()
