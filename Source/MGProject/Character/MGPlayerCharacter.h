@@ -21,18 +21,6 @@ class MGPROJECT_API AMGPlayerCharacter : public AMGCharacter
 public:
 	AMGPlayerCharacter();
 
-private:
-	TArray<AActor*> TargetArray;
-	FVector3d		DronePos;
-	int				MissileMaxCount;
-	int				MissileCount;
-	float			MissileChargeTime;
-	float			MissileChargeTimeAcc;
-	float			DroneChargeTime;
-	float			DroneChargeTimeAcc;
-	bool			IsDroneDeployable;
-
-
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class USpringArmComponent* ArmSpring;
@@ -48,12 +36,18 @@ protected:
 	
 	class UCameraComponent* Camera;
 
-protected:
-	virtual void BeginPlay() override;
+private:
+	TArray<AActor*> TargetArray;
+	FVector3d		DronePos;
+	int				MissileMaxCount;
+	int				MissileCount;
+	float			MissileChargeTime;
+	float			MissileChargeTimeAcc;
+	float			DroneChargeTime;
+	float			DroneChargeTimeAcc;
+	bool			IsDroneDeployable;
+	bool			ChargeFireMode;
 
-public:
-	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
 	USpringArmComponent* GetSpringArmComponent() const
@@ -102,14 +96,14 @@ public:
 		return MissileChargeTimeAcc;
 	}
 
-	void UseDroneReady()
-	{
-		IsDroneDeployable = false;
-	}
-	
 	bool IsDroneReady() const
 	{
 		return IsDroneDeployable;
+	}
+	
+	bool IsChargeFireMode() const
+	{
+		return ChargeFireMode;
 	}
 
 	ECharacter_Status GetStatus() const
@@ -118,10 +112,34 @@ public:
 	}
 
 public:
+	void UseDroneReady()
+	{
+		IsDroneDeployable = false;
+	}
+
+	void SetChargeFireMode(bool bEnable)
+	{
+		ChargeFireMode = bEnable;
+	}
+
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+public:
 	int GetMissileCount() const;
 	int GetMissileCount(int UsingCount);
 	USceneComponent* GetTarget() const;
 	FVector GetTrace(FVector Pos = FVector::ZeroVector, float TraceDistance = 10000.0f) const;
+	void SetQSkillCollision(bool bEnable);
+	void QFireEnd();
+
+private:
+	void ESkillTrace();
 
 public:
 	virtual void AdjustHP(float _HP);
@@ -129,13 +147,6 @@ public:
 protected:
 	virtual void StateUpdate(float DeltaTime) override;
 	virtual void ActionStateUpdate(float DeltaTime);
-
-private:
-	void ESkillTrace();
-
-public:
-	void SetQSkillCollision(bool bEnable);
-	void QFireEnd();
 
 protected:
 	UFUNCTION()
