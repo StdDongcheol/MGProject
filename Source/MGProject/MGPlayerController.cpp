@@ -24,8 +24,9 @@ void AMGPlayerController::InitInputSystem()
 	InputComponent->BindAxis(FName("MoveRight"), this, &AMGPlayerController::MoveRight);
 	InputComponent->BindAxis(FName("MouseX"), this, &AMGPlayerController::MouseXMove);
 	InputComponent->BindAxis(FName("MouseY"), this, &AMGPlayerController::MouseYMove);
+	InputComponent->BindAxis(FName("LeftMouseButton"), this, &AMGPlayerController::LeftMouseButtonAxis);
 	
-	InputComponent->BindAction(FName("LeftMouseButton"), EInputEvent::IE_Pressed, this, &AMGPlayerController::LeftMouseButtonClick);
+	//InputComponent->BindAction(FName("LeftMouseButton"), EInputEvent::IE_Pressed, this, &AMGPlayerController::LeftMouseButtonClick);
 	InputComponent->BindAction(FName("RightMouseButton"), EInputEvent::IE_Pressed, this, &AMGPlayerController::RightMouseButtonClick);
 	InputComponent->BindAction(FName("RightMouseButton"), EInputEvent::IE_Released, this, &AMGPlayerController::RightMouseButtonRelease);
 	InputComponent->BindAction(FName("SkillQ"), EInputEvent::IE_Pressed, this, &AMGPlayerController::QButtonPress);
@@ -34,6 +35,7 @@ void AMGPlayerController::InitInputSystem()
 	InputComponent->BindAction(FName("SkillE"), EInputEvent::IE_Released, this, &AMGPlayerController::EButtonRelease);
 	InputComponent->BindAction(FName("Interaction"), EInputEvent::IE_Pressed, this, &AMGPlayerController::FButtonPress);
 	InputComponent->BindAction(FName("Interaction"), EInputEvent::IE_Released, this, &AMGPlayerController::FButtonRelease);
+	InputComponent->BindAction(FName("SetFireMode"), EInputEvent::IE_Pressed, this, &AMGPlayerController::RButtonPress);
 }
 
 void AMGPlayerController::BeginPlay()	
@@ -234,15 +236,15 @@ void AMGPlayerController::LeftMouseButtonClick()
 
 	switch (ActionState)
 	{
-	case EPlayer_ActionState::Normal:
 	case EPlayer_ActionState::Aiming:
 	{
 		PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetBodyActionState(EPlayer_BodyAction::NormalFire);
-
+		
 		PlayerCharacter->GetTrace();
 		break;
 	}
 
+	case EPlayer_ActionState::Normal:
 	case EPlayer_ActionState::QAiming:
 	case EPlayer_ActionState::EAiming:
 	default:
@@ -560,4 +562,21 @@ void AMGPlayerController::FButtonRelease()
 		return;
 
 	InteractionInput->SetProgressing(false);
+}
+
+void AMGPlayerController::RButtonPress()
+{
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
+		return;
+
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
+
+	if (bCheck)
+	{
+		return;
+	}
+
+	bool CurrentFireMode = PlayerCharacter->IsChargeFireMode();
+
+	PlayerCharacter->SetChargeFireMode(!CurrentFireMode);
 }

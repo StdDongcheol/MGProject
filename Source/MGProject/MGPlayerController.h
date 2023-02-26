@@ -90,4 +90,5 @@ private:
 	void EButtonRelease();
 	void FButtonPress();
 	void FButtonRelease();
+	void RButtonPress();
 };
