@@ -80,6 +80,7 @@ private:
 	void MoveBack(float Value);
 	void MouseXMove(float Value);
 	void MouseYMove(float Value);
+	void LeftMouseButtonAxis(float Value);
 	void LeftMouseButtonClick();
 	void RightMouseButtonClick();
 	void RightMouseButtonRelease();

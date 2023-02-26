@@ -184,6 +184,43 @@ void AMGPlayerController::MouseYMove(float Value)
 	PlayerCharacter->GetSpringArmComponent()->SetRelativeRotation(Rotation);
 }
 
+void AMGPlayerController::LeftMouseButtonAxis(float Value)
+{
+	if (Value == 0.0f)
+		return;
+
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
+		return;
+
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
+
+	if (bCheck)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Error, TEXT("Clicking.."));
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
+
+	switch (ActionState)
+	{
+	case EPlayer_ActionState::Aiming:
+	{
+		if (PlayerCharacter->IsChargeFireMode())
+			PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetBodyActionState(EPlayer_BodyAction::NormalFire);
+		else
+			PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetBodyActionState(EPlayer_BodyAction::RapidFire);
+
+		break;
+	}
+	case EPlayer_ActionState::Normal:
+	case EPlayer_ActionState::QAiming:
+	case EPlayer_ActionState::EAiming:
+	default:
+		break;
+	}
+}
+
 void AMGPlayerController::LeftMouseButtonClick()
 {
 	bool bCheck = (bool)(PlayerCharacter->GetStatus());
