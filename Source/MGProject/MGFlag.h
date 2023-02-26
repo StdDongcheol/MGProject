@@ -32,6 +32,7 @@ enum class EPlayer_BodyAction : uint8
 	None,
 	Ready,
 	NormalFire,
+	RapidFire,
 	QFire,
 	EThrowing
 };
