@@ -23,7 +23,7 @@ protected:
 	class UBoxComponent* DamageBoxRight;
 
 protected:
-	void BeginPlay() override;
+	virtual void BeginPlay() override;
 
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData() override;
