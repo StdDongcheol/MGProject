@@ -21,6 +21,10 @@ void AMGCharacter::AdjustHP(float _HP)
 	if (HP <= 0.0f)
 	{
 		AnimInstance->SetDeath(true);
+
+		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+		CapsuleComponent->SetCollisionProfileName(TEXT("Ragdoll"));
+		SetLifeSpan(5.0f);
 		return;
 	}
 
@@ -37,7 +41,7 @@ void AMGCharacter::SetDamage(float _Damage, bool _IsWeakpoint)
 
 AActor* AMGCharacter::FindTarget(FName _TargetTag, double _Range)
 {
-	TArray<AActor*> ActorsInLevel;
+	TArray<TObjectPtr<AActor>> ActorsInLevel;
 
 	UGameplayStatics::GetAllActorsWithTag(UMGBlueprintFunctionLibrary::GetCurrentWorld(), _TargetTag, ActorsInLevel);
 
