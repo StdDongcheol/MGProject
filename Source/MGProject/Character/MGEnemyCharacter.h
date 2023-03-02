@@ -23,16 +23,19 @@ protected:
 	class UWidgetComponent* TargetingWidgetComponent;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty")
 	class UBehaviorTree* BehaviorTree;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty")
 	class UBlackboardData* BlackboardData;
 
 	class UMGEnemyWidget* EnemyWidget;
 
 protected:
 	const struct FMGEnemyStatusDataTable* EnemyData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty")
+	double	AppearanceTime;
 
 public:
 	const FMGEnemyStatusDataTable* GetEnemyData()
@@ -44,6 +47,7 @@ protected:
 	bool	IsTargetLock;
 	double	DetectRange;
 	double	AttackRange;
+	double	AppearanceTimeAcc;
 
 public:
 	bool IsTargetLocked() const
@@ -81,6 +85,9 @@ public:
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData();
 	virtual void SetDamage(float _Damage, bool _IsWeakpoint = false);
+
+private:
+	void SetAppearance(float _DeltaTime);
 
 protected:
 	virtual void BeginPlay() override;

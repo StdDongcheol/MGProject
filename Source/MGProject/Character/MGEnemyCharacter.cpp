@@ -65,7 +65,18 @@ void AMGEnemyCharacter::SetDamage(float _Damage, bool _IsWeakpoint)
 	Super::SetDamage(_Damage, _IsWeakpoint);
 
 	if (HP <= 0.0f)
+	{
 		GetAnimInst<UMGEnemyAnimInstance>()->SetAIAnimState(EAIAnimState::Death);
+	}
+}
+
+void AMGEnemyCharacter::SetAppearance(float _DeltaTime)
+{
+	AppearanceTimeAcc -= _DeltaTime;
+
+	const float AppearanceValue = AppearanceTimeAcc / AppearanceTime;
+	
+	GetMesh()->SetScalarParameterValueOnMaterials(TEXT("Appearance"), AppearanceValue);
 }
 
 void AMGEnemyCharacter::BeginPlay()
@@ -75,6 +86,7 @@ void AMGEnemyCharacter::BeginPlay()
 	EnemyWidget = Cast<UMGEnemyWidget>(TargetingWidgetComponent->GetWidget());
 	
 	TargetingWidgetComponent->SetVisibility(false);
+	AppearanceTimeAcc = AppearanceTime;
 }
 
 void AMGEnemyCharacter::Tick(float DeltaTime)
@@ -83,4 +95,9 @@ void AMGEnemyCharacter::Tick(float DeltaTime)
 
 	if (EnemyWidget)
 		IsTargetLock = EnemyWidget->IsTargetLocked();
+
+	if (GetAnimInst()->IsDead())
+	{
+		SetAppearance(DeltaTime);
+	}
 }
