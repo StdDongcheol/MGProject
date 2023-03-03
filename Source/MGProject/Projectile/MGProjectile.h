@@ -25,7 +25,7 @@ protected:
 	class UProjectileMovementComponent* ProjectileComponent;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> HitEffect;
+	TObjectPtr<class UParticleSystem> HitEffect;
 
 protected:
 	EObject_Force Force;

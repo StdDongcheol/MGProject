@@ -13,6 +13,7 @@ AMGPlayerDrone::AMGPlayerDrone() :
 	HealTime(0.2f),
 	HealTimeAcc(0.0f)
 {
+	RootComponent = Mesh;
 	Mesh->SetCollisionProfileName(TEXT("PlayerAttack"));
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerDrone::OnCollisionEnter);
 
@@ -41,6 +42,9 @@ AMGPlayerDrone::AMGPlayerDrone() :
 	HealSphere->SetGenerateOverlapEvents(false);
 	HealSphere->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerDrone::OnHealCollisionEnter);
 	HealSphere->OnComponentEndOverlap.AddDynamic(this, &AMGPlayerDrone::OnHealCollisionEnd);
+
+	ParticleLegacy->SetupAttachment(RootComponent);
+	ProjectileComponent->SetUpdatedComponent(RootComponent);
 
 	ProjectileComponent->Velocity = FVector(1200.0f, 0.0f, 0.0f);
 }

@@ -8,16 +8,22 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AMGMissile::AMGMissile() 
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	RootComponent = Mesh;
 
 	DamageCollider = CreateDefaultSubobject<USphereComponent>(TEXT("DamageCollider"));
 	DamageCollider->SetupAttachment(RootComponent);
 	DamageCollider->SetNotifyRigidBodyCollision(true);
 	DamageCollider->SetRelativeLocation(FVector(30.0f, 0.0f, 0.0f));
 	DamageCollider->OnComponentBeginOverlap.AddDynamic(this, &AMGMissile::OnCollisionEnter);
+
+	ParticleLegacy->SetupAttachment(RootComponent);
+	ProjectileComponent->SetUpdatedComponent(RootComponent);
 }
 
 void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetComponent,
@@ -32,16 +38,19 @@ void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetCompone
 
 	if (_CollisionName == FName("PlayerAttack"))
 	{
+		SetForce(EObject_Force::Player);
+
 		ProjectileComponent->InitialSpeed = 1000.f;
 		ProjectileComponent->MaxSpeed = 1500.f;
 		ProjectileComponent->HomingAccelerationMagnitude = 35000.f;
-
 		ProjectileComponent->HomingTargetComponent = target;
 		ProjectileComponent->bIsHomingProjectile = true;
 	}
 
 	else if (_CollisionName == FName("EnemyAttack"))
 	{
+		SetForce(EObject_Force::Enemy);
+
 		ProjectileComponent->InitialSpeed = 500.f;
 		ProjectileComponent->MaxSpeed = 5000.f;
 		ProjectileComponent->HomingAccelerationMagnitude = 25000.f;
@@ -95,16 +104,30 @@ void AMGMissile::Tick(float DeltaTime)
 	}
 }
 
-void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
+void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, 
+	UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
 {
 	FName OtherProfile = _OtherComp->GetCollisionProfileName();
 
-	if (OtherProfile == "PlayerAttack" || OtherProfile == "EnemyAttack")
-		return;
+	switch (Force)
+	{
+	case EObject_Force::Player:
+	{
+		if (OtherProfile == "PlayerAttack" || 
+			OtherProfile == "Player")
+			return;
+		break;
+	}
+	case EObject_Force::Enemy:
+		if (OtherProfile == "EnemyAttack" || 
+			OtherProfile == "Enemy")
+			return;
+		break;
+	}
 
-	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(HitEffect, GetActorLocation(), GetActorRotation());
+	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(GetActorLocation(), GetActorRotation());
 	Effect->SetStatus(3.0f);
-	//
+
 	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
 	
 	if (!OtherCharacter || !OtherCharacter->IsValidLowLevel())

@@ -12,8 +12,12 @@
 AMGBullet::AMGBullet()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
+
+	RootComponent = Mesh;
 	Mesh->OnComponentBeginOverlap.AddDynamic(this, &AMGBullet::OnCollisionEnter);
+
+	ParticleLegacy->SetupAttachment(RootComponent);
+	ProjectileComponent->SetUpdatedComponent(RootComponent);
 }
 
 void AMGBullet::BeginPlay()
@@ -39,7 +43,10 @@ void AMGBullet::SetBulletProfile(FName _Name, float _Speed, float _Damage)
 		const FMGBulletDataTable* BulletTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetBulletData(TEXT("PlayerBullet"));
 
 		if (BulletTable)
+		{
 			ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
+			HitEffect = BulletTable->HitEffect;
+		}
 	}
 
 	else if (_Name == "EnemyAttack")
@@ -47,7 +54,10 @@ void AMGBullet::SetBulletProfile(FName _Name, float _Speed, float _Damage)
 		const FMGBulletDataTable* BulletTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetBulletData(TEXT("EnemyBullet"));
 
 		if (BulletTable)
+		{
 			ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
+			HitEffect = BulletTable->HitEffect;
+		}
 	}
 }
 
@@ -61,7 +71,9 @@ void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOth
 
 	ProjectileComponent->StopSimulating(_Hit);
 	
-	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(HitEffect, GetActorLocation(), GetActorRotation());
+	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(GetActorLocation(), GetActorRotation());
+	Effect->SetActorScale3D(FVector(3.0f, 3.0f, 3.0f));
+	Effect->SetParticle(HitEffect);
 	Effect->SetStatus(3.0f);
 
 	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);

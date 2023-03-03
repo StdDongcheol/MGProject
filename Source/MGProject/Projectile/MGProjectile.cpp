@@ -13,13 +13,10 @@ AMGProjectile::AMGProjectile() :
  	PrimaryActorTick.bCanEverTick = true;
 	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Mesh"));
-	RootComponent = Mesh;
 
 	ParticleLegacy = CreateDefaultSubobject<UParticleSystemComponent>(FName("Particle"));
-	ParticleLegacy->SetupAttachment(Mesh);
 
 	ProjectileComponent = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMovement"));
-	ProjectileComponent->SetUpdatedComponent(RootComponent);
 	ProjectileComponent->ProjectileGravityScale = 0.0f;
 }
 
