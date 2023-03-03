@@ -24,7 +24,7 @@ EBTNodeResult::Type UMGTaskNode_Idle::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
     if (Target)
     {
-        return EBTNodeResult::Failed;
+        return EBTNodeResult::Succeeded;
     }
 
     return EBTNodeResult::InProgress;

@@ -18,7 +18,16 @@ bool UMGDecorator_CheckAIStatus::CalculateRawConditionValue(UBehaviorTreeCompone
 	AMGEnemyCharacter* Character = Cast<AMGEnemyCharacter>(Controller->GetPawn());
 	UMGEnemyAnimInstance* AnimInst = Character->GetAnimInst<UMGEnemyAnimInstance>();
 
-	if (CheckStatus & AnimInst->GetAIAnimState())
+	bool bCheck = (bool)(AnimInst->GetAIAnimState());
+
+	// Is DeathState
+	if (CheckStatus == EAIAnimState::Death)
+	{
+		if (!bCheck)
+			return true;
+	}
+
+	else if (CheckStatus & AnimInst->GetAIAnimState())
 		return true;
 
 	return false;

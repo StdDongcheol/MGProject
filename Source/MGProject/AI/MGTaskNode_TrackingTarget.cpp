@@ -37,11 +37,13 @@ EBTNodeResult::Type UMGTaskNode_TrackingTarget::ExecuteTask(UBehaviorTreeCompone
 
 		// Transition to Attack_TaskNode
 		if (AttackRange > Dist)
-			return EBTNodeResult::Failed;
+			return EBTNodeResult::Succeeded;
 		
 		else
 		{
-			if (EnemyCharacter->GetCurrentHP() > 0.0f)
+			// Is not death && Is character status not damaged
+			if (EnemyCharacter->GetCurrentHP() > 0.0f && 
+				!(ECharacter_Status::Damaged & AnimInst->GetStatus()))
 			{
 				AnimInst->SetCurrentAttacking(false);
 
@@ -50,7 +52,7 @@ EBTNodeResult::Type UMGTaskNode_TrackingTarget::ExecuteTask(UBehaviorTreeCompone
 		}
 	}
 
-	return EBTNodeResult::Succeeded;
+	return EBTNodeResult::Failed;
 }
 
 void UMGTaskNode_TrackingTarget::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)

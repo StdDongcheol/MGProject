@@ -32,7 +32,7 @@ EBTNodeResult::Type UMGTaskNode_Attack::ExecuteTask(UBehaviorTreeComponent& Owne
 		AnimInst->SetCurrentAttacking(false);
 		AttackAnimTimeAcc = 0.0f;
 
-		return EBTNodeResult::Succeeded;
+		return EBTNodeResult::Failed;
 	}
 
 	int32 AttStateIndex = AnimInst->GetInstanceAssetPlayerIndex(TEXT("Locomotion"), TEXT("Attack"));
@@ -61,7 +61,8 @@ EBTNodeResult::Type UMGTaskNode_Attack::ExecuteTask(UBehaviorTreeComponent& Owne
 			EnemyCharacter->SetLookAt(ActorTarget);
 		}
 
-		if (EnemyCharacter->GetCurrentHP() > 0.0f)
+		if (EnemyCharacter->GetCurrentHP() > 0.0f && 
+			!(ECharacter_Status::Damaged & AnimInst->GetStatus()))
 			return EBTNodeResult::Succeeded;
 		
 	}
