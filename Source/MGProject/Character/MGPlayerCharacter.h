@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MGCharacter.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "MGPlayerCharacter.generated.h"
@@ -34,7 +35,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UParticleSystemComponent* DroneDeployParticle;
 	
-	class UCameraComponent* Camera;
+	TObjectPtr<UCameraComponent> Camera;
 
 private:
 	TArray<AActor*> TargetArray;
@@ -110,18 +111,17 @@ public:
 	{
 		return AnimInstance->GetStatus();
 	}
+	
+	UCameraComponent* GetCameraComponent() const
+	{
+		return Camera;
+	}
 
 public:
 	void UseDroneReady()
 	{
 		IsDroneDeployable = false;
 	}
-
-	void SetChargeFireMode(bool bEnable)
-	{
-		ChargeFireMode = bEnable;
-	}
-
 
 protected:
 	virtual void BeginPlay() override;
@@ -137,6 +137,7 @@ public:
 	FVector GetTrace(FVector Pos = FVector::ZeroVector, float TraceDistance = 10000.0f) const;
 	void SetQSkillCollision(bool bEnable);
 	void QFireEnd();
+	void SetChargeFireMode(bool bEnable);
 
 private:
 	void ESkillTrace();

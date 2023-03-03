@@ -48,7 +48,7 @@ void AMGPlayerCharacter::BeginPlay()
 	Camera = FindComponentByClass<UCameraComponent>();
 	DroneDeployParticle = FindComponentByClass<UParticleSystemComponent>();
 
-	BoxCollision->SetBoxExtent(FVector(1024.0f, 500.0f, 128.0f));
+	BoxCollision->SetBoxExtent(FVector(2000.0f, 500.0f, 128.0f));
 	BoxCollision->AddRelativeLocation(FVector(-1024.0f, 0.0f, 0.0f));
 
 	DroneDeployParticle->SetVisibility(false);
@@ -123,7 +123,7 @@ FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance) const
 
 		bHit = GetWorld()->LineTraceSingleByChannel(Result, CameraPos, CameraForwardPos, ECollisionChannel::ECC_WorldDynamic);
 		
-		// Trace啊 Hit老 版快
+		// Hit老 版快
 		if (bHit)
 		{
 			// Debugging log print start.
@@ -296,6 +296,13 @@ void AMGPlayerCharacter::QFireEnd()
 	ArmSpring->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
 
 	TargetArray.Empty();
+}
+
+void AMGPlayerCharacter::SetChargeFireMode(bool bEnable)
+{
+	ChargeFireMode = bEnable;
+
+	GetAnimInst<UMGPlayerAnimInstance>()->SetChargeMode(bEnable);
 }
 
 void AMGPlayerCharacter::QSkillOnCollisionEnter(UPrimitiveComponent* _pComponent, 
