@@ -19,6 +19,9 @@ public:
 
 private:
 	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool	IsChargeMode;
+
+	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool	IsQFire;
 
 	UPROPERTY(Category = "PlayerState", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -59,6 +62,11 @@ public:
 		CharacterAimRotation = Rot;
 	}
 
+	void SetChargeMode(bool bMode)
+	{
+		IsChargeMode = bMode;
+	}
+
 	void SetQFire(bool Fire)
 	{
 		IsQFire = Fire;
@@ -84,6 +92,7 @@ public:
 		QAnimLoopCount += Count;
 	}
 
+public:
 	FRotator GetAimRot() const
 	{
 		return CharacterAimRotation;
@@ -97,6 +106,11 @@ public:
 	EPlayer_BodyAction GetBodyActionState() const
 	{
 		return BodyActionState;
+	}
+
+	bool IsChargeFire() const
+	{
+		return IsChargeMode;
 	}
 
 	int GetCurrentQCount() const

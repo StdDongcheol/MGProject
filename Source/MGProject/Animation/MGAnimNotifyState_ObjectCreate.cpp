@@ -10,6 +10,7 @@
 #include "../Character/MGEnemyCharacter.h"
 #include "../Projectile/MGProjectile.h"
 #include "../Projectile/MGBullet.h"
+#include "../Projectile/MGLaser.h"
 #include "../Projectile/MGMissile.h"
 #include "../Projectile/MGPlayerDrone.h"
 
@@ -49,12 +50,12 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 			FVector Dir = HitPos - SpawnPosition;
 			FRotator Rot = Dir.Rotation();
 
-			AMGBullet* Bullet = MeshComp->GetWorld()->SpawnActor<AMGBullet>(TargetActor, SpawnPosition, Rot);
+			AMGLaser* Laser = MeshComp->GetWorld()->SpawnActor<AMGLaser>(TargetActor, SpawnPosition, Rot);
 
-			if (!Bullet || !Bullet->IsValidLowLevel())
+			if (!Laser || !Laser->IsValidLowLevel())
 				return;
 
-			Bullet->SetBulletProfile(TEXT("PlayerAttack"), 2500.0f, PlayerCharacter->GetMaxAttack());
+			Laser->SetProfile(TEXT("PlayerAttack"), PlayerCharacter->GetMaxAttack());
 			break;
 		}
 		case EPlayer_BodyAction::RapidFire:

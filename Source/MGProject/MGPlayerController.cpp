@@ -576,7 +576,26 @@ void AMGPlayerController::RButtonPress()
 		return;
 	}
 
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
+
+	if (ActionState == EPlayer_ActionState::Aiming)
+	{
 	bool CurrentFireMode = PlayerCharacter->IsChargeFireMode();
 
 	PlayerCharacter->SetChargeFireMode(!CurrentFireMode);
+
+		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
+
+		if (CurrentFireMode)
+		{
+			ArmComponent->TargetArmLength = 200.0f;
+			ArmComponent->SocketOffset = FVector(10.0f, 90.0f, 20.0f);
+		}
+
+		else
+		{
+			ArmComponent->TargetArmLength = 100.0f;
+			ArmComponent->SocketOffset = FVector(0.0f, 60.0f, 10.0f);
+		}
+	}
 }
