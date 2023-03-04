@@ -45,8 +45,8 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 		{
 		case EPlayer_BodyAction::NormalFire:
 		{
-			FVector HitPos = PlayerCharacter->GetTrace();
-
+			FVector HitPos = PlayerCharacter->GetTrace(FVector::ZeroVector, 2000.0f, false);
+			
 			FVector Dir = HitPos - SpawnPosition;
 			FRotator Rot = Dir.Rotation();
 
