@@ -40,12 +40,16 @@ void AMGLaser::BeginPlay()
 		HitEffect = BulletTable->HitEffect;
 	}
 
-	SetLifeSpan(0.3f);
+	SetLifeSpan(1.0f);
+	CollisionTime = 0.3f;
+	CollisionTimeAcc = 0.0f;
 }
 
 void AMGLaser::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	CollisionTimeAcc += DeltaTime;
 }
 
 void AMGLaser::SetProfile(FName _Name, float _Damage)
@@ -56,13 +60,16 @@ void AMGLaser::SetProfile(FName _Name, float _Damage)
 void AMGLaser::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor,
 	UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
 {
+	if (CollisionTimeAcc >= CollisionTime)
+		return;
+
 	FName OtherProfile = _OtherComp->GetCollisionProfileName();
 
 	if (OtherProfile == "PlayerAttack" || 
 		OtherProfile == "EnemyAttack" || 
 		OtherProfile == "WorldObject")
 		return;
-
+	
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(_pOtherActor->GetActorLocation(), _pOtherActor->GetActorRotation());
 	Effect->SetActorScale3D(FVector(3.0f, 3.0f, 3.0f));
 	Effect->SetStatus(2.0f);
@@ -71,9 +78,7 @@ void AMGLaser::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOthe
 	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
 
 	if (!OtherCharacter || !OtherCharacter->IsValidLowLevel())
-	{
 		return;
-	}
 
 	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
 

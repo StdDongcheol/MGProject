@@ -21,6 +21,10 @@ protected:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Laser")
 	class UBoxComponent* DamageCollider;
 
+private:
+	double	CollisionTime;
+	double	CollisionTimeAcc;
+
 protected:
 	virtual void BeginPlay() override;
 
