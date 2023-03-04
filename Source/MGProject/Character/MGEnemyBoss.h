@@ -21,6 +21,10 @@ protected:
 	class UMGBossStatusWidget* StatusWidget;
 
 protected:
+	UPROPERTY(EditAnywhere, Category = "Event Setting", meta = (AllowPrivateAccess = "true"))
+	FName	EventInteractionTagName;
+
+protected:
 	double	CurrentStunGauge;
 	double	MaxStunGauge;
 
@@ -33,5 +37,8 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	bool FindTag(class AMGInteraction* Interaction);
 
 };

@@ -72,6 +72,9 @@ public:
 	virtual void InitInputSystem() override;
 	virtual void BeginPlay() override;
 
+public:
+	void WidgetStart();
+	void WidgetEnd();
 
 private:
 	void MoveFront(float Value);

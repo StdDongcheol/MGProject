@@ -47,16 +47,23 @@ private:
 	float	WaveTime;
 	float	WaveTimeAcc;
 
+
+	UPROPERTY(EditAnywhere, Category = "Input Setting", meta = (AllowPrivateAccess = "true"))
+	bool	IsFinalInput;
+	
 	bool	IsWaveStart;
 	bool	IsEntered;
+	bool	ForceStart;
 	bool	IsPlayerPushed;
-	float	Gauge;
 
 public:
 	bool IsPlayerEntered() const
 	{
 		return IsEntered;
 	}
+
+public:
+	void SetForceEnter();
 
 public:
 	void SetSpawnComponent(class UMGSpawnComponent* Component);

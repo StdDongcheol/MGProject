@@ -2,6 +2,8 @@
 
 
 #include "MGInteraction_Input.h"
+#include "../Character/MGPlayerCharacter.h"
+#include "../MGPlayerController.h"
 #include "../Component/MGSpawnComponent.h"
 #include "../UI/MGInteractionWidget.h"
 #include "Components/WidgetComponent.h"
@@ -22,6 +24,12 @@ AMGInteraction_Input::AMGInteraction_Input()
 	InteractionWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionWidget"));
 	InteractionWidget->SetupAttachment(RootComponent);
 	InteractionWidget->SetWidgetSpace(EWidgetSpace::Screen);
+}
+
+void AMGInteraction_Input::SetForceEnter()
+{
+	ForceStart = true;
+	IsEntered = true;
 }
 
 void AMGInteraction_Input::SetSpawnComponent(UMGSpawnComponent* Component)
@@ -48,9 +56,6 @@ void AMGInteraction_Input::BeginPlay()
 	InteractionWidget->SetWidgetClass(InteractionWidgetClass);
 
 	InteractionPtr = Cast<UMGInteractionWidget>(InteractionWidget->GetWidget());
-
-	Gauge = 0.0f;
-	InputTime = 3.0f;
 }
 
 void AMGInteraction_Input::Tick(float DeltaTime)
@@ -61,6 +66,14 @@ void AMGInteraction_Input::Tick(float DeltaTime)
 	{
 		TArray<AActor*> OutActors;
 		TriggerBox->GetOverlappingActors(OutActors);
+
+		if (ForceStart)
+		{
+			IsWaveStart = true;
+
+			SpawnComponent->GetInteracts(InteractionTag, InteractComponents,
+				WaveEndTag, WaveEndInteractComponents);
+		}
 
 		for (AActor* OutActor : OutActors)
 		{
@@ -126,12 +139,36 @@ void AMGInteraction_Input::OnCollisionEnter(UPrimitiveComponent* _pComponent, AA
 		return;
 	}
 
+	if (IsFinalInput)
+	{
+		// Final Setting;
+		AMGPlayerCharacter* Player = Cast<AMGPlayerCharacter>(_pOtherActor);
+
+		if (!Player || !Player->IsValidLowLevel())
+		{
+			UE_LOG(LogTemp, Error, TEXT("Player doesn't executed !!"));
+			return;
+		}
+
+		AMGPlayerController* PlayerController = Player->GetController<AMGPlayerController>();
+
+		if (!PlayerController || !PlayerController->IsValidLowLevel())
+		{
+			UE_LOG(LogTemp, Error, TEXT("PlayerController doesn't executed !!"));
+			return;
+		}
+
+		PlayerController->WidgetEnd();
+		return;
+	}
+
 	if (InteractionPtr)
 	{
 		InteractionPtr->SetPlayerOn(true);
 	}
 
 	IsEntered = true;
+
 }
 
 void AMGInteraction_Input::OnCollisionEnd(UPrimitiveComponent* _pComponent, AActor* _pOtherActor,

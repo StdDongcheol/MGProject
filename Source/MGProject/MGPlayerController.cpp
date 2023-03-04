@@ -55,6 +55,18 @@ void AMGPlayerController::BeginPlay()
 	PlayerStatusWidget = CreateWidget<UMGPlayerWidget>(this, PlayerStatusWBP, TEXT("PlayerStatusWidget"));
 	PlayerStatusWidget->AddToViewport(8);
 	PlayerStatusWidget->SetVisibility(ESlateVisibility::Visible);
+
+	PlayerStatusWidget->StageStart();
+}
+
+void AMGPlayerController::WidgetStart()
+{
+	PlayerStatusWidget->StageStart();
+}
+
+void AMGPlayerController::WidgetEnd()
+{
+	PlayerStatusWidget->StageEnd();
 }
 
 void AMGPlayerController::MoveFront(float Value)
@@ -67,7 +79,9 @@ void AMGPlayerController::MoveFront(float Value)
 
 	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 
-	if (bCheck)
+	EPlayer_BodyAction PlayerAction = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
+
+	if (bCheck || PlayerAction == EPlayer_BodyAction::NormalFire)
 	{
 		return;
 	}
@@ -92,7 +106,9 @@ void AMGPlayerController::MoveLeft(float Value)
 
 	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 
-	if (bCheck)
+	EPlayer_BodyAction PlayerAction = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
+
+	if (bCheck || PlayerAction == EPlayer_BodyAction::NormalFire)
 	{
 		return;
 	}
@@ -117,7 +133,9 @@ void AMGPlayerController::MoveRight(float Value)
 
 	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 
-	if (bCheck)
+	EPlayer_BodyAction PlayerAction = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
+
+	if (bCheck || PlayerAction == EPlayer_BodyAction::NormalFire)
 	{
 		return;
 	}
@@ -139,8 +157,10 @@ void AMGPlayerController::MoveBack(float Value)
 		return;
 
 	bool bCheck = (bool)(PlayerCharacter->GetStatus());
-
-	if (bCheck)
+	
+	EPlayer_BodyAction PlayerAction = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
+	
+	if (bCheck || PlayerAction == EPlayer_BodyAction::NormalFire)
 	{
 		return;
 	}
@@ -201,7 +221,6 @@ void AMGPlayerController::LeftMouseButtonAxis(float Value)
 		return;
 	}
 
-	UE_LOG(LogTemp, Error, TEXT("Clicking.."));
 	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
 
 	switch (ActionState)
@@ -271,17 +290,18 @@ void AMGPlayerController::RightMouseButtonClick()
 	case EPlayer_ActionState::Normal:
 	{
 		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
+		UCameraComponent* CamComponent = PlayerCharacter->GetCameraComponent();
 		
-		if (!ArmComponent)
+		if (!ArmComponent || !CamComponent)
 			return;
 
 		// StateMachine내 ActionState 설정 
 		PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetActionState(EPlayer_ActionState::Aiming);
-
-		// CameraArm Length 및 SocketOffset 조정
-		ArmComponent->TargetArmLength = 100.0f;
-		ArmComponent->SocketOffset = FVector(0.0f, -60.0f, 30.0f);
 		
+		// CameraArm Length 및 SocketOffset 조정
+		ArmComponent->TargetArmLength = 200.0f;
+		ArmComponent->SocketOffset = FVector(10.0f, 150.0f, 20.0f);
+
 		// NormalAimWidget off
 		PlayerNormalAimWidget->SetVisibility(ESlateVisibility::Visible);
 
@@ -307,8 +327,9 @@ void AMGPlayerController::RightMouseButtonRelease()
 	case EPlayer_ActionState::Aiming:
 	{
 		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
+		UCameraComponent* CamComponent = PlayerCharacter->GetCameraComponent();
 
-		if (!ArmComponent)
+		if (!ArmComponent || !CamComponent)
 			return;
 
 		// StateMachine내 ActionState 설정 
@@ -316,7 +337,7 @@ void AMGPlayerController::RightMouseButtonRelease()
 
 		// CameraArm Length 및 SocketOffset 조정
 		ArmComponent->TargetArmLength = 250.0f;
-		ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 0.0f);
+		ArmComponent->SocketOffset = FVector(0.0f, 0.0f, 10.0f);
 
 		// NormalAimWidget off
 		PlayerNormalAimWidget->SetVisibility(ESlateVisibility::Hidden);
@@ -580,9 +601,9 @@ void AMGPlayerController::RButtonPress()
 
 	if (ActionState == EPlayer_ActionState::Aiming)
 	{
-	bool CurrentFireMode = PlayerCharacter->IsChargeFireMode();
+		bool CurrentFireMode = PlayerCharacter->IsChargeFireMode();
 
-	PlayerCharacter->SetChargeFireMode(!CurrentFireMode);
+		PlayerCharacter->SetChargeFireMode(!CurrentFireMode);
 
 		USpringArmComponent* ArmComponent = PlayerCharacter->FindComponentByClass<USpringArmComponent>();
 

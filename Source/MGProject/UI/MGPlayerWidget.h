@@ -27,6 +27,22 @@ private:
 	UPROPERTY()
 	class UTextBlock* MissileCountText;
 
+	UPROPERTY()
+	class UImage* Fade;
+
+
+public:
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* FadeOutAnimation;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* FadeinAnimation;
+
+private:
+	FWidgetAnimationDynamicEvent FadeOutDelegateStart;
+	FWidgetAnimationDynamicEvent FadeOutDelegateEnd;
+	FWidgetAnimationDynamicEvent FadeinDelegateStart;
+
 private:
 	class AMGPlayerCharacter* PlayerChacracter;
 
@@ -42,6 +58,9 @@ private:
 
 public:
 	void SetHPBar(float HP);
+	void StageStart();
+	void StageEnd();
+
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -51,5 +70,11 @@ protected:
 
 private:
 	void PlayerStatusUpdate(float Deltatime);
-	
+
+private:
+	UFUNCTION()
+	void PlayStageStart();
+
+	UFUNCTION()
+	void PlayStageEnd();
 };
