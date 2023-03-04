@@ -134,7 +134,7 @@ public:
 	int GetMissileCount() const;
 	int GetMissileCount(int UsingCount);
 	USceneComponent* GetTarget() const;
-	FVector GetTrace(FVector Pos = FVector::ZeroVector, float TraceDistance = 10000.0f) const;
+	FVector GetTrace(FVector Pos = FVector::ZeroVector, float TraceDistance = 10000.0f, bool GetHitResult = true) const;
 	void SetQSkillCollision(bool bEnable);
 	void QFireEnd();
 	void SetChargeFireMode(bool bEnable);

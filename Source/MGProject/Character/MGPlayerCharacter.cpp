@@ -104,7 +104,7 @@ USceneComponent* AMGPlayerCharacter::GetTarget() const
 	return TargetArray[Index]->GetRootComponent();
 }
 
-FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance) const
+FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance, bool GetHitResult) const
 {
 	FHitResult Result;
 
@@ -124,7 +124,7 @@ FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance) const
 		bHit = GetWorld()->LineTraceSingleByChannel(Result, CameraPos, CameraForwardPos, ECollisionChannel::ECC_WorldDynamic);
 		
 		// Hit老 版快
-		if (bHit)
+		if (bHit && GetHitResult)
 		{
 			// Debugging log print start.
 			AActor* HitActor = Result.GetActor(); 
@@ -150,7 +150,7 @@ FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance) const
 		bHit = GetWorld()->LineTraceSingleByChannel(Result, Pos, TargetForwardPos, ECollisionChannel::ECC_WorldDynamic);
 
 		// Trace啊 Hit老 版快
-		if (bHit)
+		if (bHit && GetHitResult)
 		{
 			// Debugging log print start.
 			AActor* HitActor = Result.GetActor();
