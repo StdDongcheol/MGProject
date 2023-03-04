@@ -37,4 +37,10 @@ void AMGEnemyBoss::BeginPlay()
 void AMGEnemyBoss::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (HP <= 0.0f)
+	{
+		StatusWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
 }
