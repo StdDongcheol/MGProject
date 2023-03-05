@@ -4,9 +4,11 @@
 #include "MGPlayerWidget.h"
 #include "../MGPlayerController.h"
 #include "Blueprint/WidgetTree.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Components/Button.h"
 
 void UMGPlayerWidget::SetHPBar(float HP)
 {
@@ -47,6 +49,7 @@ void UMGPlayerWidget::NativeConstruct()
 	DroneChargeBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("DroneProgressBar")));
 	MissileCountText = Cast<UTextBlock>(WidgetTree->FindWidget(TEXT("MissileCount")));
 	Fade = Cast<UImage>(WidgetTree->FindWidget(TEXT("FadeImage")));
+	TitleButton = Cast<UButton>(WidgetTree->FindWidget(TEXT("PlayBackButton")));
 
 	HPCurrent = PlayerChacracter->GetCurrentHP();
 	HPMax = PlayerChacracter->GetMaxHP();
@@ -59,8 +62,13 @@ void UMGPlayerWidget::NativeConstruct()
 
 	MissileCountText->SetText(FText::FromString(FString::FromInt(CurrentMissile)));
 
+	TitleButton->OnReleased.AddDynamic(this, &UMGPlayerWidget::BacktoTitle);
+		
+	FadeOutDelegateEnd.BindDynamic(this, &UMGPlayerWidget::PlayStageEnd);
+
 	BindToAnimationStarted(FadeOutAnimation, FadeOutDelegateStart);
 	BindToAnimationStarted(FadeinAnimation, FadeinDelegateStart);
+	BindToAnimationFinished(FadeOutAnimation, FadeOutDelegateEnd);
 }
 
 void UMGPlayerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -90,10 +98,21 @@ void UMGPlayerWidget::PlayerStatusUpdate(float Deltatime)
 
 void UMGPlayerWidget::PlayStageEnd()
 {
-	PlayAnimation(FadeOutAnimation);
+	PlayerChacracter->SetLifeSpan(0.3f);
+
+	AMGPlayerController* PC = PlayerChacracter->GetController<AMGPlayerController>();
+
+	if (PC && PC->IsValidLowLevel())
+	{
+		PC->SetShowMouseCursor(true);
+		PC->bEnableClickEvents = true;
+		PC->bEnableMouseOverEvents = true;
+	}
+
+	PlayAnimation(LevelEndAnimation);
 }
 
-void UMGPlayerWidget::PlayStageStart()
+void UMGPlayerWidget::BacktoTitle()
 {
-	PlayAnimation(FadeinAnimation);
+	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("LobbyLevel")));
 }

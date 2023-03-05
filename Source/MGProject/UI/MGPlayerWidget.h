@@ -30,6 +30,9 @@ private:
 	UPROPERTY()
 	class UImage* Fade;
 
+	UPROPERTY()
+	class UButton* TitleButton;
+
 
 public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
@@ -37,6 +40,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* FadeinAnimation;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* LevelEndAnimation;
 
 private:
 	FWidgetAnimationDynamicEvent FadeOutDelegateStart;
@@ -73,8 +79,8 @@ private:
 
 private:
 	UFUNCTION()
-	void PlayStageStart();
+	void PlayStageEnd();
 
 	UFUNCTION()
-	void PlayStageEnd();
+	void BacktoTitle();
 };
