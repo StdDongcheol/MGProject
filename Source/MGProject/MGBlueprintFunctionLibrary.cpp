@@ -14,6 +14,7 @@ UWorld* UMGBlueprintFunctionLibrary::GetCurrentWorld()
 		switch (Context.WorldType)
 		{
 		case EWorldType::PIE:
+		case EWorldType::Game:
 			PIE = Context.World();
 			break;
 		case EWorldType::GamePreview:
