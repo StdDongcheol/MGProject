@@ -59,8 +59,8 @@ void AMGPlayerCharacter::BeginPlay()
 	GetAnimInst<UMGPlayerAnimInstance>()->AddQAnimLoopCount(MissileCount);
 
 	// Character status setting start
-	HP = 75.0f;
 	HPMax = 100.0f;
+	HP = HPMax;
 	MinAttack = 10.0f;
 	MaxAttack = 20.0f;
 	IsDroneDeployable = true;

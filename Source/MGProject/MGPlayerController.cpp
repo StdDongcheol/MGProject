@@ -284,7 +284,6 @@ void AMGPlayerController::RightMouseButtonClick()
 
 	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
 
-	UE_LOG(LogTemp, Log, TEXT("Pressed!!!"));
 	switch (ActionState)
 	{
 	case EPlayer_ActionState::Normal:
@@ -297,14 +296,22 @@ void AMGPlayerController::RightMouseButtonClick()
 
 		// StateMachine내 ActionState 설정 
 		PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetActionState(EPlayer_ActionState::Aiming);
-		
+
 		// CameraArm Length 및 SocketOffset 조정
-		ArmComponent->TargetArmLength = 200.0f;
-		ArmComponent->SocketOffset = FVector(10.0f, 150.0f, 20.0f);
+		if (PlayerCharacter->IsChargeFireMode())
+		{
+			ArmComponent->TargetArmLength = 100.0f;
+			ArmComponent->SocketOffset = FVector(0.0f, 60.0f, 10.0f);
+		}
+
+		else
+		{
+			ArmComponent->TargetArmLength = 200.0f;
+			ArmComponent->SocketOffset = FVector(10.0f, 90.0f, 20.0f);
+		}
 
 		// NormalAimWidget off
 		PlayerNormalAimWidget->SetVisibility(ESlateVisibility::Visible);
-
 		break;
 	}
 
