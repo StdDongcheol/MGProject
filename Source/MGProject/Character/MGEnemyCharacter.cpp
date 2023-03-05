@@ -22,15 +22,6 @@ AMGEnemyCharacter::AMGEnemyCharacter()
 	TargetingWidgetComponent->SetupAttachment(RootComponent);
 	TargetingWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> BPObject(TEXT("WidgetBlueprint'/Game/Play/UI/Enemy/WBP_EnemyWidget.WBP_EnemyWidget'")); // PATH is blueprint object path
-
-	if (BPObject.Object)
-	{
-		TSubclassOf<UUserWidget> BPClass = BPObject.Object->GeneratedClass;
-
-		TargetingWidgetComponent->SetWidgetClass(BPClass);
-	}
-
 	IsTargetLock = false;
 }
 

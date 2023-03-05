@@ -6,12 +6,6 @@
 
 AMGBossController::AMGBossController()
 {
-	static ConstructorHelpers::FObjectFinder<UBlueprint> BPObject(TEXT("WidgetBlueprint'/Game/Play/UI/Enemy/WBP_BossStatusWidget.WBP_BossStatusWidget'")); // PATH is blueprint object path
-
-	if (BPObject.Object)
-	{
-		StatusWBP = BPObject.Object->GeneratedClass;
-	}
 }
 
 UMGBossStatusWidget* AMGBossController::GetStatusWidget()
