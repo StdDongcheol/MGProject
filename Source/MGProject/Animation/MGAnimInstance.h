@@ -67,6 +67,11 @@ public:
 	{
 		return IsFalling;
 	}
+	
+	bool IsDead() const
+	{
+		return IsDeath;
+	}
 
 	ECharacter_Status GetStatus() const
 	{
