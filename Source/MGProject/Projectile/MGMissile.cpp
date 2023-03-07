@@ -4,11 +4,15 @@
 #include "MGMissile.h"
 #include "MGHitEffect.h"
 #include "../Character/MGCharacter.h"
+#include "../MGBlueprintFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMGMissile::AMGMissile() 
 {
@@ -22,6 +26,9 @@ AMGMissile::AMGMissile()
 	DamageCollider->SetRelativeLocation(FVector(30.0f, 0.0f, 0.0f));
 	DamageCollider->OnComponentBeginOverlap.AddDynamic(this, &AMGMissile::OnCollisionEnter);
 
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("MissileNiagaraComponent"));
+	NiagaraComponent->SetupAttachment(RootComponent, TEXT("skeleton_grpSocket"));
+
 	ParticleLegacy->SetupAttachment(RootComponent);
 	ProjectileComponent->SetUpdatedComponent(RootComponent);
 }
@@ -32,7 +39,7 @@ void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetCompone
 	DamageCollider->SetCollisionProfileName(_CollisionName);
 	
 	Damage = _Damage;
-	target = _TargetComponent;
+	Target = _TargetComponent;
 	BoostTime = _BoostTime;
 	ForgetTime = _ForgetTime;
 
@@ -43,8 +50,43 @@ void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetCompone
 		ProjectileComponent->InitialSpeed = 1000.f;
 		ProjectileComponent->MaxSpeed = 1500.f;
 		ProjectileComponent->HomingAccelerationMagnitude = 35000.f;
-		ProjectileComponent->HomingTargetComponent = target;
+		ProjectileComponent->HomingTargetComponent = Target;
 		ProjectileComponent->bIsHomingProjectile = true;
+
+		const FMGBulletDataTable* BulletTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetBulletData(TEXT("Missile"));
+		const FHitParticleDataTable* ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("MissileParticle"));
+
+		if (BulletTable && ParticleTable)
+		{
+			switch (BulletTable->ParticleType)
+			{
+			case EParticle_Type::None:
+				break;
+			case EParticle_Type::CascadeParticle:
+				ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
+				break;
+			case EParticle_Type::NiagaraParticle:
+				NiagaraComponent->SetAsset(BulletTable->NiagaraParticle);
+				break;
+			default:
+				break;
+			}
+
+			switch (ParticleTable->ParticleType)
+			{
+			case EParticle_Type::None:
+				break;
+			case EParticle_Type::CascadeParticle:
+				HitEffect = ParticleTable->CascadeParticle;
+				break;
+			case EParticle_Type::NiagaraParticle:
+				break;
+			default:
+				break;
+			}
+
+			HitSound = ParticleTable->HitSound;
+		}
 	}
 
 	else if (_CollisionName == FName("EnemyAttack"))
@@ -54,6 +96,41 @@ void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetCompone
 		ProjectileComponent->InitialSpeed = 500.f;
 		ProjectileComponent->MaxSpeed = 5000.f;
 		ProjectileComponent->HomingAccelerationMagnitude = 25000.f;
+
+		const FMGBulletDataTable* BulletTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetBulletData(TEXT("Missile"));
+		const FHitParticleDataTable* ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("MissileParticle"));
+
+		if (BulletTable && ParticleTable)
+		{
+			switch (BulletTable->ParticleType)
+			{
+			case EParticle_Type::None:
+				break;
+			case EParticle_Type::CascadeParticle:
+				ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
+				break;
+			case EParticle_Type::NiagaraParticle:
+				NiagaraComponent->SetAsset(BulletTable->NiagaraParticle);
+				break;
+			default:
+				break;
+			}
+
+			switch (ParticleTable->ParticleType)
+			{
+			case EParticle_Type::None:
+				break;
+			case EParticle_Type::CascadeParticle:
+				HitEffect = ParticleTable->CascadeParticle;
+				break;
+			case EParticle_Type::NiagaraParticle:
+				break;
+			default:
+				break;
+			}
+
+			HitSound = ParticleTable->HitSound;
+		}
 	}
 }
 
@@ -87,7 +164,7 @@ void AMGMissile::Tick(float DeltaTime)
 
 		MissileState = MissileState | EMissile_State::Boost;
 
-		ProjectileComponent->HomingTargetComponent = target;
+		ProjectileComponent->HomingTargetComponent = Target;
 		ProjectileComponent->bIsHomingProjectile = true;
 	}
 
@@ -164,9 +241,13 @@ void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOt
 			return;
 		break;
 	}
-
+	
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(GetActorLocation(), GetActorRotation());
+	Effect->SetActorScale3D(FVector(3.0f, 3.0f, 3.0f));
+	Effect->SetParticle(HitEffect);
+	Effect->SetSound(HitSound);
 	Effect->SetStatus(3.0f);
+
 
 	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
 	
@@ -178,8 +259,8 @@ void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOt
 
 	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
 
-	OtherCharacter->SetDamage(-Damage, IsWeakPoint);
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
+	OtherCharacter->SetDamage(-Damage, IsWeakPoint);
 	
 	Destroy();
 }

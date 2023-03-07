@@ -33,12 +33,27 @@ void AMGLaser::BeginPlay()
 	Super::BeginPlay();
 
 	const FMGBulletDataTable* BulletTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetBulletData(TEXT("PlayerSnipe"));
+	const FHitParticleDataTable* ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("PlayerCharge"));
 
-	if (BulletTable)
+	if (BulletTable && ParticleTable)
 	{
 		ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
-		HitEffect = BulletTable->HitEffect;
+
+		switch (ParticleTable->ParticleType)
+		{
+		case EParticle_Type::None:
+			break;
+		case EParticle_Type::CascadeParticle:
+			HitEffect = ParticleTable->CascadeParticle;
+			break;
+		case EParticle_Type::NiagaraParticle:
+			break;
+		default:
+			break;
+		}
 	}
+
+	HitSound = ParticleTable->HitSound;
 
 	SetLifeSpan(1.0f);
 	CollisionTime = 0.3f;
@@ -73,7 +88,9 @@ void AMGLaser::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOthe
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(_pOtherActor->GetActorLocation(), _pOtherActor->GetActorRotation());
 	Effect->SetActorScale3D(FVector(3.0f, 3.0f, 3.0f));
 	Effect->SetStatus(2.0f);
+	Effect->SetSound(HitSound);
 	Effect->SetParticle(HitEffect);
+	//Effect->SetSound(HitEffect);
 
 	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
 
@@ -82,7 +99,7 @@ void AMGLaser::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOthe
 
 	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
 
-	OtherCharacter->SetDamage(-20.0f, IsWeakPoint);
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
+	OtherCharacter->SetDamage(-20.0f, IsWeakPoint);
 }
 

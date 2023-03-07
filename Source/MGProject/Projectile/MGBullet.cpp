@@ -6,6 +6,8 @@
 #include "../MGBlueprintFunctionLibrary.h"
 #include "../Character/MGCharacter.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
@@ -41,24 +43,76 @@ void AMGBullet::SetBulletProfile(FName _Name, float _Speed, float _Damage)
 	if (_Name == "PlayerAttack")
 	{
 		const FMGBulletDataTable* BulletTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetBulletData(TEXT("PlayerBullet"));
+		ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("PlayerNormal"));
 
-		if (BulletTable)
+		if (BulletTable && ParticleTable)
 		{
-			ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
-			HitEffect = BulletTable->HitEffect;
+			switch (BulletTable->ParticleType)
+			{
+			case EParticle_Type::None:
+				break;
+			case EParticle_Type::CascadeParticle:
+				ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
+				break;
+			case EParticle_Type::NiagaraParticle:
+				UNiagaraFunctionLibrary::SpawnSystemAttached(BulletTable->NiagaraParticle, GetRootComponent(), 
+					NAME_None, GetActorLocation(), GetActorRotation(), EAttachLocation::KeepRelativeOffset, true);
+				break;
+			default:
+				break;
+			}
+
+			switch (ParticleTable->ParticleType)
+			{
+			case EParticle_Type::None:
+				break;
+			case EParticle_Type::CascadeParticle:
+				HitEffect = ParticleTable->CascadeParticle;
+				break;
+			case EParticle_Type::NiagaraParticle:
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
 	else if (_Name == "EnemyAttack")
 	{
 		const FMGBulletDataTable* BulletTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetBulletData(TEXT("EnemyBullet"));
+		ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("SoldierParticle"));
 
-		if (BulletTable)
+		if (BulletTable && ParticleTable)
 		{
-			ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
-			HitEffect = BulletTable->HitEffect;
+			switch (BulletTable->ParticleType)
+			{
+			case EParticle_Type::None:
+				break;
+			case EParticle_Type::CascadeParticle:
+				ParticleLegacy->SetTemplate(BulletTable->ProjectileEffect);
+				break;
+			case EParticle_Type::NiagaraParticle:
+				break;
+			default:
+				break;
+			}
+
+			switch (ParticleTable->ParticleType)
+			{
+			case EParticle_Type::None:
+				break;
+			case EParticle_Type::CascadeParticle:
+				HitEffect = ParticleTable->CascadeParticle;
+				break;
+			case EParticle_Type::NiagaraParticle:
+				break;
+			default:
+				break;
+			}
 		}
 	}
+
+	HitSound = ParticleTable->HitSound;
 }
 
 void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, 
@@ -70,10 +124,12 @@ void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOth
 		return;
 
 	ProjectileComponent->StopSimulating(_Hit);
-	
+
+
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(GetActorLocation(), GetActorRotation());
 	Effect->SetActorScale3D(FVector(3.0f, 3.0f, 3.0f));
 	Effect->SetParticle(HitEffect);
+	Effect->SetSound(HitSound);
 	Effect->SetStatus(3.0f);
 
 	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
@@ -86,8 +142,8 @@ void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOth
 
 	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
 
-	OtherCharacter->SetDamage(-Damage, IsWeakPoint);
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
+	OtherCharacter->SetDamage(-Damage, IsWeakPoint);
 
 	Destroy();
 }

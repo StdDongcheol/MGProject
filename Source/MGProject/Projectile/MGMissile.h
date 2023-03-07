@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
 	TObjectPtr<class USceneComponent> Target;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
+	TObjectPtr<class UNiagaraComponent> NiagaraComponent;
+
 private:
 	float	BoostTime;
 	float	ForgetTime;

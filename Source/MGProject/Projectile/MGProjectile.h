@@ -26,6 +26,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UParticleSystem> HitEffect;
+	TObjectPtr<class USoundBase> HitSound;
 
 protected:
 	EObject_Force Force;

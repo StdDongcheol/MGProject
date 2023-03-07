@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MGProjectile.h"
+#include "../MGStructs.h"
 #include "MGBullet.generated.h"
 
 /**
@@ -16,6 +17,9 @@ class MGPROJECT_API AMGBullet : public AMGProjectile
 
 public:
 	AMGBullet();
+
+private:
+	const FHitParticleDataTable* ParticleTable;
 
 protected:
 	virtual void BeginPlay() override;
