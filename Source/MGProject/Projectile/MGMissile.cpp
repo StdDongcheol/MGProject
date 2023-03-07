@@ -101,7 +101,47 @@ void AMGMissile::Tick(float DeltaTime)
 
 		ProjectileComponent->HomingTargetComponent = nullptr;
 		ProjectileComponent->bIsHomingProjectile = false;
+	}	
+
+
+	AMGCharacter* Character = Target->GetOwner<AMGCharacter>();
+
+	if (!Character || !Character->IsValidLowLevel())
+		return;
+
+	if (Character->GetCurrentHP() <= 0.0f)
+	{
+		ProjectileComponent->HomingTargetComponent = nullptr;
+		ProjectileComponent->bIsHomingProjectile = false;
+		
+		bool IsFinded = FindNearTarget();
 	}
+
+}
+
+bool AMGMissile::FindNearTarget()
+{
+	TArray<TObjectPtr<AActor>> Actors;
+	
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName(TEXT("Enemy")), Actors);
+
+	for (AActor* TargetActor : Actors)
+	{
+		AMGCharacter* TargetCharacter = Cast<AMGCharacter>(TargetActor);
+		
+		if (!TargetCharacter || !TargetCharacter->IsValidLowLevel())
+			continue;
+
+		if (TargetCharacter->GetCurrentHP() <= 0.0f)
+			continue;
+
+		ProjectileComponent->HomingTargetComponent = TargetCharacter->GetRootComponent();
+		ProjectileComponent->bIsHomingProjectile = true;
+
+		return true;
+	}
+
+	return false;
 }
 
 void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, 

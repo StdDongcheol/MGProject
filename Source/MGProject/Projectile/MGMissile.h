@@ -26,7 +26,7 @@ protected:
 	class USphereComponent* DamageCollider;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
-	TObjectPtr<class USceneComponent> target;
+	TObjectPtr<class USceneComponent> Target;
 
 private:
 	float	BoostTime;
@@ -44,6 +44,9 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+private:
+	bool FindNearTarget();
+	
 protected:
 	UFUNCTION()
 	void OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, UPrimitiveComponent* _OtherComp,
