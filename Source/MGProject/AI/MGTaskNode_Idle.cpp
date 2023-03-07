@@ -22,7 +22,18 @@ EBTNodeResult::Type UMGTaskNode_Idle::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
     UObject* Target = OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName("TargetObject"));
 
-    if (Target)
+    if (!Target || !Target->IsValidLowLevel())
+        return EBTNodeResult::Failed;
+
+    AMGCharacter* TargetChar = Cast<AMGCharacter>(Target);
+
+    if (TargetChar->GetAnimInst()->IsDead())
+    {
+        EnemyCharacter->GetAnimInst<UMGEnemyAnimInstance>()->SetCurrentAttacking(false);
+        return EBTNodeResult::Failed;
+    }
+
+    if (TargetChar)
     {
         return EBTNodeResult::Succeeded;
     }
