@@ -36,6 +36,7 @@ void AMGPlayerController::InitInputSystem()
 	InputComponent->BindAction(FName("Interaction"), EInputEvent::IE_Pressed, this, &AMGPlayerController::FButtonPress);
 	InputComponent->BindAction(FName("Interaction"), EInputEvent::IE_Released, this, &AMGPlayerController::FButtonRelease);
 	InputComponent->BindAction(FName("SetFireMode"), EInputEvent::IE_Pressed, this, &AMGPlayerController::RButtonPress);
+	InputComponent->BindAction(FName("CheatOn"), EInputEvent::IE_Pressed, this, &AMGPlayerController::CheatKeyPress);
 }
 
 void AMGPlayerController::BeginPlay()	
@@ -625,7 +626,7 @@ void AMGPlayerController::RButtonPress()
 	{
 		return;
 	}
-
+		
 	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
 
 	if (ActionState == EPlayer_ActionState::Aiming)
@@ -648,4 +649,16 @@ void AMGPlayerController::RButtonPress()
 			ArmComponent->SocketOffset = FVector(0.0f, 60.0f, 10.0f);
 		}
 	}
+}
+
+void AMGPlayerController::CheatKeyPress()
+{
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
+		return;
+
+	PlayerCharacter->SetMaxHP(99999999.0);
+	PlayerCharacter->SetCurrentHP(99999999.0);
+	PlayerCharacter->SetMinAttack(9999.0);
+	PlayerCharacter->SetMaxAttack(9999.0);
+	PlayerCharacter->SetMoveSpeed(9999.0);
 }

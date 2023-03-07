@@ -75,6 +75,8 @@ public:
 public:
 	void WidgetStart();
 	void WidgetEnd();
+	void PlayerDeath();
+	void SetCursor(bool bEnable);
 
 private:
 	void MoveFront(float Value);
@@ -94,4 +96,5 @@ private:
 	void FButtonPress();
 	void FButtonRelease();
 	void RButtonPress();
+	void CheatKeyPress();
 };
