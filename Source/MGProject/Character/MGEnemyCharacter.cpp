@@ -41,7 +41,7 @@ void AMGEnemyCharacter::SetLockonWidget(bool bEnable)
 
 	if (!bEnable)
 	{
-		if (EnemyWidget && EnemyWidget->IsValidLowLevel())
+		if (EnemyWidget || EnemyWidget->IsValidLowLevel())
 			EnemyWidget->SetTargetLock(false);
 	}
 }
@@ -57,6 +57,7 @@ void AMGEnemyCharacter::SetDamage(float _Damage, bool _IsWeakpoint)
 
 	if (HP <= 0.0f)
 	{
+		SetLifeSpan(5.0f);
 		GetAnimInst<UMGEnemyAnimInstance>()->SetAIAnimState(EAIAnimState::Death);
 	}
 }
