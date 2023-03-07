@@ -69,6 +69,18 @@ void AMGPlayerController::WidgetEnd()
 	PlayerStatusWidget->StageEnd();
 }
 
+void AMGPlayerController::PlayerDeath()
+{
+	PlayerStatusWidget->SetPlayerDeathWidget();
+}
+
+void AMGPlayerController::SetCursor(bool bEnable)
+{
+	SetShowMouseCursor(bEnable);
+	bEnableClickEvents = bEnable;
+	bEnableMouseOverEvents = bEnable;
+}
+
 void AMGPlayerController::MoveFront(float Value)
 {	
 	if (Value == 0.0f)
@@ -93,7 +105,7 @@ void AMGPlayerController::MoveFront(float Value)
 
 	FVector ForwardVector = ArmComponent->GetForwardVector();
 
-	PlayerCharacter->AddMovementInput(ForwardVector);
+	PlayerCharacter->AddMovementInput(ForwardVector, PlayerCharacter->GetMoveSpeed());
 }
 
 void AMGPlayerController::MoveLeft(float Value)
@@ -120,7 +132,7 @@ void AMGPlayerController::MoveLeft(float Value)
 
 	FVector RightVector = ArmComponent->GetRightVector();
 
-	PlayerCharacter->AddMovementInput(-RightVector);
+	PlayerCharacter->AddMovementInput(-RightVector, PlayerCharacter->GetMoveSpeed());
 }
 
 void AMGPlayerController::MoveRight(float Value)
@@ -145,7 +157,7 @@ void AMGPlayerController::MoveRight(float Value)
 	if (!ArmComponent || !ArmComponent->IsValidLowLevel())
 		return;
 
-	PlayerCharacter->AddMovementInput(ArmComponent->GetRightVector());
+	PlayerCharacter->AddMovementInput(ArmComponent->GetRightVector(), PlayerCharacter->GetMoveSpeed());
 }
 
 void AMGPlayerController::MoveBack(float Value)
@@ -172,7 +184,7 @@ void AMGPlayerController::MoveBack(float Value)
 
 	FVector ForwardVector = ArmComponent->GetForwardVector();
 	
-	PlayerCharacter->AddMovementInput(-ForwardVector);
+	PlayerCharacter->AddMovementInput(-ForwardVector, PlayerCharacter->GetMoveSpeed());
 }
 
 void AMGPlayerController::MouseXMove(float Value)
@@ -181,6 +193,11 @@ void AMGPlayerController::MouseXMove(float Value)
 		return;
 
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
+		return;
+
+	bool bCheck = (bool)(PlayerCharacter->GetStatus() & ECharacter_Status::Death);
+
+	if (bCheck)
 		return;
 
 	FRotator Rotation = PlayerCharacter->GetSpringArmComponent()->GetRelativeRotation();
@@ -197,6 +214,11 @@ void AMGPlayerController::MouseYMove(float Value)
 		return;
 
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
+		return;
+
+	bool bCheck = (bool)(PlayerCharacter->GetStatus() & ECharacter_Status::Death);
+
+	if (bCheck)
 		return;
 
 	FRotator Rotation = PlayerCharacter->GetSpringArmComponent()->GetRelativeRotation();

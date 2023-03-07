@@ -43,11 +43,15 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* LevelEndAnimation;
+	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* PlayerDeadAnimation;
 
 private:
 	FWidgetAnimationDynamicEvent FadeOutDelegateStart;
 	FWidgetAnimationDynamicEvent FadeOutDelegateEnd;
 	FWidgetAnimationDynamicEvent FadeinDelegateStart;
+	FWidgetAnimationDynamicEvent PlayerDeadDelegateEnd;
 
 private:
 	class AMGPlayerCharacter* PlayerChacracter;
@@ -62,10 +66,12 @@ private:
 	int		CurrentMissile;
 	int		MissileMax;
 
+	// Callable functions.
 public:
 	void SetHPBar(float HP);
 	void StageStart();
 	void StageEnd();
+	void SetPlayerDeathWidget();
 
 
 protected:
@@ -79,8 +85,11 @@ private:
 
 private:
 	UFUNCTION()
-	void PlayStageEnd();
+	void PlayStageEndCallback();
 
 	UFUNCTION()
-	void BacktoTitle();
+	void BacktoTitleCallback();
+
+	UFUNCTION()
+	void PlayerDiedCallback();
 };

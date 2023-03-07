@@ -27,6 +27,11 @@ void UMGPlayerWidget::StageEnd()
 	PlayAnimation(FadeOutAnimation);
 }
 
+void UMGPlayerWidget::SetPlayerDeathWidget()
+{
+	PlayAnimation(PlayerDeadAnimation);
+}
+
 void UMGPlayerWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -62,13 +67,14 @@ void UMGPlayerWidget::NativeConstruct()
 
 	MissileCountText->SetText(FText::FromString(FString::FromInt(CurrentMissile)));
 
-	TitleButton->OnReleased.AddDynamic(this, &UMGPlayerWidget::BacktoTitle);
+	TitleButton->OnReleased.AddDynamic(this, &UMGPlayerWidget::BacktoTitleCallback);
 		
-	FadeOutDelegateEnd.BindDynamic(this, &UMGPlayerWidget::PlayStageEnd);
+	FadeOutDelegateEnd.BindDynamic(this, &UMGPlayerWidget::PlayStageEndCallback);
+	PlayerDeadDelegateEnd.BindDynamic(this, &UMGPlayerWidget::PlayerDiedCallback);
 
 	BindToAnimationStarted(FadeOutAnimation, FadeOutDelegateStart);
 	BindToAnimationStarted(FadeinAnimation, FadeinDelegateStart);
-	BindToAnimationFinished(FadeOutAnimation, FadeOutDelegateEnd);
+	BindToAnimationFinished(PlayerDeadAnimation, PlayerDeadDelegateEnd);
 }
 
 void UMGPlayerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -96,23 +102,31 @@ void UMGPlayerWidget::PlayerStatusUpdate(float Deltatime)
 	MissileCountText->SetText(FText::FromString(FString::FromInt(CurrentMissile)));
 }
 
-void UMGPlayerWidget::PlayStageEnd()
+void UMGPlayerWidget::PlayStageEndCallback()
 {
 	PlayerChacracter->SetLifeSpan(0.3f);
 
-	AMGPlayerController* PC = PlayerChacracter->GetController<AMGPlayerController>();
+	AMGPlayerController* PlayerController = PlayerChacracter->GetController<AMGPlayerController>();
 
-	if (PC && PC->IsValidLowLevel())
+	if (PlayerController && PlayerController->IsValidLowLevel())
 	{
-		PC->SetShowMouseCursor(true);
-		PC->bEnableClickEvents = true;
-		PC->bEnableMouseOverEvents = true;
+		PlayerController->SetCursor(true);
 	}
 
 	PlayAnimation(LevelEndAnimation);
 }
 
-void UMGPlayerWidget::BacktoTitle()
+void UMGPlayerWidget::BacktoTitleCallback()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("LobbyLevel")));
+}
+
+void UMGPlayerWidget::PlayerDiedCallback()
+{
+	AMGPlayerController* PlayerController = PlayerChacracter->GetController<AMGPlayerController>();
+
+	if (PlayerController && PlayerController->IsValidLowLevel())
+	{
+		PlayerController->SetCursor(true);
+	}
 }

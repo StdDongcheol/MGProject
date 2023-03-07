@@ -21,10 +21,10 @@ void AMGCharacter::AdjustHP(float _HP)
 	if (HP <= 0.0f)
 	{
 		AnimInstance->SetDeath(true);
+		AnimInstance->SetStatus(ECharacter_Status::Death);
 
 		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 		CapsuleComponent->SetCollisionProfileName(TEXT("Ragdoll"));
-		SetLifeSpan(5.0f);
 		return;
 	}
 

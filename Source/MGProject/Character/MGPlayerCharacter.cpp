@@ -3,6 +3,7 @@
 
 #include "MGPlayerCharacter.h"
 #include "MGEnemyCharacter.h"
+#include "../MGPlayerController.h"
 #include "../Animation/MGPlayerAnimInstance.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
@@ -63,6 +64,7 @@ void AMGPlayerCharacter::BeginPlay()
 	HP = HPMax;
 	MinAttack = 10.0f;
 	MaxAttack = 20.0f;
+	MoveSpeed = 1.0f;
 	IsDroneDeployable = true;
 }
 
@@ -171,12 +173,10 @@ FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance, bool GetH
 
 void AMGPlayerCharacter::AdjustHP(float _HP)
 {
-	ECharacter_Status CurrentStatus = GetAnimInst()->GetStatus();
-
-	if (CurrentStatus != ECharacter_Status::Normal)
-		return;
-
 	Super::AdjustHP(_HP);
+
+	if (HP <= 0.0f)
+		GetController<AMGPlayerController>()->PlayerDeath();
 }
 
 void AMGPlayerCharacter::StateUpdate(float DeltaTime)
