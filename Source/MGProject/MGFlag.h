@@ -67,7 +67,8 @@ enum class ECharacter_Status : uint8
 {
 	Normal = 0b00000000,
 	Damaged = 0b00000001,
-	KnockOut = 0b00000010
+	KnockOut = 0b00000010,
+	Death = 0b00000100
 }; 
 
 inline bool operator&(ECharacter_Status l, ECharacter_Status r)
