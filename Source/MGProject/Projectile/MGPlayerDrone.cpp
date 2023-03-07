@@ -139,9 +139,19 @@ void AMGPlayerDrone::Tick(float DeltaTime)
 			if (HealTimeAcc >= HealTime)
 			{
 				HealTimeAcc -= HealTime;
-				
+
 				AMGPlayerCharacter* Player = Cast<AMGPlayerCharacter>(HealingTarget);
-				Player->AdjustHP(1.0f);
+
+				if (Player->GetCurrentHP() >= Player->GetMaxHP())
+				{
+					HealParticle->DeactivateSystem();
+				}
+
+				else
+				{
+					HealParticle->ActivateSystem();
+					Player->AdjustHP(1.0f);
+				}
 			}	
 		}
 	}
@@ -174,10 +184,6 @@ void AMGPlayerDrone::OnHealCollisionEnter(UPrimitiveComponent* _pComponent, AAct
 
 		// heal effect 시작.
 		HealParticle->ActivateSystem();
-
-		// Player 도트 heal 시작.
-		 
-		
 	}
 }
 
