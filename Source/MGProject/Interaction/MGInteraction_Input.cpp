@@ -3,7 +3,9 @@
 
 #include "MGInteraction_Input.h"
 #include "../Character/MGPlayerCharacter.h"
+#include "../Character/MGEnemyCharacter.h"
 #include "../MGPlayerController.h"
+#include "../MGPlayGameMode.h"
 #include "../Component/MGSpawnComponent.h"
 #include "../UI/MGInteractionWidget.h"
 #include "Components/WidgetComponent.h"
@@ -23,7 +25,9 @@ AMGInteraction_Input::AMGInteraction_Input()
 
 	InteractionWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionWidget"));
 	InteractionWidget->SetupAttachment(RootComponent);
-	InteractionWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	InteractionWidget->SetWidgetSpace(EWidgetSpace::Screen); 
+
+	IsLeftEnemyAllDeath = false;
 }
 
 void AMGInteraction_Input::SetForceEnter()
@@ -46,6 +50,28 @@ void AMGInteraction_Input::SetProgressing(bool bEnable)
 	{
 		InputTimeAcc = 0.0f;
 		InteractionPtr->SetProgress(0.0f);
+	}
+}
+
+bool AMGInteraction_Input::FindEnemies()
+{
+	TArray<TObjectPtr<AActor>> OutActors;
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Enemy"), OutActors);
+
+	if (OutActors.IsEmpty())
+		return false;
+
+	else
+	{
+		for (AActor* EnemyLeft : OutActors)
+		{
+			AMGEnemyCharacter* CastedEnemy = Cast<AMGEnemyCharacter>(EnemyLeft);
+
+			WaveEndEnemiesArray.Add(CastedEnemy);
+		}
+
+		return true;
 	}
 }
 
@@ -92,6 +118,12 @@ void AMGInteraction_Input::Tick(float DeltaTime)
 					SpawnComponent->GetInteracts(InteractionTag, InteractComponents, 
 						WaveEndTag, WaveEndInteractComponents);
 
+					if (IsIncomingWave)
+					{
+						AMGPlayGameMode* GameMode = Cast<AMGPlayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+						GameMode->ChangeBGM(FName("PlayWave"), 0.2f);
+					}
+
 					for (TObjectPtr<AMGInteraction> InteractTarget : InteractComponents)
 					{
 						InteractTarget->InteractionActivate();
@@ -112,6 +144,26 @@ void AMGInteraction_Input::Tick(float DeltaTime)
 			InteractionComplete();
 		}
 	}
+
+	if (IsComplete && !IsLeftEnemyAllDeath)
+	{
+		for (AMGEnemyCharacter* EnemyLeft : WaveEndEnemiesArray)
+		{
+			IsLeftEnemyAllDeath = true;
+
+			if (EnemyLeft->GetCurrentHP() > 0.0f)
+			{
+				IsLeftEnemyAllDeath = false;
+				break;
+			}
+		}
+
+		if (IsLeftEnemyAllDeath)
+		{
+			AMGPlayGameMode* GameMode = Cast<AMGPlayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+			GameMode->ChangeBGM(FName("PlayNormal"), 2.0f);
+		}
+	}
 }
 
 void AMGInteraction_Input::InteractionActivate()
@@ -126,6 +178,15 @@ void AMGInteraction_Input::InteractionComplete()
 	for (AMGInteraction* InteractTarget : WaveEndInteractComponents)
 	{
 		InteractTarget->InteractionActivate();
+	}
+
+	if (IsIncomingWave)
+	{
+		if (!FindEnemies())
+		{
+			AMGPlayGameMode* GameMode = Cast<AMGPlayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+			GameMode->ChangeBGM(FName("PlayNormal"), 0.2f);
+		}
 	}
 }
 
@@ -158,11 +219,14 @@ void AMGInteraction_Input::OnCollisionEnter(UPrimitiveComponent* _pComponent, AA
 			return;
 		}
 
+		AMGPlayGameMode* GameMode = Cast<AMGPlayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		GameMode->ChangeBGM(FName("StageClear"), 3.0f);
+
 		PlayerController->WidgetEnd();
 		return;
 	}
 
-	if (InteractionPtr)
+	if (InteractionPtr && !IsTriggerOnly)
 	{
 		InteractionPtr->SetPlayerOn(true);
 	}
@@ -184,7 +248,7 @@ void AMGInteraction_Input::OnCollisionEnd(UPrimitiveComponent* _pComponent, AAct
 	IsEntered = false;
 	IsPlayerPushed = false;
 
-	if (InteractionPtr)
+	if (InteractionPtr && !IsTriggerOnly)
 	{
 		InteractionPtr->SetPlayerOn(false);
 	}

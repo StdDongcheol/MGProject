@@ -27,13 +27,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget>	InteractionWidgetClass;
 
-	class UMGInteractionWidget* InteractionPtr;
+	TObjectPtr<class UMGInteractionWidget> InteractionPtr;
+
+	TObjectPtr<class UMGSpawnComponent>		SpawnComponent;
 
 private:
 	TArray<TObjectPtr<AMGInteraction>>	InteractComponents;
 	TArray<TObjectPtr<AMGInteraction>>	WaveEndInteractComponents;
 	
-	TObjectPtr<class UMGSpawnComponent>		SpawnComponent;
+private:
+	TArray<TObjectPtr<class AMGEnemyCharacter>> WaveEndEnemiesArray;
+	
 	
 	UPROPERTY(EditAnywhere, Category = "Interaction TagName", meta = (AllowPrivateAccess = "true"))
 	FName	WaveEndTag;
@@ -50,6 +54,13 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input Setting", meta = (AllowPrivateAccess = "true"))
 	bool	IsFinalInput;
+	
+	UPROPERTY(EditAnywhere, Category = "Input Setting", meta = (AllowPrivateAccess = "true"))
+	bool	IsIncomingWave;
+	bool	IsLeftEnemyAllDeath;
+
+	UPROPERTY(EditAnywhere, Category = "Input Setting", meta = (AllowPrivateAccess = "true"))
+	bool	IsTriggerOnly;
 	
 	bool	IsWaveStart;
 	bool	IsEntered;
@@ -68,6 +79,9 @@ public:
 public:
 	void SetSpawnComponent(class UMGSpawnComponent* Component);
 	void SetProgressing(bool bEnable);
+
+private:
+	bool FindEnemies();
 
 protected:
 	virtual void BeginPlay() override;
