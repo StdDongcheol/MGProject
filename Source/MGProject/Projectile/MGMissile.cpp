@@ -37,7 +37,8 @@ void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetCompone
 	float _Damage, float _BoostTime, float _ForgetTime)
 {
 	DamageCollider->SetCollisionProfileName(_CollisionName);
-	
+	Mesh->SetCollisionProfileName(_CollisionName);
+
 	Damage = _Damage;
 	Target = _TargetComponent;
 	BoostTime = _BoostTime;
@@ -92,6 +93,8 @@ void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetCompone
 	else if (_CollisionName == FName("EnemyAttack"))
 	{
 		SetForce(EObject_Force::Enemy);
+		
+		DamageCollider->SetSphereRadius(DamageCollider->GetScaledSphereRadius() * 2.f);
 
 		ProjectileComponent->InitialSpeed = 500.f;
 		ProjectileComponent->MaxSpeed = 5000.f;
@@ -201,7 +204,7 @@ bool AMGMissile::FindNearTarget()
 	TArray<TObjectPtr<AActor>> Actors;
 	
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName(TEXT("Enemy")), Actors);
-
+	
 	for (AActor* TargetActor : Actors)
 	{
 		AMGCharacter* TargetCharacter = Cast<AMGCharacter>(TargetActor);
@@ -224,24 +227,6 @@ bool AMGMissile::FindNearTarget()
 void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor, 
 	UPrimitiveComponent* _OtherComp, int32 _OtherBodyIndex, bool _bFromSweep, const FHitResult& _Hit)
 {
-	FName OtherProfile = _OtherComp->GetCollisionProfileName();
-
-	switch (Force)
-	{
-	case EObject_Force::Player:
-	{
-		if (OtherProfile == "PlayerAttack" || 
-			OtherProfile == "Player")
-			return;
-		break;
-	}
-	case EObject_Force::Enemy:
-		if (OtherProfile == "EnemyAttack" || 
-			OtherProfile == "Enemy")
-			return;
-		break;
-	}
-	
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(GetActorLocation(), GetActorRotation());
 	Effect->SetActorScale3D(FVector(3.0f, 3.0f, 3.0f));
 	Effect->SetParticle(HitEffect);

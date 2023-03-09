@@ -20,10 +20,10 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
-	class USkeletalMesh* SkeletalMesh;
+	TObjectPtr<class USkeletalMesh> SkeletalMesh;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
-	class USphereComponent* DamageCollider;
+	TObjectPtr<class USphereComponent> DamageCollider;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
 	TObjectPtr<class USceneComponent> Target;

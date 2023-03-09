@@ -75,7 +75,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 		}
 		case EPlayer_BodyAction::QFire:
 		{
-			AMGMissile* Missile = MeshComp->GetWorld()->SpawnActor<AMGMissile>(TargetActor, SpawnPosition, SpawnRotation);
+			AMGMissile* Missile = MeshComp->GetWorld()->SpawnActorDeferred<AMGMissile>(AMGMissile::StaticClass(), MeshTransform);
 
 			if (!Missile || !Missile->IsValidLowLevel())
 				return;
@@ -84,6 +84,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 			Missile->SetStatus(TEXT("PlayerAttack"), PlayerCharacter->GetTarget(), 
 				PlayerCharacter->GetMinAttack(), 0.0f, 8.f);
 
+			Missile->FinishSpawning(MeshTransform);
 			break;
 		}
 		case EPlayer_BodyAction::EThrowing:
