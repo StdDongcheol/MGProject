@@ -44,7 +44,13 @@ struct FMGBulletDataTable : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EParticle_Type ParticleType;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UParticleSystem> ProjectileEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UNiagaraSystem> NiagaraParticle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UParticleSystem> HitEffect;
@@ -84,4 +90,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EObject_Force Force;
 
+};
+
+USTRUCT(Atomic, BlueprintType)
+struct FMGBGMDataTable : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class USoundBase> BGM;
 };
