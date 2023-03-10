@@ -9,12 +9,14 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
+#include "Components/Slider.h"
 
 void UMGPlayerWidget::SetHPBar(float HP)
 {
 	float Percent = HP / HPMax;
 
 	HPBar->SetPercent(Percent);
+	HPSlider->SetValue(Percent);
 }
 
 void UMGPlayerWidget::StageStart()
@@ -50,6 +52,7 @@ void UMGPlayerWidget::NativeConstruct()
 	PlayerChacracter = Cast<AMGPlayerCharacter>(PlayerController->GetPlayerCharacter());
 
 	HPBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("HPProgressBar")));
+	HPSlider = Cast<USlider>(WidgetTree->FindWidget(TEXT("S_Shine")));
 	MissileChargeBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("MissileProgressBar")));
 	DroneChargeBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("DroneProgressBar")));
 	MissileCountText = Cast<UTextBlock>(WidgetTree->FindWidget(TEXT("MissileCount")));
@@ -72,9 +75,10 @@ void UMGPlayerWidget::NativeConstruct()
 	FadeOutDelegateEnd.BindDynamic(this, &UMGPlayerWidget::PlayStageEndCallback);
 	PlayerDeadDelegateEnd.BindDynamic(this, &UMGPlayerWidget::PlayerDiedCallback);
 
-	BindToAnimationStarted(FadeOutAnimation, FadeOutDelegateStart);
-	BindToAnimationStarted(FadeinAnimation, FadeinDelegateStart);
+	BindToAnimationFinished(FadeOutAnimation, FadeOutDelegateEnd);
 	BindToAnimationFinished(PlayerDeadAnimation, PlayerDeadDelegateEnd);
+
+	PlayAnimation(ShineLoopAnimation, 0.0f, 0);
 }
 
 void UMGPlayerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -108,10 +112,13 @@ void UMGPlayerWidget::PlayStageEndCallback()
 
 	AMGPlayerController* PlayerController = PlayerChacracter->GetController<AMGPlayerController>();
 
-	if (PlayerController && PlayerController->IsValidLowLevel())
+	if (!PlayerController || !PlayerController->IsValidLowLevel())
 	{
-		PlayerController->SetCursor(true);
+		UE_LOG(LogTemp, Error, TEXT("UMGPlayerWidget::PlayStageEndCallback() : PlayerController is error!!"));
+		return;
 	}
+
+	PlayerController->SetCursor(true);
 
 	PlayAnimation(LevelEndAnimation);
 }

@@ -33,6 +33,15 @@ void UMGNormalAimWidget::SetVisibility(ESlateVisibility InVisibility)
 	}
 }
 
+void UMGNormalAimWidget::SwtichAimWidget(bool ToCharge)
+{
+	if (ToCharge)
+		PlayAnimation(SwitchAnim);
+
+	else
+		PlayAnimationReverse(SwitchAnim);
+}
+
 void UMGNormalAimWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();

@@ -19,6 +19,9 @@ private:
 	class UProgressBar* HPBar;
 
 	UPROPERTY()
+	class USlider*	HPSlider;
+
+	UPROPERTY()
 	class UProgressBar* MissileChargeBar;
 
 	UPROPERTY()
@@ -26,6 +29,7 @@ private:
 	
 	UPROPERTY()
 	class UTextBlock* MissileCountText;
+
 
 	UPROPERTY()
 	class UImage* Fade;
@@ -35,6 +39,9 @@ private:
 
 
 public:
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* ShineLoopAnimation;
+	
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* FadeOutAnimation;
 

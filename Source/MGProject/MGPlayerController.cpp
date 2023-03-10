@@ -282,6 +282,7 @@ void AMGPlayerController::LeftMouseButtonClick()
 	{
 		PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetBodyActionState(EPlayer_BodyAction::NormalFire);
 		
+		// Trace debug test
 		PlayerCharacter->GetTrace();
 		break;
 	}
@@ -323,6 +324,7 @@ void AMGPlayerController::RightMouseButtonClick()
 		// CameraArm Length ¹× SocketOffset Á¶Á¤
 		if (PlayerCharacter->IsChargeFireMode())
 		{
+			PlayerNormalAimWidget->SwtichAimWidget(true);
 			ArmComponent->TargetArmLength = 100.0f;
 			ArmComponent->SocketOffset = FVector(0.0f, 60.0f, 10.0f);
 		}
@@ -639,12 +641,14 @@ void AMGPlayerController::RButtonPress()
 
 		if (CurrentFireMode)
 		{
+			PlayerNormalAimWidget->SwtichAimWidget(false);
 			ArmComponent->TargetArmLength = 200.0f;
 			ArmComponent->SocketOffset = FVector(10.0f, 90.0f, 20.0f);
 		}
 
 		else
 		{
+			PlayerNormalAimWidget->SwtichAimWidget(true);
 			ArmComponent->TargetArmLength = 100.0f;
 			ArmComponent->SocketOffset = FVector(0.0f, 60.0f, 10.0f);
 		}

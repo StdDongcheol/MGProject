@@ -20,6 +20,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* RecoilAnim;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* SwitchAnim;
 
 private:
 	FWidgetAnimationDynamicEvent ActivateAimStartDelegate;
@@ -34,6 +37,7 @@ private:
 
 public:
 	virtual void SetVisibility(ESlateVisibility InVisibility) override;
+	void SwtichAimWidget(bool ToCharge);
 
 protected:
 	virtual void NativeOnInitialized() override;
