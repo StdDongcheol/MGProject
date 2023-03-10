@@ -35,7 +35,14 @@ protected:
 	const struct FMGEnemyStatusDataTable* EnemyData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty")
+	double	RevealAppearanceTime;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty")
 	double	AppearanceTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyProperty")
+	bool	SetAppearanceInSpawning;
+
 
 public:
 	const FMGEnemyStatusDataTable* GetEnemyData()
@@ -87,7 +94,7 @@ public:
 	virtual void SetDamage(float _Damage, bool _IsWeakpoint = false);
 
 private:
-	void SetAppearance(float _DeltaTime);
+	void SetAppearance(float _DeltaTime, bool _IsReveal = false);
 
 protected:
 	virtual void BeginPlay() override;

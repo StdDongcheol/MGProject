@@ -62,13 +62,30 @@ void AMGEnemyCharacter::SetDamage(float _Damage, bool _IsWeakpoint)
 	}
 }
 
-void AMGEnemyCharacter::SetAppearance(float _DeltaTime)
+void AMGEnemyCharacter::SetAppearance(float _DeltaTime, bool _IsReveal)
 {
-	AppearanceTimeAcc -= _DeltaTime;
+	if (_IsReveal)
+	{
+		AppearanceTimeAcc += _DeltaTime;
 
-	const float AppearanceValue = AppearanceTimeAcc / AppearanceTime;
-	
-	GetMesh()->SetScalarParameterValueOnMaterials(TEXT("Appearance"), AppearanceValue);
+		const float AppearanceValue = AppearanceTimeAcc / RevealAppearanceTime;
+
+		GetMesh()->SetScalarParameterValueOnMaterials(TEXT("Appearance"), AppearanceValue);
+
+		if (AppearanceValue >= 1.0f)
+		{
+			AppearanceTimeAcc = AppearanceTime;
+			SetAppearanceInSpawning = false;
+		}
+	}
+
+	else
+	{
+		AppearanceTimeAcc -= _DeltaTime;
+		const float AppearanceValue = AppearanceTimeAcc / AppearanceTime;
+		
+		GetMesh()->SetScalarParameterValueOnMaterials(TEXT("Appearance"), AppearanceValue);
+	}
 }
 
 void AMGEnemyCharacter::BeginPlay()
@@ -78,7 +95,15 @@ void AMGEnemyCharacter::BeginPlay()
 	EnemyWidget = Cast<UMGEnemyWidget>(TargetingWidgetComponent->GetWidget());
 	
 	TargetingWidgetComponent->SetVisibility(false);
-	AppearanceTimeAcc = AppearanceTime;
+
+	if (SetAppearanceInSpawning)
+	{
+		AppearanceTimeAcc = 0.0f;
+		GetMesh()->SetScalarParameterValueOnMaterials(TEXT("Appearance"), 0.0f);
+	}
+
+	else
+		AppearanceTimeAcc = AppearanceTime;
 }
 
 void AMGEnemyCharacter::Tick(float DeltaTime)
@@ -88,7 +113,12 @@ void AMGEnemyCharacter::Tick(float DeltaTime)
 	if (EnemyWidget)
 		IsTargetLock = EnemyWidget->IsTargetLocked();
 
-	if (GetAnimInst()->IsDead())
+	if (SetAppearanceInSpawning)
+	{
+		SetAppearance(DeltaTime, true);
+	}
+
+	else if (GetAnimInst()->IsDead())
 	{
 		SetAppearance(DeltaTime);
 	}
