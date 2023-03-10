@@ -106,7 +106,7 @@ USceneComponent* AMGPlayerCharacter::GetTarget() const
 	return TargetArray[Index]->GetRootComponent();
 }
 
-FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance, bool GetHitResult) const
+FHitResult AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance, bool GetHitResult) const
 {
 	FHitResult Result;
 
@@ -168,7 +168,7 @@ FVector AMGPlayerCharacter::GetTrace(FVector Pos, float TraceDistance, bool GetH
 	}
 
 	
-	return Result.ImpactPoint;
+	return Result;
 }
 
 void AMGPlayerCharacter::AdjustHP(float _HP)
@@ -258,12 +258,43 @@ void AMGPlayerCharacter::ActionStateUpdate(float DeltaTime)
 
 void AMGPlayerCharacter::ESkillTrace()
 {
-	FVector3d HitPos = GetTrace(FVector3d::ZeroVector, 1000.0f);
-	HitPos += FVector3d(0.0f, 0.0f, 50.0f);
+	FHitResult Result = GetTrace(FVector3d::ZeroVector, 1000.0f);
 
-	DronePos = HitPos;
+	if (Result.bStartPenetrating)
+	{
+		FVector3d HitPos = Result.ImpactPoint;
+	
+		HitPos += FVector3d(0.0f, 0.0f, 50.0f);
 
-	DroneDeployParticle->SetWorldLocation(HitPos);
+		DronePos = HitPos;
+
+		DroneDeployParticle->SetWorldLocation(HitPos);
+
+		UE_LOG(LogTemp, Log, TEXT("ImpactPoint.Z : %d"), Result.ImpactPoint.Z);
+	}
+
+	else
+	{
+		FVector3d NonHitPos = Result.ImpactPoint;
+		FVector3d GroundPos = NonHitPos - FVector3d(0.0f, 0.0f, 1000.0f);
+
+		FHitResult SecondHitResult;
+
+		bool bSecondHit = GetWorld()->LineTraceSingleByChannel(SecondHitResult, NonHitPos, GroundPos, ECollisionChannel::ECC_WorldDynamic);
+
+		if (bSecondHit)
+		{
+			NonHitPos.Z = SecondHitResult.ImpactPoint.Z;
+			DronePos = NonHitPos;
+			DroneDeployParticle->SetWorldLocation(NonHitPos);
+		}
+
+		else
+		{
+			DronePos = GroundPos;
+			DroneDeployParticle->SetWorldLocation(GroundPos);
+		}
+	}
 }
 
 void AMGPlayerCharacter::SetQSkillCollision(bool bEnable)

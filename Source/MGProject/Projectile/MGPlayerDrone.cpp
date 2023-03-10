@@ -200,9 +200,5 @@ void AMGPlayerDrone::OnHealCollisionEnd(UPrimitiveComponent* OverlappedComponent
 
 		// heal effect 정지.
 		HealParticle->DeactivateSystem();
-
-		// Player 도트 heal 정지.
-
-
 	}
 }
