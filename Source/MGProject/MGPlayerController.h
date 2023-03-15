@@ -96,5 +96,6 @@ private:
 	void FButtonPress();
 	void FButtonRelease();
 	void RButtonPress();
+	void ShiftButtonPress();
 	void CheatKeyPress();
 };

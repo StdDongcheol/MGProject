@@ -13,6 +13,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void AMGPlayerController::InitInputSystem()
 {
@@ -26,7 +27,6 @@ void AMGPlayerController::InitInputSystem()
 	InputComponent->BindAxis(FName("MouseY"), this, &AMGPlayerController::MouseYMove);
 	InputComponent->BindAxis(FName("LeftMouseButton"), this, &AMGPlayerController::LeftMouseButtonAxis);
 	
-	//InputComponent->BindAction(FName("LeftMouseButton"), EInputEvent::IE_Pressed, this, &AMGPlayerController::LeftMouseButtonClick);
 	InputComponent->BindAction(FName("RightMouseButton"), EInputEvent::IE_Pressed, this, &AMGPlayerController::RightMouseButtonClick);
 	InputComponent->BindAction(FName("RightMouseButton"), EInputEvent::IE_Released, this, &AMGPlayerController::RightMouseButtonRelease);
 	InputComponent->BindAction(FName("SkillQ"), EInputEvent::IE_Pressed, this, &AMGPlayerController::QButtonPress);
@@ -36,6 +36,7 @@ void AMGPlayerController::InitInputSystem()
 	InputComponent->BindAction(FName("Interaction"), EInputEvent::IE_Pressed, this, &AMGPlayerController::FButtonPress);
 	InputComponent->BindAction(FName("Interaction"), EInputEvent::IE_Released, this, &AMGPlayerController::FButtonRelease);
 	InputComponent->BindAction(FName("SetFireMode"), EInputEvent::IE_Pressed, this, &AMGPlayerController::RButtonPress);
+	InputComponent->BindAction(FName("Dash"), EInputEvent::IE_Pressed, this, &AMGPlayerController::ShiftButtonPress);
 	InputComponent->BindAction(FName("CheatOn"), EInputEvent::IE_Pressed, this, &AMGPlayerController::CheatKeyPress);
 }
 
@@ -93,11 +94,15 @@ void AMGPlayerController::MoveFront(float Value)
 	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 
 	EPlayer_BodyAction PlayerAction = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
 
-	if (bCheck || PlayerAction == EPlayer_BodyAction::NormalFire)
+	if (bCheck ||
+		PlayerAction == EPlayer_BodyAction::NormalFire ||
+		ActionState == EPlayer_ActionState::Dash)
 	{
 		return;
 	}
+
 
 	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(PlayerCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
 
@@ -120,11 +125,15 @@ void AMGPlayerController::MoveLeft(float Value)
 	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 
 	EPlayer_BodyAction PlayerAction = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
 
-	if (bCheck || PlayerAction == EPlayer_BodyAction::NormalFire)
+	if (bCheck ||
+		PlayerAction == EPlayer_BodyAction::NormalFire ||
+		ActionState == EPlayer_ActionState::Dash)
 	{
 		return;
 	}
+
 
 	USpringArmComponent* ArmComponent = Cast<USpringArmComponent>(PlayerCharacter->FindComponentByClass(USpringArmComponent::StaticClass()));
 
@@ -147,8 +156,11 @@ void AMGPlayerController::MoveRight(float Value)
 	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 
 	EPlayer_BodyAction PlayerAction = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
 
-	if (bCheck || PlayerAction == EPlayer_BodyAction::NormalFire)
+	if (bCheck ||
+		PlayerAction == EPlayer_BodyAction::NormalFire ||
+		ActionState == EPlayer_ActionState::Dash)
 	{
 		return;
 	}
@@ -172,8 +184,11 @@ void AMGPlayerController::MoveBack(float Value)
 	bool bCheck = (bool)(PlayerCharacter->GetStatus());
 	
 	EPlayer_BodyAction PlayerAction = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
-	
-	if (bCheck || PlayerAction == EPlayer_BodyAction::NormalFire)
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
+
+	if (bCheck ||
+		PlayerAction == EPlayer_BodyAction::NormalFire ||
+		ActionState == EPlayer_ActionState::Dash)
 	{
 		return;
 	}
@@ -652,6 +667,42 @@ void AMGPlayerController::RButtonPress()
 			ArmComponent->TargetArmLength = 100.0f;
 			ArmComponent->SocketOffset = FVector(0.0f, 60.0f, 10.0f);
 		}
+	}
+}
+
+void AMGPlayerController::ShiftButtonPress()
+{
+	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
+		return;
+
+	bool bCheck = (bool)(PlayerCharacter->GetStatus());
+
+	if (bCheck)
+	{
+		return;
+	}
+
+	EPlayer_ActionState ActionState = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetActionState();
+
+	if (ActionState == EPlayer_ActionState::Normal)
+	{
+		// 현재 이동방향에 따라서 전후좌우 판단.
+		UCharacterMovementComponent* MovementComponent = PlayerCharacter->GetCharacterMovement();
+
+		if (!MovementComponent || !MovementComponent->IsValidLowLevel())
+			return;
+
+		FVector MoveDir = PlayerCharacter->GetCharacterMovement()->GetCurrentAcceleration().GetSafeNormal();
+		MoveDir.Z += 0.4f;
+
+		// 000의경우, 무조건전진대시.
+
+		PlayerCharacter->GetCapsuleComponent()->SetSimulatePhysics(true);
+		PlayerCharacter->GetCapsuleComponent()->AddImpulse(MoveDir * 1000.f, NAME_None, true);
+		PlayerCharacter->GetAnimInst()->SetFalling(true);
+
+		// 대시 키로 State 변환
+		PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetActionState(EPlayer_ActionState::Dash);
 	}
 }
 

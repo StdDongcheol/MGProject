@@ -403,9 +403,20 @@ void AMGPlayerCharacter::QSkillOnCollisionEnd(UPrimitiveComponent* _pComponent,
 
 void AMGPlayerCharacter::OnCollisionGroundHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherComp->GetCollisionProfileName() == TEXT("WorldObject") && 
-		GetAnimInst()->GetStatus() & ECharacter_Status::KnockOut)
+	FName OtherProfileName = OtherComp->GetCollisionProfileName();
+
+	if (OtherProfileName == TEXT("WorldObject") || 
+		OtherProfileName == TEXT("BlockAll"))
 	{
-		GetAnimInst()->SetFalling(false);
+		if (GetAnimInst()->GetStatus() & ECharacter_Status::KnockOut ||
+			GetAnimInst<UMGPlayerAnimInstance>()->GetActionState() == EPlayer_ActionState::Dash)
+		{
+			GetAnimInst()->SetFalling(false);
+
+			if (GetAnimInst<UMGPlayerAnimInstance>()->GetActionState() == EPlayer_ActionState::Dash)
+			{
+				GetCapsuleComponent()->SetSimulatePhysics(false);
+			}
+		}
 	}
 }
