@@ -91,7 +91,8 @@ void AMGCrunch::WeakpointHit(float _Damage)
 	{
 		CurrentStunGauge -= CurrentStunGauge;
 		
-		GetAnimInst<UMGEnemyAnimInstance>()->SetAIAnimState(EAIAnimState::Groggy);
+		if (!AnimInstance->IsDead())
+			GetAnimInst<UMGEnemyAnimInstance>()->SetAIAnimState(EAIAnimState::Groggy);
 	}
 }
 
@@ -121,11 +122,8 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 	if (!OtherCharacter || !OtherCharacter->IsValidLowLevel())
 		return;
 
-	OtherCharacter->AdjustHP(-MinAttack);
-
 	if (OtherCharacter->GetStatus() == ECharacter_Status::Normal)
 	{
-
 		/// Player Knockout Start.
 		OtherCharacter->SetStatus(ECharacter_Status::KnockOut);
 
@@ -170,4 +168,6 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 		/// Melee Particle End.
 
 	}
+
+	OtherCharacter->AdjustHP(-MinAttack);
 }

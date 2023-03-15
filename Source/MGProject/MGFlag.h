@@ -90,7 +90,8 @@ enum class EAIAnimState : uint8
 	Rotate = 0b00000010,
 	Attack1 = 0b00000100,
 	Attack2 = 0b00001000,
-	Groggy = 0b00010000,
+	Attack3 = 0b00010000,
+	Groggy = 0b00100000,
 };
 
 inline bool operator&(EAIAnimState l, EAIAnimState r)

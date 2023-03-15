@@ -24,7 +24,8 @@ EBTNodeResult::Type UMGTaskNode_BossAttack::ExecuteTask(UBehaviorTreeComponent& 
 
 	// attacking now...
 	if (AnimInst->GetAIAnimState() == EAIAnimState::Attack1 || 
-		AnimInst->GetAIAnimState() == EAIAnimState::Attack2)
+		AnimInst->GetAIAnimState() == EAIAnimState::Attack2 ||
+		AnimInst->GetAIAnimState() == EAIAnimState::Attack3)
 		return EBTNodeResult::InProgress;
 
 	// attack ended
