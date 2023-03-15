@@ -2,6 +2,7 @@
 
 
 #include "MGEnemyBoss.h"
+#include "../MGPlayGameMode.h"
 #include "../MGBossController.h"
 #include "../UI/MGBossStatusWidget.h"
 #include "../Interaction/MGInteraction.h"
@@ -27,6 +28,9 @@ void AMGEnemyBoss::SetDamage(float _Damage, bool _IsWeakpoint)
 	{
 		TObjectPtr<AMGInteraction> Interaction = nullptr;
 
+		AMGPlayGameMode* GameMode = Cast<AMGPlayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		GameMode->ChangeBGM(FName("PlayNormal"), 3.0f);
+
 		FindTag(Interaction);
 	}
 }
@@ -42,6 +46,10 @@ void AMGEnemyBoss::BeginPlay()
 		StatusWidget = BossController->GetStatusWidget();
 		StatusWidget->SetCharacter(this);
 	}
+
+	AMGPlayGameMode* GameMode = Cast<AMGPlayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	GameMode->ChangeBGM(FName("PlayBoss"), 0.5f);
+	
 }
 
 void AMGEnemyBoss::Tick(float DeltaTime)

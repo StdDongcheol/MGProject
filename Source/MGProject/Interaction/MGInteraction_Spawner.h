@@ -21,6 +21,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Spawner Setting", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<class AMGEnemyCharacter>> MonsterArray;
 
+	UPROPERTY(EditAnywhere, Category = "Spawner Setting", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class USoundBase> SpawningSound;
+	
 	FRandomStream RandomStream; 
 
 	UPROPERTY(EditAnywhere, Category = "Spawner Setting", meta = (AllowPrivateAccess = "true"))

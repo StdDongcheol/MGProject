@@ -5,6 +5,7 @@
 #include "../Character/MGEnemyCharacter.h"
 #include "../Character/MGWarrior.h"
 #include "../Character/MGSoldier.h"
+#include "Kismet/GameplayStatics.h"
 
 AMGInteraction_Spawner::AMGInteraction_Spawner()
 {
@@ -43,9 +44,12 @@ void AMGInteraction_Spawner::Spawn()
 {
 	int Index = static_cast<int>(RandomStream.FRandRange(0, MonsterArray.Num()));
 
-	FTransform SpawnTransform = FTransform(GetActorLocation());
+	FTransform SpawnTransform = GetActorTransform();
 
-	GetWorld()->SpawnActor<AMGEnemyCharacter>(MonsterArray[Index], SpawnTransform);	
+	GetWorld()->SpawnActor<AMGEnemyCharacter>(MonsterArray[Index], SpawnTransform);
+
+	if (SpawningSound)
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SpawningSound, GetActorLocation());
 }
 
 void AMGInteraction_Spawner::InteractionActivate()
