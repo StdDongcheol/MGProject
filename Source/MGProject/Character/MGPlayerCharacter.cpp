@@ -415,6 +415,7 @@ void AMGPlayerCharacter::OnCollisionGroundHit(UPrimitiveComponent* HitComponent,
 
 			if (GetAnimInst<UMGPlayerAnimInstance>()->GetActionState() == EPlayer_ActionState::Dash)
 			{
+				GetAnimInst()->SetStatus(ECharacter_Status::Normal);
 				GetCapsuleComponent()->SetSimulatePhysics(false);
 			}
 		}

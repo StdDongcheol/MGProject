@@ -242,6 +242,9 @@ void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOt
 		return;
 	}
 
+	if (OtherCharacter->GetStatus() & ECharacter_Status::Dodge)
+		return;
+
 	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
 
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);

@@ -68,8 +68,11 @@ void AMGWarrior::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor
 	if (!OtherCharacter || !OtherCharacter->IsValidLowLevel())
 		return;
 	
-	OtherCharacter->AdjustHP(-MinAttack);
+	if (OtherCharacter->GetStatus() & ECharacter_Status::Dodge)
+		return;
+
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
+	OtherCharacter->AdjustHP(-MinAttack);
 
 	FVector HitPos = _pComponent->GetComponentLocation();
 

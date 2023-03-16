@@ -123,8 +123,9 @@ void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOth
 	if (OtherProfile == "PlayerAttack" || OtherProfile == "EnemyAttack")
 		return;
 
-	ProjectileComponent->StopSimulating(_Hit);
+	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
 
+	ProjectileComponent->StopSimulating(_Hit);
 
 	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(GetActorLocation(), GetActorRotation());
 	Effect->SetActorScale3D(FVector(3.0f, 3.0f, 3.0f));
@@ -132,13 +133,15 @@ void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOth
 	Effect->SetSound(HitSound);
 	Effect->SetStatus(3.0f);
 
-	AMGCharacter* OtherCharacter = Cast<AMGCharacter>(_pOtherActor);
 
 	if (!OtherCharacter || !OtherCharacter->IsValidLowLevel())
 	{
 		Destroy();
 		return;
 	}
+
+	if (OtherCharacter->GetStatus() & ECharacter_Status::Dodge)
+		return;
 
 	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
 

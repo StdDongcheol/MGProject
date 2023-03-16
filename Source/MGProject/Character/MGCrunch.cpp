@@ -122,8 +122,9 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 	if (!OtherCharacter || !OtherCharacter->IsValidLowLevel())
 		return;
 
-	if (OtherCharacter->GetStatus() == ECharacter_Status::Normal)
-	{
+	if (OtherCharacter->GetStatus() & ECharacter_Status::Dodge)
+		return;
+
 		/// Player Knockout Start.
 		OtherCharacter->SetStatus(ECharacter_Status::KnockOut);
 

@@ -703,6 +703,7 @@ void AMGPlayerController::ShiftButtonPress()
 
 		// 대시 키로 State 변환
 		PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetActionState(EPlayer_ActionState::Dash);
+		PlayerCharacter->GetAnimInst()->SetStatus(ECharacter_Status::Dodge);
 	}
 }
 
