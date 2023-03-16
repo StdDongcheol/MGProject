@@ -9,6 +9,8 @@
 #include "../Animation/MGEnemyAnimInstance.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AMGCrunch::AMGCrunch()
 {
@@ -34,11 +36,14 @@ AMGCrunch::AMGCrunch()
 	WeakBoxHead->ComponentTags.Add(TEXT("WeakPoint"));
 
 	WeakBoxBack = CreateDefaultSubobject<UBoxComponent>(TEXT("WeakPointBack"));
-	WeakBoxBack->SetupAttachment(GetMesh(), TEXT("FX_Head"));
+	WeakBoxBack->SetupAttachment(GetMesh(), TEXT("FX_Heads"));
 	WeakBoxBack->SetCollisionProfileName(FName("Enemy"));
 	WeakBoxBack->SetBoxExtent(FVector(40.0f, 25.0f, 25.0f));
 	WeakBoxBack->SetGenerateOverlapEvents(true);
-	WeakBoxHead->ComponentTags.Add(TEXT("WeakPoint"));
+	WeakBoxBack->ComponentTags.Add(TEXT("WeakPoint"));
+
+	JetParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>("JetParticle");
+	JetParticleComponent->SetupAttachment(GetMesh(), FName("FX_UltSteam_Back"));
 }
 
 const FMGEnemyStatusDataTable* AMGCrunch::InitEnemyData()
@@ -71,6 +76,11 @@ void AMGCrunch::SetDamage(float _Damage, bool _IsWeakpoint)
 	if (_IsWeakpoint)
 	{
 		WeakpointHit(_Damage);
+	}
+
+	if (HP <= 0.0f)
+	{
+		JetParticleComponent->Deactivate();
 	}
 }
 
@@ -125,50 +135,48 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 	if (OtherCharacter->GetStatus() & ECharacter_Status::Dodge)
 		return;
 
-		/// Player Knockout Start.
-		OtherCharacter->SetStatus(ECharacter_Status::KnockOut);
+	/// Player Knockout Start.
+	OtherCharacter->SetStatus(ECharacter_Status::KnockOut);
 
-		FVector HandPos = _pComponent->GetComponentLocation() - FVector(0.0f, 0.0f, 250.f);
+	FVector HandPos = _pComponent->GetComponentLocation() - FVector(0.0f, 0.0f, 250.f);
+	
+	// Debugging sphere
+	DrawDebugSphere(GetWorld(), HandPos, 500.0f, 50, FColor::Red, false, 2.0f);
+
+	OtherCharacter->GetCapsuleComponent()->SetSimulatePhysics(true);
+	OtherCharacter->GetCapsuleComponent()->AddRadialImpulse(HandPos, 500.0f, 700.0f, ERadialImpulseFalloff::RIF_Constant, true);
+	OtherCharacter->GetAnimInst()->SetFalling(true);
+	/// Player Knockout End.
+
+	/// Melee Particle Start.
+	FVector HitPos = _pOtherActor->GetActorLocation();
+
+	const FHitParticleDataTable* ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("CrunchMelee"));
+
+	AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(AMGHitEffect::StaticClass(), HitPos, GetActorRotation());
+	Effect->SetStatus(2.0f, _pOtherActor->GetRootComponent());
+	Effect->SetSound(ParticleTable->HitSound);
+
+	switch (ParticleTable->ParticleType)
+	{
+	case EParticle_Type::CascadeParticle:
+	{
+		Effect->SetParticle(ParticleTable->CascadeParticle);
 		
-		// Debugging sphere
-		DrawDebugSphere(GetWorld(), HandPos, 500.0f, 50, FColor::Red, false, 2.0f);
-
-		OtherCharacter->GetCapsuleComponent()->SetSimulatePhysics(true);
-		OtherCharacter->GetCapsuleComponent()->AddRadialImpulse(HandPos, 500.0f, 700.0f, ERadialImpulseFalloff::RIF_Constant, true);
-		OtherCharacter->GetAnimInst()->SetFalling(true);
-		/// Player Knockout End.
-
-		/// Melee Particle Start.
-		FVector HitPos = _pOtherActor->GetActorLocation();
-
-		const FHitParticleDataTable* ParticleTable = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetParticleData(TEXT("CrunchMelee"));
-
-		AMGHitEffect* Effect = GetWorld()->SpawnActor<AMGHitEffect>(AMGHitEffect::StaticClass(), HitPos, GetActorRotation());
-		Effect->SetStatus(2.0f, _pOtherActor->GetRootComponent());
-		Effect->SetSound(ParticleTable->HitSound);
-
-		switch (ParticleTable->ParticleType)
-		{
-		case EParticle_Type::CascadeParticle:
-		{
-			Effect->SetParticle(ParticleTable->CascadeParticle);
-			
-			break;
-		}
-		case EParticle_Type::NiagaraParticle:
-		{
-			Effect->SetParticleNiagara(ParticleTable->NiagaraParticle);
-			break;
-		}
-		default:
-		{
-			UE_LOG(LogTemp, Error, TEXT("Particle not selected type. Please select particle type."));
-			break;
-		}
-		}
-		/// Melee Particle End.
-
+		break;
 	}
+	case EParticle_Type::NiagaraParticle:
+	{
+		Effect->SetParticleNiagara(ParticleTable->NiagaraParticle);
+		break;
+	}
+	default:
+	{
+		UE_LOG(LogTemp, Error, TEXT("Particle not selected type. Please select particle type."));
+		break;
+	}
+	}
+	/// Melee Particle End.
 
 	OtherCharacter->AdjustHP(-MinAttack);
 }

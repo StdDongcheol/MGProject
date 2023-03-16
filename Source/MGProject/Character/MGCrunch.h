@@ -29,7 +29,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* WeakBoxBack;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UParticleSystemComponent* JetParticleComponent;
 
 public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData() override;
