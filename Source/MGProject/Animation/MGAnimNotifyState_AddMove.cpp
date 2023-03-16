@@ -3,12 +3,14 @@
 
 #include "MGAnimNotifyState_AddMove.h"
 #include "../Character/MGCharacter.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UMGAnimNotifyState_AddMove::UMGAnimNotifyState_AddMove()
 {
 }
 
-void UMGAnimNotifyState_AddMove::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, 
+void UMGAnimNotifyState_AddMove::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
 	float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
@@ -20,7 +22,8 @@ void UMGAnimNotifyState_AddMove::NotifyTick(USkeletalMeshComponent* MeshComp, UA
 	{
 		return;
 	}
-	
+
 	FVector FwdVector = Character->GetActorForwardVector();
-	Character->AddActorWorldOffset(FwdVector * Speed * FrameDeltaTime);
+
+	Character->AddActorWorldOffset(FwdVector * Speed * FrameDeltaTime, true);
 }
