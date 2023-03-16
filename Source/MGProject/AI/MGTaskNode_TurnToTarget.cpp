@@ -13,6 +13,7 @@ UMGTaskNode_TurnToTarget::UMGTaskNode_TurnToTarget()
 	bNotifyTick = true;
 	TurnAnimTimeAcc = 0.0f;
 	PatternIndex = 0;
+	LongRangePatternIndex = 0;
 }
 
 EBTNodeResult::Type UMGTaskNode_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -56,12 +57,28 @@ EBTNodeResult::Type UMGTaskNode_TurnToTarget::ExecuteTask(UBehaviorTreeComponent
 		// turning ended.
 		TurnAnimTimeAcc -= TurnAnimTimeAcc;
 
-		AnimInst->SetAIAnimState(AttackPattern[PatternIndex]);
-		++PatternIndex;
+		double TargetDist = FVector::Distance(EnemyCharacter->GetActorLocation(), 
+			ActorTarget->GetActorLocation());
+		
+		if (TargetDist > SetLongRangeDistance)
+		{
+			AnimInst->SetAIAnimState(LongRangeAttackPattern[LongRangePatternIndex]);
+			++LongRangePatternIndex;
 
-		// Reset index
-		if (PatternIndex > AttackPattern.Num() - 1)
-			PatternIndex -= PatternIndex;
+			// Reset index
+			if (LongRangePatternIndex > AttackPattern.Num() - 1)
+				LongRangePatternIndex -= LongRangePatternIndex;
+		}
+
+		else
+		{
+			AnimInst->SetAIAnimState(AttackPattern[PatternIndex]);
+			++PatternIndex;
+
+			// Reset index
+			if (PatternIndex > AttackPattern.Num() - 1)
+				PatternIndex -= PatternIndex;
+		}
 
 		return EBTNodeResult::Succeeded;
 	}

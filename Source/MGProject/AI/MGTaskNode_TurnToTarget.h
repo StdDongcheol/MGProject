@@ -21,9 +21,16 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TArray<EAIAnimState> AttackPattern;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TArray<EAIAnimState> LongRangeAttackPattern;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	double	SetLongRangeDistance;
 	
 private:
 	int		PatternIndex;
+	int		LongRangePatternIndex;
 	double	TurnAnimTimeAcc;
 
 protected:
