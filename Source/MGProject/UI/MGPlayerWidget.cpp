@@ -55,6 +55,7 @@ void UMGPlayerWidget::NativeConstruct()
 	HPSlider = Cast<USlider>(WidgetTree->FindWidget(TEXT("S_Shine")));
 	MissileChargeBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("MissileProgressBar")));
 	DroneChargeBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("DroneProgressBar")));
+	DashChargeBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("DashProgressBar")));
 	MissileCountText = Cast<UTextBlock>(WidgetTree->FindWidget(TEXT("MissileCount")));
 	Fade = Cast<UImage>(WidgetTree->FindWidget(TEXT("FadeImage")));
 	TitleButton = Cast<UButton>(WidgetTree->FindWidget(TEXT("PlayBackButton")));
@@ -65,6 +66,8 @@ void UMGPlayerWidget::NativeConstruct()
 	ECoolTime = PlayerChacracter->GetDroneChargeTime();
 	QTimeLeft = PlayerChacracter->GetMissileChargeTimeAcc();
 	QCoolTime = PlayerChacracter->GetMissileChargeTime();
+	DashTimeLeft = PlayerChacracter->GetDashChargeTimeAcc();
+	DashCoolTime = PlayerChacracter->GetDashChargeTime();
 	CurrentMissile = PlayerChacracter->GetMissileCount();
 	MissileMax = PlayerChacracter->GetMissileMax();
 
@@ -96,6 +99,8 @@ void UMGPlayerWidget::PlayerStatusUpdate(float Deltatime)
 	ECoolTime = PlayerChacracter->GetDroneChargeTime();
 	QTimeLeft = PlayerChacracter->GetMissileChargeTimeAcc();
 	QCoolTime = PlayerChacracter->GetMissileChargeTime();
+	DashTimeLeft = PlayerChacracter->GetDashChargeTimeAcc();
+	DashCoolTime = PlayerChacracter->GetDashChargeTime();
 	CurrentMissile = PlayerChacracter->GetMissileCount();
 	MissileMax = PlayerChacracter->GetMissileMax();
 
@@ -103,6 +108,7 @@ void UMGPlayerWidget::PlayerStatusUpdate(float Deltatime)
 
 	MissileChargeBar->SetPercent(QTimeLeft / QCoolTime);
 	DroneChargeBar->SetPercent(ETimeLeft / ECoolTime);
+	DashChargeBar->SetPercent(DashTimeLeft / DashCoolTime);
 	MissileCountText->SetText(FText::FromString(FString::FromInt(CurrentMissile)));
 }
 

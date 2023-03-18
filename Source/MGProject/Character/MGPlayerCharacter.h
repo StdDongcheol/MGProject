@@ -46,6 +46,9 @@ private:
 	float			MissileChargeTimeAcc;
 	float			DroneChargeTime;
 	float			DroneChargeTimeAcc;
+	float			DashChargeTime;
+	float			DashChargeTimeAcc;
+	bool			IsDashReady;
 	bool			IsDroneDeployable;
 	bool			ChargeFireMode;
 
@@ -96,6 +99,16 @@ public:
 	{
 		return MissileChargeTimeAcc;
 	}
+	
+	float GetDashChargeTime() const
+	{
+		return DashChargeTime;
+	}
+	
+	float GetDashChargeTimeAcc() const
+	{
+		return DashChargeTimeAcc;
+	}
 
 	bool IsDroneReady() const
 	{
@@ -105,6 +118,11 @@ public:
 	bool IsChargeFireMode() const
 	{
 		return ChargeFireMode;
+	}
+
+	bool IsDashCharged() const
+	{
+		return IsDashReady;
 	}
 
 	ECharacter_Status GetStatus() const
@@ -121,6 +139,11 @@ public:
 	void UseDroneReady()
 	{
 		IsDroneDeployable = false;
+	}
+	
+	void UseDash()
+	{
+		IsDashReady = false;
 	}
 
 protected:

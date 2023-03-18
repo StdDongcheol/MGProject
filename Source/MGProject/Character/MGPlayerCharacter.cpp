@@ -16,7 +16,9 @@ AMGPlayerCharacter::AMGPlayerCharacter() :
 	MissileChargeTime(5.0f),
 	MissileChargeTimeAcc(0.0f),
 	DroneChargeTime(20.0f),
-	DroneChargeTimeAcc(0.0f)
+	DroneChargeTimeAcc(0.0f),
+	DashChargeTime(13.0f),
+	DashChargeTimeAcc(0.0f)
 {
 	Tags.Add(TEXT("Player"));
 
@@ -49,8 +51,8 @@ void AMGPlayerCharacter::BeginPlay()
 	Camera = FindComponentByClass<UCameraComponent>();
 	DroneDeployParticle = FindComponentByClass<UParticleSystemComponent>();
 
-	BoxCollision->SetBoxExtent(FVector(2000.0f, 500.0f, 128.0f));
-	BoxCollision->AddRelativeLocation(FVector(-1024.0f, 0.0f, 0.0f));
+	BoxCollision->SetBoxExtent(FVector(3000.0f, 1000.0f, 128.0f));
+	BoxCollision->AddRelativeLocation(FVector(-1500.0f, 0.0f, 0.0f));
 
 	DroneDeployParticle->SetVisibility(false);
 
@@ -66,6 +68,7 @@ void AMGPlayerCharacter::BeginPlay()
 	MaxAttack = 20.0f;
 	MoveSpeed = 1.0f;
 	IsDroneDeployable = true;
+	IsDashReady = true;
 }
 
 
@@ -207,7 +210,7 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 
 		if (MissileChargeTimeAcc > MissileChargeTime)
 		{
-			MissileChargeTimeAcc -= MissileChargeTime;
+			MissileChargeTimeAcc -= MissileChargeTimeAcc;
 			++MissileCount;
 
 			// AnimInst 업데이트
@@ -223,9 +226,23 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 
 		if (DroneChargeTimeAcc > DroneChargeTime)
 		{
-			DroneChargeTimeAcc -= DroneChargeTime;
+			DroneChargeTimeAcc -= DroneChargeTimeAcc;
 
 			IsDroneDeployable = true;
+		}
+	}
+	// Drone Charge end
+	
+	// Dash Charge start
+	if (!IsDashReady)
+	{
+		DashChargeTimeAcc += DeltaTime;
+
+		if (DashChargeTimeAcc > DashChargeTime)
+		{
+			DashChargeTimeAcc -= DashChargeTimeAcc;
+
+			IsDashReady = true;
 		}
 	}
 	// Drone Charge end
@@ -415,6 +432,7 @@ void AMGPlayerCharacter::OnCollisionGroundHit(UPrimitiveComponent* HitComponent,
 
 			if (GetAnimInst<UMGPlayerAnimInstance>()->GetActionState() == EPlayer_ActionState::Dash)
 			{
+				GetAnimInst<UMGPlayerAnimInstance>()->SetActionState(EPlayer_ActionState::Normal);
 				GetAnimInst()->SetStatus(ECharacter_Status::Normal);
 				GetCapsuleComponent()->SetSimulatePhysics(false);
 			}

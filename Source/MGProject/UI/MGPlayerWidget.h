@@ -26,6 +26,9 @@ private:
 
 	UPROPERTY()
 	class UProgressBar* DroneChargeBar;
+
+	UPROPERTY()
+	class UProgressBar* DashChargeBar;
 	
 	UPROPERTY()
 	class UTextBlock* MissileCountText;
@@ -70,6 +73,8 @@ private:
 	float	ECoolTime;
 	float	QTimeLeft;
 	float	QCoolTime;
+	float	DashTimeLeft;
+	float	DashCoolTime;
 	int		CurrentMissile;
 	int		MissileMax;
 

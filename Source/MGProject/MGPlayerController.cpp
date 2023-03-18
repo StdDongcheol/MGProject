@@ -675,7 +675,7 @@ void AMGPlayerController::ShiftButtonPress()
 	if (!PlayerCharacter || !PlayerCharacter->IsValidLowLevel())
 		return;
 
-	bool bCheck = (bool)(PlayerCharacter->GetStatus());
+	bool bCheck = (bool)(PlayerCharacter->GetStatus()) || !PlayerCharacter->IsDashCharged();
 
 	if (bCheck)
 	{
@@ -686,7 +686,7 @@ void AMGPlayerController::ShiftButtonPress()
 
 	if (ActionState == EPlayer_ActionState::Normal)
 	{
-		// 현재 이동방향에 따라서 전후좌우 판단.
+		// 전후좌우 판단.
 		UCharacterMovementComponent* MovementComponent = PlayerCharacter->GetCharacterMovement();
 
 		if (!MovementComponent || !MovementComponent->IsValidLowLevel())
@@ -704,6 +704,9 @@ void AMGPlayerController::ShiftButtonPress()
 		// 대시 키로 State 변환
 		PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetActionState(EPlayer_ActionState::Dash);
 		PlayerCharacter->GetAnimInst()->SetStatus(ECharacter_Status::Dodge);
+
+		// UseDash check
+		PlayerCharacter->UseDash();
 	}
 }
 
