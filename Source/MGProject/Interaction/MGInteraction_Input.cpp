@@ -3,6 +3,7 @@
 
 #include "MGInteraction_Input.h"
 #include "../Character/MGPlayerCharacter.h"
+#include "../Animation/MGPlayerAnimInstance.h"
 #include "../Character/MGEnemyCharacter.h"
 #include "../MGPlayerController.h"
 #include "../MGPlayGameMode.h"
@@ -23,6 +24,9 @@ AMGInteraction_Input::AMGInteraction_Input()
 
 	RootComponent = TriggerBox;
 
+	InputMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	InputMesh->SetupAttachment(RootComponent);
+	
 	InteractionWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionWidget"));
 	InteractionWidget->SetupAttachment(RootComponent);
 	InteractionWidget->SetWidgetSpace(EWidgetSpace::Screen); 
@@ -50,6 +54,9 @@ void AMGInteraction_Input::SetProgressing(bool bEnable)
 	{
 		InputTimeAcc = 0.0f;
 		InteractionPtr->SetProgress(0.0f);
+
+		if (InputMesh)
+			InputMesh->SetScalarParameterValueOnMaterials(TEXT("EmssiveIntensity"), 1.0f);
 	}
 }
 
@@ -82,6 +89,8 @@ void AMGInteraction_Input::BeginPlay()
 	InteractionWidget->SetWidgetClass(InteractionWidgetClass);
 
 	InteractionPtr = Cast<UMGInteractionWidget>(InteractionWidget->GetWidget());
+
+	EmitFlickTime = 0.2f;
 }
 
 void AMGInteraction_Input::Tick(float DeltaTime)
@@ -108,6 +117,22 @@ void AMGInteraction_Input::Tick(float DeltaTime)
 				if (IsPlayerPushed)
 				{
 					InputTimeAcc += DeltaTime;
+					EmitFlickTimeAcc += DeltaTime;
+
+					if (InputMesh)
+					{
+						if (EmitFlickTimeAcc >= EmitFlickTime)
+						{
+							bEmitFlipper = !bEmitFlipper;
+							EmitFlickTimeAcc -= EmitFlickTimeAcc;
+						}
+
+						if (bEmitFlipper)
+							InputMesh->SetScalarParameterValueOnMaterials(TEXT("EmssiveIntensity"), 100.0f);
+						else
+							InputMesh->SetScalarParameterValueOnMaterials(TEXT("EmssiveIntensity"), 1.0f);
+					}
+					
 					InteractionPtr->SetProgress(InputTimeAcc / InputTime);
 				}
 
@@ -115,6 +140,16 @@ void AMGInteraction_Input::Tick(float DeltaTime)
 				{
 					UE_LOG(LogTemp, Error, TEXT("Input Complete!"));
 
+					AMGPlayerCharacter* Player = Cast<AMGPlayerCharacter>(OutActor);
+
+					if (!Player || !Player->IsValidLowLevel())
+					{
+						UE_LOG(LogTemp, Error, TEXT("Player doesn't executed !!"));
+						return;
+					}
+
+					Player->GetAnimInst<UMGPlayerAnimInstance>()->SetActionState(EPlayer_ActionState::Normal);
+						
 					SpawnComponent->GetInteracts(InteractionTag, InteractComponents, 
 						WaveEndTag, WaveEndInteractComponents);
 
@@ -254,4 +289,7 @@ void AMGInteraction_Input::OnCollisionEnd(UPrimitiveComponent* _pComponent, AAct
 	}
 
 	InputTimeAcc = 0.0f;
+
+	if (InputMesh)
+		InputMesh->SetScalarParameterValueOnMaterials(TEXT("EmssiveIntensity"), 1.0f);
 }

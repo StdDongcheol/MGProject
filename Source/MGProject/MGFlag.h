@@ -25,6 +25,7 @@ enum class EPlayer_ActionState : uint8
 	QAiming,
 	EAiming,
 	Dash,
+	Interaction,
 };
 
 UENUM()

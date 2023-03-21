@@ -19,6 +19,9 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UStaticMeshComponent>	InputMesh;
+	
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UBoxComponent>	TriggerBox;
 	
 	UPROPERTY(EditAnywhere)
@@ -50,6 +53,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input Setting", meta = (AllowPrivateAccess = "true"))
 	float	WaveTime;
 	float	WaveTimeAcc;
+
+	float	EmitFlickTime;
+	float	EmitFlickTimeAcc;
+	bool	bEmitFlipper;
 
 
 	UPROPERTY(EditAnywhere, Category = "Input Setting", meta = (AllowPrivateAccess = "true"))

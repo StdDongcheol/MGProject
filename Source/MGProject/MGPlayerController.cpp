@@ -265,10 +265,18 @@ void AMGPlayerController::LeftMouseButtonAxis(float Value)
 	{
 	case EPlayer_ActionState::Aiming:
 	{
-		if (PlayerCharacter->IsChargeFireMode())
+		if (PlayerCharacter->IsChargeFireMode() && PlayerCharacter->IsChargeReady)
+		{
 			PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetBodyActionState(EPlayer_BodyAction::NormalFire);
-		else
+			PlayerCharacter->UseChargeShot();
+			break;
+		}
+		
+		else if (!PlayerCharacter->IsChargeFireMode())
+		{
 			PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetBodyActionState(EPlayer_BodyAction::RapidFire);
+			break;
+		}
 
 		break;
 	}
@@ -600,6 +608,7 @@ void AMGPlayerController::FButtonPress()
 
 	if (InteractionInput)
 	{
+		PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetActionState(EPlayer_ActionState::Interaction);
 		InteractionInput->SetProgressing(true);
 	}
 }
@@ -629,6 +638,7 @@ void AMGPlayerController::FButtonRelease()
 	if (!InteractionInput)
 		return;
 
+	PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetActionState(EPlayer_ActionState::Normal);
 	InteractionInput->SetProgressing(false);
 }
 
@@ -694,8 +704,19 @@ void AMGPlayerController::ShiftButtonPress()
 
 		FVector MoveDir = PlayerCharacter->GetCharacterMovement()->GetCurrentAcceleration().GetSafeNormal();
 		MoveDir.Z += 0.4f;
+		
+		float YawValue = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetMovementYawValue();
 
-		// 000의경우, 무조건전진대시.
+		bool bKeyPushedW = IsInputKeyDown("W");
+		bool bKeyPushedS = IsInputKeyDown("S");
+		
+		if (!(bKeyPushedW || bKeyPushedS))
+		{
+			FRotator MeshRot = PlayerCharacter->GetMesh()->GetRelativeRotation();
+			MeshRot.Yaw = YawValue - 90.0f;
+
+			PlayerCharacter->GetMesh()->SetRelativeRotation(MeshRot);
+		}
 
 		PlayerCharacter->GetCapsuleComponent()->SetSimulatePhysics(true);
 		PlayerCharacter->GetCapsuleComponent()->AddImpulse(MoveDir * 1000.f, NAME_None, true);
