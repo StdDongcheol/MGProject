@@ -18,6 +18,7 @@ class MGPROJECT_API AMGPlayerCharacter : public AMGCharacter
 	GENERATED_BODY()
 
 	friend class UMGAnimInstance;
+	friend class AMGPlayerController;
 
 public:
 	AMGPlayerCharacter();
@@ -35,6 +36,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UParticleSystemComponent* DroneDeployParticle;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UParticleSystemComponent* ChargeParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UParticleSystemComponent* BackpackParticle;
+	
 	TObjectPtr<UCameraComponent> Camera;
 
 private:
@@ -48,9 +55,12 @@ private:
 	float			DroneChargeTimeAcc;
 	float			DashChargeTime;
 	float			DashChargeTimeAcc;
+	float			ChargeShotGauge;
+	float			ChargeShotGaugeMax;
 	bool			IsDashReady;
 	bool			IsDroneDeployable;
 	bool			ChargeFireMode;
+	bool			IsChargeReady;
 
 
 public:
@@ -119,6 +129,11 @@ public:
 	{
 		return ChargeFireMode;
 	}
+	
+	bool IsChargeEnable() const
+	{
+		return IsChargeReady;
+	}
 
 	bool IsDashCharged() const
 	{
@@ -145,6 +160,8 @@ public:
 	{
 		IsDashReady = false;
 	}
+	
+	void UseChargeShot();
 
 protected:
 	virtual void BeginPlay() override;
@@ -161,6 +178,7 @@ public:
 	void SetQSkillCollision(bool bEnable);
 	void QFireEnd();
 	void SetChargeFireMode(bool bEnable);
+	void AddAttackCharge(float ChargeValue);
 
 private:
 	void ESkillTrace();

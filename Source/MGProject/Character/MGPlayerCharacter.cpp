@@ -17,8 +17,10 @@ AMGPlayerCharacter::AMGPlayerCharacter() :
 	MissileChargeTimeAcc(0.0f),
 	DroneChargeTime(20.0f),
 	DroneChargeTimeAcc(0.0f),
-	DashChargeTime(13.0f),
-	DashChargeTimeAcc(0.0f)
+	DashChargeTime(1.0f),
+	DashChargeTimeAcc(0.0f),
+	ChargeShotGauge(300.0f),
+	ChargeShotGaugeMax(300.0f)
 {
 	Tags.Add(TEXT("Player"));
 
@@ -37,9 +39,25 @@ AMGPlayerCharacter::AMGPlayerCharacter() :
 	DroneDeployParticle = CreateDefaultSubobject<UParticleSystemComponent>("DroneDeploy");
 	DroneDeployParticle->SetupAttachment(RootComponent);
 	DroneDeployParticle->SetRelativeRotation(FRotator3d(90.0f, 0.0f, 0.0f));
+	
+	ChargeParticle = CreateDefaultSubobject<UParticleSystemComponent>("ChargeParticle");
+	ChargeParticle->SetupAttachment(GetMesh(), FName("Muzzle_01"));
+	ChargeParticle->SetRelativeRotation(FRotator3d(90.0f, 0.0f, 0.0f));
+	
+	BackpackParticle = CreateDefaultSubobject<UParticleSystemComponent>("BackpackParticle");
+	BackpackParticle->SetupAttachment(GetMesh(), FName("FX_piston_l"));
+	BackpackParticle->SetRelativeRotation(FRotator3d(90.0f, 0.0f, 0.0f));
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMGPlayerCharacter::QSkillOnCollisionEnter);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AMGPlayerCharacter::QSkillOnCollisionEnd);
+}
+
+void AMGPlayerCharacter::UseChargeShot()
+{
+	ChargeShotGauge = 0.0f;
+	IsChargeReady = false;
+	ChargeParticle->Deactivate();
+	BackpackParticle->Deactivate();
 }
 
 void AMGPlayerCharacter::BeginPlay()
@@ -56,6 +74,9 @@ void AMGPlayerCharacter::BeginPlay()
 
 	DroneDeployParticle->SetVisibility(false);
 
+	ChargeParticle->Deactivate();
+	BackpackParticle->Deactivate();
+
 	SetQSkillCollision(false);
 
 	// PlayerAnim setting start
@@ -69,6 +90,7 @@ void AMGPlayerCharacter::BeginPlay()
 	MoveSpeed = 1.0f;
 	IsDroneDeployable = true;
 	IsDashReady = true;
+	IsChargeReady = true;
 }
 
 
@@ -247,6 +269,7 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 	}
 	// Drone Charge end
 
+
 }
 
 void AMGPlayerCharacter::ActionStateUpdate(float DeltaTime)
@@ -258,8 +281,32 @@ void AMGPlayerCharacter::ActionStateUpdate(float DeltaTime)
 	case EPlayer_ActionState::None:
 		break;
 	case EPlayer_ActionState::Normal:
+	{
+		if (ChargeParticle->IsActive())
+		{
+			ChargeParticle->Deactivate(); 
+			BackpackParticle->Deactivate();
+
+			GetMesh()->SetScalarParameterValueOnMaterials(TEXT("EmissiveFresnelINT"), 0.2f);
+		}
+	}
 		break;
 	case EPlayer_ActionState::Aiming:
+	{
+		if (!ChargeParticle->IsActive() && IsChargeReady && ChargeFireMode)
+		{
+			ChargeParticle->Activate();
+			BackpackParticle->Activate();
+			GetMesh()->SetScalarParameterValueOnMaterials(TEXT("EmissiveFresnelINT"), 100.0f);
+		}
+
+		else if (!ChargeFireMode)
+		{
+			ChargeParticle->Deactivate();
+			BackpackParticle->Deactivate();
+			GetMesh()->SetScalarParameterValueOnMaterials(TEXT("EmissiveFresnelINT"), 0.2f);
+		}
+	}
 		break;
 	case EPlayer_ActionState::QAiming:
 		break;
@@ -275,7 +322,7 @@ void AMGPlayerCharacter::ActionStateUpdate(float DeltaTime)
 
 void AMGPlayerCharacter::ESkillTrace()
 {
-	FHitResult Result = GetTrace(FVector3d::ZeroVector, 1000.0f);
+	FHitResult Result = GetTrace(FVector3d::ZeroVector, 1200.0f);
 
 	if (Result.bStartPenetrating)
 	{
@@ -284,16 +331,13 @@ void AMGPlayerCharacter::ESkillTrace()
 		HitPos += FVector3d(0.0f, 0.0f, 50.0f);
 
 		DronePos = HitPos;
-
 		DroneDeployParticle->SetWorldLocation(HitPos);
-
-		UE_LOG(LogTemp, Log, TEXT("ImpactPoint.Z : %d"), Result.ImpactPoint.Z);
 	}
 
 	else
 	{
 		FVector3d NonHitPos = Result.ImpactPoint;
-		FVector3d GroundPos = NonHitPos - FVector3d(0.0f, 0.0f, 1000.0f);
+		FVector3d GroundPos = NonHitPos - FVector3d(0.0f, 0.0f, 1200.0f);
 
 		FHitResult SecondHitResult;
 
@@ -301,7 +345,7 @@ void AMGPlayerCharacter::ESkillTrace()
 
 		if (bSecondHit)
 		{
-			NonHitPos.Z = SecondHitResult.ImpactPoint.Z;
+			NonHitPos.Z = SecondHitResult.ImpactPoint.Z + 50.0f;
 			DronePos = NonHitPos;
 			DroneDeployParticle->SetWorldLocation(NonHitPos);
 		}
@@ -351,6 +395,18 @@ void AMGPlayerCharacter::SetChargeFireMode(bool bEnable)
 	ChargeFireMode = bEnable;
 
 	GetAnimInst<UMGPlayerAnimInstance>()->SetChargeMode(bEnable);
+}
+
+void AMGPlayerCharacter::AddAttackCharge(float ChargeValue)
+{
+	ChargeShotGauge += ChargeValue;
+
+	if (ChargeShotGauge >= ChargeShotGaugeMax)
+	{
+		ChargeShotGauge = ChargeShotGaugeMax;
+
+		IsChargeReady = true;
+	}
 }
 
 void AMGPlayerCharacter::QSkillOnCollisionEnter(UPrimitiveComponent* _pComponent, 
@@ -435,6 +491,8 @@ void AMGPlayerCharacter::OnCollisionGroundHit(UPrimitiveComponent* HitComponent,
 				GetAnimInst<UMGPlayerAnimInstance>()->SetActionState(EPlayer_ActionState::Normal);
 				GetAnimInst()->SetStatus(ECharacter_Status::Normal);
 				GetCapsuleComponent()->SetSimulatePhysics(false);
+
+				GetMesh()->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
 			}
 		}
 	}

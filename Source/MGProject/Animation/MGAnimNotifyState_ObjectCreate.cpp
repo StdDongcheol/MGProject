@@ -45,8 +45,9 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 		{
 		case EPlayer_BodyAction::NormalFire:
 		{
-			FVector HitPos = PlayerCharacter->GetTrace(FVector::ZeroVector, 2000.0f, false);
-			
+			FHitResult Result = PlayerCharacter->GetTrace(FVector::ZeroVector, 2000.0f, false);
+			FVector3d HitPos = Result.ImpactPoint;
+
 			FVector Dir = HitPos - SpawnPosition;
 			FRotator Rot = Dir.Rotation();
 
@@ -56,11 +57,14 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 				return;
 
 			Laser->SetProfile(TEXT("PlayerAttack"), PlayerCharacter->GetMaxAttack());
+
+			PlayerCharacter->GetMesh()->SetScalarParameterValueOnMaterials(TEXT("EmissiveFresnelINT"), 0.2f);
 			break;
 		}
 		case EPlayer_BodyAction::RapidFire:
 		{			
-			FVector HitPos = PlayerCharacter->GetTrace();
+			FHitResult Result = PlayerCharacter->GetTrace();
+			FVector3d HitPos = Result.ImpactPoint;
 
 			FVector Dir = HitPos - SpawnPosition;
 			FRotator Rot = Dir.Rotation();
