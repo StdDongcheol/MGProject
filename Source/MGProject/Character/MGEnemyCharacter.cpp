@@ -2,10 +2,13 @@
 
 
 #include "MGEnemyCharacter.h"
+#include "MGPlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "../MGEnemyController.h"
 #include "../UI/MGEnemyWidget.h"
 #include "../Animation/MGEnemyAnimInstance.h"
 
@@ -60,6 +63,15 @@ void AMGEnemyCharacter::SetDamage(float _Damage, bool _IsWeakpoint)
 		SetLifeSpan(5.0f);
 		GetAnimInst<UMGEnemyAnimInstance>()->SetAIAnimState(EAIAnimState::Death);
 	}
+	
+	UObject* Target = GetController<AMGEnemyController>()->GetBlackboardComponent()->GetValueAsObject(FName("TargetObject"));
+
+	AMGPlayerCharacter* PlayerTarget = Cast<AMGPlayerCharacter>(Target);
+	
+	if (!PlayerTarget || !PlayerTarget->IsValidLowLevel())
+		return;
+
+	PlayerTarget->AddAttackCharge(-_Damage / 2.0f);
 }
 
 void AMGEnemyCharacter::SetAppearance(float _DeltaTime, bool _IsReveal)
