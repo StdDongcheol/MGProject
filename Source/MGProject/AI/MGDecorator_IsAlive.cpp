@@ -8,6 +8,7 @@
 
 UMGDecorator_IsAlive::UMGDecorator_IsAlive()
 {
+	bNotifyTick = true;
 }
 
 bool UMGDecorator_IsAlive::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
@@ -29,3 +30,24 @@ bool UMGDecorator_IsAlive::CalculateRawConditionValue(UBehaviorTreeComponent& Ow
 	return true;
 }
 
+void UMGDecorator_IsAlive::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+	Super::OnBecomeRelevant(OwnerComp, NodeMemory);
+	
+	TNodeInstanceMemory* DecoratorMemory = CastInstanceNodeMemory<TNodeInstanceMemory>(NodeMemory);
+	DecoratorMemory->BeforeData = CalculateRawConditionValue(OwnerComp, NodeMemory);
+}
+
+void UMGDecorator_IsAlive::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
+	TNodeInstanceMemory* DecoratorMemory = CastInstanceNodeMemory<TNodeInstanceMemory>(NodeMemory);
+	
+	bool bCondition = CalculateRawConditionValue(OwnerComp, NodeMemory);
+	if (bCondition != DecoratorMemory->BeforeData)
+	{
+		DecoratorMemory->BeforeData = bCondition;
+		OwnerComp.RequestExecution(this);
+	}
+}
