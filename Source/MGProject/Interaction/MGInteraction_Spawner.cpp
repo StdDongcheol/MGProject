@@ -43,8 +43,14 @@ void AMGInteraction_Spawner::Tick(float DeltaTime)
 void AMGInteraction_Spawner::Spawn()
 {
 	int Index = static_cast<int>(RandomStream.FRandRange(0, MonsterArray.Num()));
+	float RandPosX = RandomStream.FRandRange(-250.0f, 250.0f);
+	float RandPosY = RandomStream.FRandRange(-250.0f, 250.0f);
 
 	FTransform SpawnTransform = GetActorTransform();
+	float SpawnPosX = SpawnTransform.GetLocation().X + RandPosX;
+	float SpawnPosY = SpawnTransform.GetLocation().Y + RandPosY;
+
+	SpawnTransform.SetLocation(FVector(SpawnPosX, SpawnPosY, SpawnTransform.GetLocation().Z));
 
 	GetWorld()->SpawnActor<AMGEnemyCharacter>(MonsterArray[Index], SpawnTransform);
 
