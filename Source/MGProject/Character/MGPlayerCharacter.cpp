@@ -5,22 +5,16 @@
 #include "MGEnemyCharacter.h"
 #include "../MGPlayerController.h"
 #include "../Animation/MGPlayerAnimInstance.h"
+#include "../MGBlueprintFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
-#include "GameFramework/PawnMovementComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 
 AMGPlayerCharacter::AMGPlayerCharacter() :
-	MissileMaxCount(10),
-	MissileCount(10),
-	MissileChargeTime(5.0f),
 	MissileChargeTimeAcc(0.0f),
-	DroneChargeTime(20.0f),
 	DroneChargeTimeAcc(0.0f),
-	DashChargeTime(1.0f),
-	DashChargeTimeAcc(0.0f),
-	ChargeShotGauge(300.0f),
-	ChargeShotGaugeMax(300.0f)
+	DashChargeTimeAcc(0.0f)
 {
 	Tags.Add(TEXT("Player"));
 
@@ -82,15 +76,36 @@ void AMGPlayerCharacter::BeginPlay()
 	// PlayerAnim setting start
 	GetAnimInst<UMGPlayerAnimInstance>()->AddQAnimLoopCount(MissileCount);
 
-	// Character status setting start
-	HPMax = 100.0f;
-	HP = HPMax;
-	MinAttack = 10.0f;
-	MaxAttack = 20.0f;
-	MoveSpeed = 1.0f;
-	IsDroneDeployable = true;
-	IsDashReady = true;
-	IsChargeReady = true;
+	const FMGPlayerDataTable* PlayerData = UMGBlueprintFunctionLibrary::GetMGGameInstance()->GetPlayerDataTable(TEXT("Player"));
+
+	if (PlayerData)
+	{
+		// Character status setting start
+		UMGPlayerWidget* PlayerWidget = GetController<AMGPlayerController>()->GetPlayerStatusWidget();
+		PlayerWidget->SetPlayerStatus(PlayerData);
+		
+		HPMax = PlayerData->HPMax;
+		HP = HPMax;
+		MinAttack = PlayerData->MinAttack;
+		MaxAttack = PlayerData->MaxAttack;
+		MoveSpeed = PlayerData->MoveSpeed;
+		MissileChargeTime = PlayerData->mapSkill.Find(FName("QSkill"))->CoolTime;
+		MissileMaxCount = *PlayerData->mapSkill.Find(FName("QSkill"))->AdditionalProperty.Find(FName("MaxMissile"));
+		MissileCount = MissileMaxCount;
+		GetAnimInst<UMGPlayerAnimInstance>()->AddQAnimLoopCount(MissileMaxCount);
+		DroneChargeTime = PlayerData->mapSkill.Find(FName("ESkill"))->CoolTime;
+		DashChargeTime = PlayerData->mapSkill.Find(FName("Dash"))->CoolTime;
+		ChargeShotGaugeMax = PlayerData->mapSkill.Find(FName("ChargeGauge"))->CoolTime;
+		ChargeShotGauge = ChargeShotGaugeMax;
+
+		IsDroneDeployable = true;
+		IsDashReady = true;
+		IsChargeReady = true;
+
+		GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
+		// Character status setting end
+	}
+
 }
 
 
@@ -268,6 +283,18 @@ void AMGPlayerCharacter::StateUpdate(float DeltaTime)
 		}
 	}
 	// Drone Charge end
+	
+	// ChargeShot start
+	if (!IsChargeReady)
+	{
+		ChargeShotGauge += (DeltaTime * 5.f);
+
+		if (ChargeShotGauge > ChargeShotGaugeMax)
+		{
+			IsDashReady = true;
+		}
+	}
+	// ChargeShot end
 
 
 }
@@ -478,8 +505,7 @@ void AMGPlayerCharacter::OnCollisionGroundHit(UPrimitiveComponent* HitComponent,
 {
 	FName OtherProfileName = OtherComp->GetCollisionProfileName();
 
-	if (OtherProfileName == TEXT("WorldObject") || 
-		OtherProfileName == TEXT("BlockAll"))
+	if (OtherProfileName == TEXT("WorldObject") || OtherProfileName == TEXT("BlockAll"))
 	{
 		if (GetAnimInst()->GetStatus() & ECharacter_Status::KnockOut ||
 			GetAnimInst<UMGPlayerAnimInstance>()->GetActionState() == EPlayer_ActionState::Dash)
