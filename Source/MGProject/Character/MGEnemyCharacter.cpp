@@ -70,8 +70,9 @@ void AMGEnemyCharacter::SetDamage(float _Damage, bool _IsWeakpoint)
 	
 	if (!PlayerTarget || !PlayerTarget->IsValidLowLevel())
 		return;
-
-	PlayerTarget->AddAttackCharge(-_Damage / 2.0f);
+	
+	if (!PlayerTarget->IsChargeFireMode())
+		PlayerTarget->AddAttackCharge(-_Damage / 2.0f);
 }
 
 void AMGEnemyCharacter::SetAppearance(float _DeltaTime, bool _IsReveal)
@@ -132,6 +133,7 @@ void AMGEnemyCharacter::Tick(float DeltaTime)
 
 	else if (GetAnimInst()->IsDead())
 	{
-		SetAppearance(DeltaTime);
+		if (AppearanceTime > 0.0f)
+			SetAppearance(DeltaTime);
 	}
 }
