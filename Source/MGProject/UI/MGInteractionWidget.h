@@ -17,6 +17,8 @@ class MGPROJECT_API UMGInteractionWidget : public UMGUserWidget
 private:
 	UPROPERTY()
 	TObjectPtr<class UProgressBar> InputProgressBar;
+	UPROPERTY()
+	TObjectPtr<class USlider> InputProgressSlider;
 	
 private:
 	bool	IsProgressBarStart;
@@ -46,6 +48,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class USoundBase> PushingSound;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class USoundBase> CalculatingSound;
 
 private:
 	FWidgetAnimationDynamicEvent PlayerOnAnimStartDelegate;

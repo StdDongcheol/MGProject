@@ -4,6 +4,7 @@
 #include "MGInteractionWidget.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/ProgressBar.h"
+#include "Components/Slider.h"
 
 void UMGInteractionWidget::NativeConstruct()
 {
@@ -14,7 +15,8 @@ void UMGInteractionWidget::NativeConstruct()
 	BindToAnimationStarted(PushingAnimation, KeyPushingAnimStartDelegate);
 	BindToAnimationStarted(CompleteAnimation, CompleteAnimStartDelegate);
 
-	InputProgressBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("ProgressBar")));
+	InputProgressBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("PB_Base")));
+	InputProgressSlider = Cast<USlider>(WidgetTree->FindWidget(TEXT("S_Shine")));
 	IsProgressBarStart = false;
 }
 
@@ -33,6 +35,7 @@ void UMGInteractionWidget::NativeTick(const FGeometry& MyGeometry, float InDelta
 void UMGInteractionWidget::SetProgress(float Percent)
 {
 	InputProgressBar->SetPercent(Percent);
+	InputProgressSlider->SetValue(Percent);
 
 	if (IsProgressCompleted)
 		return;
@@ -42,7 +45,7 @@ void UMGInteractionWidget::SetProgress(float Percent)
 		if (!IsProgressBarStart)
 		{
 			PlayAnimation(PushingAnimation);
-			PlaySound(PushingSound);
+			PlaySound(CalculatingSound);
 			IsProgressBarStart = true;
 		}
 	}
