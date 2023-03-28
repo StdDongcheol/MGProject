@@ -162,7 +162,7 @@ void AMGPlayerDrone::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* 
 {
 	FName CollisionName = _OtherComp->GetCollisionProfileName();
 
-	if (CollisionName != FName("PlayerHeal"))
+	if (CollisionName == FName("WorldObject") || CollisionName == TEXT("BlockAll"))
 	{
 		ProjectileComponent->bSimulationEnabled = false;
 

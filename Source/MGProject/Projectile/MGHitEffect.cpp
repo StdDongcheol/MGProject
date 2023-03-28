@@ -32,6 +32,9 @@ void AMGHitEffect::SetStatus(float fLifetime, USceneComponent* AttachComponent)
 void AMGHitEffect::SetSound(USoundBase* SoundBase)
 {
 	AudioComponent->SetSound(SoundBase);
+	
+	if (SoundBase)
+		AudioComponent->Play();
 }
 
 void AMGHitEffect::SetParticle(UParticleSystem* CascadeParticle)
@@ -52,12 +55,5 @@ void AMGHitEffect::BeginPlay()
 void AMGHitEffect::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (!IsSoundPlayed && AudioComponent->GetSound())
-	{
-		IsSoundPlayed = true;
-
-		AudioComponent->Play();
-	}
 }
 

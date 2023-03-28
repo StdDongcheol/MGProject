@@ -141,7 +141,10 @@ void AMGBullet::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOth
 	}
 
 	if (OtherCharacter->GetStatus() & ECharacter_Status::Dodge)
+	{
+		Destroy();
 		return;
+	}
 
 	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
 

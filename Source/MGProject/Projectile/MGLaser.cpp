@@ -70,6 +70,9 @@ void AMGLaser::Tick(float DeltaTime)
 void AMGLaser::SetProfile(FName _Name, float _Damage)
 {
 	DrawDebugBox(GetWorld(), DamageCollider->GetComponentLocation(), DamageCollider->GetScaledBoxExtent(), DamageCollider->GetComponentRotation().Quaternion(), FColor::Red, false, 2.0f, (uint8)0U, 1.0f);
+
+	Mesh->SetCollisionProfileName(_Name);
+	Damage = _Damage;
 }
 
 void AMGLaser::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOtherActor,
@@ -100,6 +103,6 @@ void AMGLaser::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOthe
 	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
 
 	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
-	OtherCharacter->SetDamage(-20.0f, IsWeakPoint);
+	OtherCharacter->SetDamage(-Damage, IsWeakPoint);
 }
 
