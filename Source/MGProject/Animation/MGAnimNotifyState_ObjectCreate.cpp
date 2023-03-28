@@ -31,12 +31,12 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 		AMGPlayerCharacter* PlayerCharacter = Cast<AMGPlayerCharacter>(Character);
 		float Pitch = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetAimRot().Pitch;
 
-		const FTransform MeshTransform = MeshComp->GetSocketTransform(SocketName);
+		const FTransform SocketTransform = MeshComp->GetSocketTransform(SocketName);
+		
+		FTransform SpawnTransform = SocketTransform;
+		SpawnTransform.SetLocation(SocketTransform.GetLocation() + SpawnOffset);
 
-		FVector SpawnPosition = MeshTransform.GetLocation() + SpawnOffset;
-
-		FRotator SpawnRotation = MeshTransform.Rotator();
-		SpawnRotation.Pitch = Pitch;
+		FVector SpawnPosition = SocketTransform.GetLocation() + SpawnOffset;
 
 
 		EPlayer_BodyAction BodyAction = PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->GetBodyActionState();
@@ -50,13 +50,15 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 
 			FVector Dir = HitPos - SpawnPosition;
 			FRotator Rot = Dir.Rotation();
+			SpawnTransform.SetRotation(Rot.Quaternion());
 
-			AMGLaser* Laser = MeshComp->GetWorld()->SpawnActor<AMGLaser>(TargetActor, SpawnPosition, Rot);
+			AMGLaser* Laser = MeshComp->GetWorld()->SpawnActorDeferred<AMGLaser>(TargetActor, SpawnTransform);
 
 			if (!Laser || !Laser->IsValidLowLevel())
 				return;
 
 			Laser->SetProfile(TEXT("PlayerAttack"), PlayerCharacter->GetMaxAttack());
+			Laser->FinishSpawning(SpawnTransform);
 
 			PlayerCharacter->GetMesh()->SetScalarParameterValueOnMaterials(TEXT("EmissiveFresnelINT"), 0.2f);
 			break;
@@ -74,12 +76,12 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 			if (!Bullet || !Bullet->IsValidLowLevel())
 				return;
 
-			Bullet->SetBulletProfile(TEXT("PlayerAttack"), 5000.0f, PlayerCharacter->GetMinAttack());
+			Bullet->SetBulletProfile(TEXT("PlayerAttack"), 9000.0f, PlayerCharacter->GetMinAttack());
 			break;
 		}
 		case EPlayer_BodyAction::QFire:
 		{
-			AMGMissile* Missile = MeshComp->GetWorld()->SpawnActorDeferred<AMGMissile>(AMGMissile::StaticClass(), MeshTransform);
+			AMGMissile* Missile = MeshComp->GetWorld()->SpawnActorDeferred<AMGMissile>(AMGMissile::StaticClass(), SocketTransform);
 
 			if (!Missile || !Missile->IsValidLowLevel())
 				return;
@@ -88,7 +90,7 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 			Missile->SetStatus(TEXT("PlayerAttack"), PlayerCharacter->GetTarget(), 
 				PlayerCharacter->GetMinAttack(), 0.0f, 8.f);
 
-			Missile->FinishSpawning(MeshTransform);
+			Missile->FinishSpawning(SocketTransform);
 			break;
 		}
 		case EPlayer_BodyAction::EThrowing:
@@ -155,4 +157,5 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 			}
 		}
 	}
+
 }
