@@ -122,6 +122,8 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 		FVector SpawnPosition = MeshTransform.GetLocation() + SpawnOffset;
 		FRotator SpawnRotation = MeshTransform.Rotator();
 
+		FTransform SpawnTransform = FTransform(SpawnRotation, MeshTransform.GetLocation() + SpawnOffset, FVector::One());
+
 		AActor* PlayerActor = EnemyCharacter->FindTarget("Player", EnemyCharacter->GetDetectRange());
 		
 		if (PlayerActor)
@@ -132,13 +134,14 @@ void UMGAnimNotifyState_ObjectCreate::NotifyBegin(USkeletalMeshComponent* MeshCo
 
 			if (TargetActor->IsChildOf(AMGMissile::StaticClass()))
 			{
-				AMGMissile* Missile = MeshComp->GetWorld()->SpawnActor<AMGMissile>(TargetActor, SpawnPosition, SpawnRotation);
+				AMGMissile* Missile = MeshComp->GetWorld()->SpawnActorDeferred<AMGMissile>(TargetActor, SpawnTransform);
 
 				if (!Missile || !Missile->IsValidLowLevel())
 					return;
 
 				Missile->SetStatus(TEXT("EnemyAttack"), PlayerActor->GetRootComponent(), 
 					EnemyCharacter->GetMinAttack(), 0.40f, 0.30f);
+				Missile->FinishSpawning(SpawnTransform);
 			}
 
 			else if (TargetActor->IsChildOf(AMGBullet::StaticClass()))

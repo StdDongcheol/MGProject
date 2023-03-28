@@ -23,6 +23,9 @@ protected:
 	TObjectPtr<class USkeletalMesh> SkeletalMesh;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
+	TObjectPtr<class USphereComponent> HitCollider;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")
 	TObjectPtr<class USphereComponent> DamageCollider;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"), Category = "Missile")

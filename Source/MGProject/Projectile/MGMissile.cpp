@@ -4,11 +4,12 @@
 #include "MGMissile.h"
 #include "MGHitEffect.h"
 #include "../Character/MGCharacter.h"
+#include "../Character/MGEnemyCharacter.h"
 #include "../MGBlueprintFunctionLibrary.h"
 #include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/SphereComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -20,11 +21,15 @@ AMGMissile::AMGMissile()
 
 	RootComponent = Mesh;
 
+	HitCollider = CreateDefaultSubobject<USphereComponent>(TEXT("HitCollider"));
+	HitCollider->SetupAttachment(RootComponent);
+	HitCollider->SetNotifyRigidBodyCollision(true);
+	HitCollider->SetRelativeLocation(FVector(30.0f, 0.0f, 0.0f));
+	HitCollider->OnComponentBeginOverlap.AddDynamic(this, &AMGMissile::OnCollisionEnter);
+
 	DamageCollider = CreateDefaultSubobject<USphereComponent>(TEXT("DamageCollider"));
 	DamageCollider->SetupAttachment(RootComponent);
 	DamageCollider->SetNotifyRigidBodyCollision(true);
-	DamageCollider->SetRelativeLocation(FVector(30.0f, 0.0f, 0.0f));
-	DamageCollider->OnComponentBeginOverlap.AddDynamic(this, &AMGMissile::OnCollisionEnter);
 
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("MissileNiagaraComponent"));
 	NiagaraComponent->SetupAttachment(RootComponent, TEXT("skeleton_grpSocket"));
@@ -36,6 +41,7 @@ AMGMissile::AMGMissile()
 void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetComponent,
 	float _Damage, float _BoostTime, float _ForgetTime)
 {
+	HitCollider->SetCollisionProfileName(_CollisionName);
 	DamageCollider->SetCollisionProfileName(_CollisionName);
 	Mesh->SetCollisionProfileName(_CollisionName);
 
@@ -47,6 +53,8 @@ void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetCompone
 	if (_CollisionName == FName("PlayerAttack"))
 	{
 		SetForce(EObject_Force::Player);
+
+		DamageCollider->SetSphereRadius(1000.0f);
 
 		ProjectileComponent->InitialSpeed = 1000.f;
 		ProjectileComponent->MaxSpeed = 1500.f;
@@ -94,7 +102,8 @@ void AMGMissile::SetStatus(FName _CollisionName, USceneComponent* _TargetCompone
 	{
 		SetForce(EObject_Force::Enemy);
 		
-		DamageCollider->SetSphereRadius(DamageCollider->GetScaledSphereRadius() * 2.f);
+		HitCollider->SetSphereRadius(HitCollider->GetScaledSphereRadius() * 2.f);
+		DamageCollider->SetSphereRadius(HitCollider->GetScaledSphereRadius() * 4.f);
 
 		ProjectileComponent->InitialSpeed = 500.f;
 		ProjectileComponent->MaxSpeed = 5000.f;
@@ -245,11 +254,35 @@ void AMGMissile::OnCollisionEnter(UPrimitiveComponent* _pComponent, AActor* _pOt
 	if (OtherCharacter->GetStatus() & ECharacter_Status::Dodge)
 		return;
 
-	bool IsWeakPoint = _OtherComp->ComponentHasTag(TEXT("WeakPoint")) ? true : false;
+	TArray<TObjectPtr<AActor>> OverlappingActorArr;
+	TArray<TObjectPtr<AActor>> OverlappingActorArr2;
 
-	OtherCharacter->SetStatus(ECharacter_Status::Damaged);
-	OtherCharacter->SetDamage(-Damage, IsWeakPoint);
-	
+	DamageCollider->GetOverlappingActors(OverlappingActorArr);
+
+	FName CollisionProfile = _OtherComp->GetCollisionProfileName();
+
+	for (AActor* TargetActor : OverlappingActorArr)
+	{
+		AMGCharacter* TargetEnemy = Cast<AMGCharacter>(TargetActor);
+		
+		if (!TargetEnemy || !TargetEnemy->IsValidLowLevel())
+			continue;
+
+		FName TargetProfileName = TargetEnemy->GetCapsuleComponent()->GetCollisionProfileName();
+
+		if (TargetProfileName == CollisionProfile)
+		{
+			TArray<TObjectPtr<UActorComponent>> CollisionComponents;
+
+			CollisionComponents = TargetEnemy->GetComponentsByTag(UPrimitiveComponent::StaticClass(), TEXT("WeakPoint"));
+
+			bool IsWeakPoint = CollisionComponents.IsEmpty() ? false : true;
+
+			TargetEnemy->SetStatus(ECharacter_Status::Damaged);
+			TargetEnemy->SetDamage(-Damage, IsWeakPoint);
+		}
+	}
+
 	Destroy();
 }
 
