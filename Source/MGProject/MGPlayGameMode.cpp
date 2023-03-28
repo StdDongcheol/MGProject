@@ -27,7 +27,7 @@ void AMGPlayGameMode::BeginPlay()
 	}
 
 	AudioComponent->SetSound(BGMSound);
-	AudioComponent->Play();
+	AudioComponent->FadeIn(3.0f, 1.0f, BGMPlayTime);
 }
 
 void AMGPlayGameMode::Tick(float DeltaTime)
@@ -37,7 +37,7 @@ void AMGPlayGameMode::Tick(float DeltaTime)
 	if (!AudioComponent->IsPlaying() && NextBGMSound)
 	{
 		AudioComponent->SetSound(NextBGMSound);
-		AudioComponent->FadeIn(0.2f, 1.0f, BGMPlayTime);
+		AudioComponent->FadeIn(3.0f, 1.0f, BGMPlayTime);
 
 		NextBGMSound = nullptr;
 	}
@@ -56,6 +56,7 @@ void AMGPlayGameMode::ChangeBGM(FName _BGMName, float _FadeDuration)
 	if (_FadeDuration == 0.0f)
 	{
 		AudioComponent->SetSound(BGMSound);
+		AudioComponent->Play();
 	}
 
 	else
@@ -70,4 +71,9 @@ void AMGPlayGameMode::ChangeBGM(FName _BGMName, float _FadeDuration)
 		BGMPlayTime += _FadeDuration;
 		NextBGMSound = BGMSound;
 	}
+}
+
+void AMGPlayGameMode::BGMFadeOut()
+{
+	AudioComponent->FadeOut(3.0f, 0.0f);
 }

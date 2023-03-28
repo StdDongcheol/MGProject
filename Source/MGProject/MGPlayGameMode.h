@@ -37,4 +37,5 @@ protected:
 	
 public:
 	void ChangeBGM(FName _BGMName, float _FadeDuration = 0.0f);
+	void BGMFadeOut();
 };
