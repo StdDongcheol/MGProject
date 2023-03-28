@@ -66,7 +66,7 @@ EBTNodeResult::Type UMGTaskNode_TurnToTarget::ExecuteTask(UBehaviorTreeComponent
 			++LongRangePatternIndex;
 
 			// Reset index
-			if (LongRangePatternIndex > AttackPattern.Num() - 1)
+			if (LongRangePatternIndex > LongRangeAttackPattern.Num() - 1)
 				LongRangePatternIndex -= LongRangePatternIndex;
 		}
 
