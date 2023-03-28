@@ -2,7 +2,6 @@
 
 
 #include "MGBlueprintFunctionLibrary.h"
-#include "Kismet/GameplayStatics.h"
 
 UWorld* UMGBlueprintFunctionLibrary::GetCurrentWorld()
 {

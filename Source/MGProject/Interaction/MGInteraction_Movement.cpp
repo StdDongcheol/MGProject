@@ -2,7 +2,6 @@
 
 
 #include "MGInteraction_Movement.h"
-#include "Kismet/GameplayStatics.h"
 
 AMGInteraction_Movement::AMGInteraction_Movement()
 {
