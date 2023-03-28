@@ -31,10 +31,14 @@ private:
 	UPROPERTY()
 	TSoftObjectPtr<class UDataTable>	BGMDataTable;
 
+	UPROPERTY()
+	TSoftObjectPtr<class UDataTable>	PlayerDataTable;
+
 public:
 	const FMGEnemyStatusDataTable* GetEnemyData(FName _Name) const;
 	const FMGBulletDataTable* GetBulletData(FName _Name) const;
 	const FHitParticleDataTable* GetParticleData(FName _Name) const;
 	USoundBase* GetBGMData(FName _Name) const;
+	const FMGPlayerDataTable* GetPlayerDataTable(FName _Name) const;
 
 };

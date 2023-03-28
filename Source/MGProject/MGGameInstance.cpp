@@ -50,6 +50,17 @@ UMGGameInstance::UMGGameInstance()
 			BGMDataTable = DataTable.Object;
 		}
 	}
+
+	{
+		FString DataPath = TEXT("DataTable'/Game/Play/Data/PlayerDataTable.PlayerDataTable'");
+
+		ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
+
+		if (DataTable.Succeeded())
+		{
+			PlayerDataTable = DataTable.Object;
+		}
+	}
 }
 
 const FMGEnemyStatusDataTable* UMGGameInstance::GetEnemyData(FName _Name) const
@@ -105,4 +116,17 @@ USoundBase* UMGGameInstance::GetBGMData(FName _Name) const
 	}
 
 	return BGMData->BGM;
+}
+
+const FMGPlayerDataTable* UMGGameInstance::GetPlayerDataTable(FName _Name) const
+{
+	if (!PlayerDataTable)
+		return nullptr;
+
+	FMGPlayerDataTable* ParticleDataInfo = PlayerDataTable->FindRow<FMGPlayerDataTable>(_Name, _Name.ToString());
+
+	if (!ParticleDataInfo)
+		return nullptr;
+
+	return ParticleDataInfo;
 }

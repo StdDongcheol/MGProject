@@ -7,7 +7,6 @@
 #include "MGFlag.h"
 #include "UObject/NoExportTypes.h"
 #include "MGStructs.generated.h"
-
 /**
  * 
  */
@@ -100,4 +99,46 @@ struct FMGBGMDataTable : public FTableRowBase
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class USoundBase> BGM;
+};
+
+USTRUCT(Atomic, BlueprintType)
+struct FMGSkillTable : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double		CoolTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FName, double> AdditionalProperty;
+};
+
+USTRUCT(Atomic, BlueprintType)
+struct FMGPlayerDataTable : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double		HP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double		HPMax;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double		MinAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double		MaxAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double		AttackSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double		MoveSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FName, FMGSkillTable> mapSkill;
+
 };
