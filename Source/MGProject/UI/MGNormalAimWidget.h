@@ -39,6 +39,9 @@ public:
 	virtual void SetVisibility(ESlateVisibility InVisibility) override;
 	void SwtichAimWidget(bool ToCharge);
 
+public:
+	void SetBossWeakpointWidget(bool bEnable);
+
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativePreConstruct() override;

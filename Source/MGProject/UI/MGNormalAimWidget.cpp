@@ -3,7 +3,11 @@
 
 #include "MGNormalAimWidget.h"
 #include "../MGPlayerController.h"
+#include "../MGBossController.h"
+#include "../Character/MGEnemyBoss.h"
+#include "../Character/MGCrunch.h"
 #include "../Animation/MGPlayerAnimInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 void UMGNormalAimWidget::SetVisibility(ESlateVisibility InVisibility)
 {
@@ -26,6 +30,8 @@ void UMGNormalAimWidget::SetVisibility(ESlateVisibility InVisibility)
 		{
 			IsAimActivated = false;
 		}
+
+		SetBossWeakpointWidget(false);
 		break;
 	}
 	default:
@@ -40,6 +46,18 @@ void UMGNormalAimWidget::SwtichAimWidget(bool ToCharge)
 
 	else
 		PlayAnimationReverse(SwitchAnim);
+}
+
+void UMGNormalAimWidget::SetBossWeakpointWidget(bool bEnable)
+{
+	AActor* BossActor = UGameplayStatics::GetActorOfClass(GetWorld(), AMGEnemyBoss::StaticClass());
+
+	if (!BossActor || !BossActor->IsValidLowLevel())
+		return;
+
+	AMGEnemyBoss* EnemyBoss = Cast<AMGEnemyBoss>(BossActor);
+	
+	EnemyBoss->SetWeakpointEnable(bEnable);
 }
 
 void UMGNormalAimWidget::NativeOnInitialized()

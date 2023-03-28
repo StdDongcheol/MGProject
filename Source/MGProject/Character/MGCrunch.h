@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MGEnemyBoss.h"
+#include "../Component/MGWeakComponent.h"
 #include "MGCrunch.generated.h"
 
 /**
@@ -29,6 +30,13 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* WeakBoxBack;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UWidgetComponent* WeakHeadWidget;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UWidgetComponent* WeakBackWidget;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UParticleSystemComponent* JetParticleComponent;

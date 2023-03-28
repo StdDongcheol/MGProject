@@ -5,6 +5,7 @@
 #include "../MGPlayGameMode.h"
 #include "../MGBossController.h"
 #include "../UI/MGBossStatusWidget.h"
+#include "../UI/MGWeakpointWidget.h"
 #include "../Interaction/MGInteraction.h"
 #include "../Interaction/MGInteraction_Input.h"
 #include "Kismet/GameplayStatics.h"
@@ -32,6 +33,31 @@ void AMGEnemyBoss::SetDamage(float _Damage, bool _IsWeakpoint)
 		GameMode->ChangeBGM(FName("PlayNormal"), 3.0f);
 
 		FindTag(Interaction);
+		SetLifeSpan(9.0f);
+	}
+}
+
+void AMGEnemyBoss::SetWeakpointEnable(bool bEnable)
+{
+	TArray<UActorComponent*> ComponentsArray = GetComponentsByTag(UWidgetComponent::StaticClass(), FName("WeakPoint"));
+
+	for (UActorComponent* WeakComponent : ComponentsArray)
+	{
+		UWidgetComponent* WidgetComp = Cast<UWidgetComponent>(WeakComponent);
+		UMGWeakpointWidget* WidgetClass = Cast<UMGWeakpointWidget>(WidgetComp->GetWidget());
+
+		if (bEnable)
+		{
+			WidgetComp->SetVisibility(true);
+			WidgetClass->SetVisibility(ESlateVisibility::Visible);
+			WidgetClass->WeakPlayAnimation();
+		}
+
+		else
+		{
+			WidgetComp->SetVisibility(false);
+			WidgetClass->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 }
 
@@ -48,8 +74,7 @@ void AMGEnemyBoss::BeginPlay()
 	}
 
 	AMGPlayGameMode* GameMode = Cast<AMGPlayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	GameMode->ChangeBGM(FName("PlayBoss"), 0.5f);
-	
+	GameMode->ChangeBGM(FName("PlayBoss"));
 }
 
 void AMGEnemyBoss::Tick(float DeltaTime)

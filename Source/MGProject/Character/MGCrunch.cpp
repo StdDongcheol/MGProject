@@ -2,13 +2,13 @@
 
 
 #include "MGCrunch.h"
+#include "../MGBossController.h"
 #include "../MGBlueprintFunctionLibrary.h"
 #include "../Projectile/MGHitEffect.h"
 #include "../Projectile/MGProjectile.h"
 #include "../UI/MGBossStatusWidget.h"
 #include "../Animation/MGEnemyAnimInstance.h"
 #include "Components/BoxComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -33,15 +33,22 @@ AMGCrunch::AMGCrunch()
 	WeakBoxHead->SetCollisionProfileName(FName("Enemy"));
 	WeakBoxHead->SetBoxExtent(FVector(30.0f, 25.0f, 25.0f));
 	WeakBoxHead->SetGenerateOverlapEvents(true);
-	WeakBoxHead->ComponentTags.Add(TEXT("WeakPoint"));
 
 	WeakBoxBack = CreateDefaultSubobject<UBoxComponent>(TEXT("WeakPointBack"));
 	WeakBoxBack->SetupAttachment(GetMesh(), TEXT("FX_Heads"));
 	WeakBoxBack->SetCollisionProfileName(FName("Enemy"));
 	WeakBoxBack->SetBoxExtent(FVector(40.0f, 25.0f, 25.0f));
 	WeakBoxBack->SetGenerateOverlapEvents(true);
-	WeakBoxBack->ComponentTags.Add(TEXT("WeakPoint"));
-
+	
+	WeakHeadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WeakHeadWidget"));
+	WeakHeadWidget->SetupAttachment(GetMesh(), TEXT("head"));
+	WeakHeadWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	
+	WeakBackWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WeakBackWidget"));
+	WeakBackWidget->SetupAttachment(GetMesh(), TEXT("FX_UltSteam_Back"));
+	WeakBackWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	
+	
 	JetParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>("JetParticle");
 	JetParticleComponent->SetupAttachment(GetMesh(), FName("FX_UltSteam_Back"));
 }
@@ -81,6 +88,8 @@ void AMGCrunch::SetDamage(float _Damage, bool _IsWeakpoint)
 	if (HP <= 0.0f)
 	{
 		JetParticleComponent->Deactivate();
+		WeakHeadWidget->SetVisibility(false);
+		WeakBackWidget->SetVisibility(false);
 	}
 }
 
@@ -109,6 +118,14 @@ void AMGCrunch::WeakpointHit(float _Damage)
 void AMGCrunch::BeginPlay()
 {
 	Super::BeginPlay();
+
+	WeakBoxHead->ComponentTags.Add(TEXT("WeakPoint"));
+	WeakBoxBack->ComponentTags.Add(TEXT("WeakPoint"));
+	WeakHeadWidget->ComponentTags.Add(TEXT("WeakPoint"));
+	WeakBackWidget->ComponentTags.Add(TEXT("WeakPoint"));
+
+	WeakHeadWidget->SetVisibility(false);
+	WeakBackWidget->SetVisibility(false);
 }
 
 void AMGCrunch::Tick(float DeltaTime)
@@ -132,21 +149,9 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 	if (!OtherCharacter || !OtherCharacter->IsValidLowLevel())
 		return;
 
-	if (OtherCharacter->GetStatus() & ECharacter_Status::Dodge)
+	if (OtherCharacter->GetStatus() & ECharacter_Status::Dodge ||
+		OtherCharacter->GetStatus() & ECharacter_Status::KnockOut)
 		return;
-
-	/// Player Knockout Start.
-	OtherCharacter->SetStatus(ECharacter_Status::KnockOut);
-
-	FVector HandPos = _pComponent->GetComponentLocation() - FVector(0.0f, 0.0f, 250.f);
-	
-	// Debugging sphere
-	DrawDebugSphere(GetWorld(), HandPos, 500.0f, 50, FColor::Red, false, 2.0f);
-
-	OtherCharacter->GetCapsuleComponent()->SetSimulatePhysics(true);
-	OtherCharacter->GetCapsuleComponent()->AddRadialImpulse(HandPos, 500.0f, 700.0f, ERadialImpulseFalloff::RIF_Constant, true);
-	OtherCharacter->GetAnimInst()->SetFalling(true);
-	/// Player Knockout End.
 
 	/// Melee Particle Start.
 	FVector HitPos = _pOtherActor->GetActorLocation();
@@ -179,4 +184,20 @@ void AMGCrunch::OnDamageCollisionEnter(UPrimitiveComponent* _pComponent, AActor*
 	/// Melee Particle End.
 
 	OtherCharacter->AdjustHP(-MinAttack);
+
+	if (OtherCharacter->GetCurrentHP() > 0.0f)
+	{
+		/// Player Knockout Start.
+		OtherCharacter->SetStatus(ECharacter_Status::KnockOut);
+
+		FVector HandPos = _pComponent->GetComponentLocation() - FVector(0.0f, 0.0f, 250.f);
+
+		// Debugging sphere
+		DrawDebugSphere(GetWorld(), HandPos, 500.0f, 50, FColor::Red, false, 2.0f);
+
+		OtherCharacter->GetCapsuleComponent()->SetSimulatePhysics(true);
+		OtherCharacter->GetCapsuleComponent()->AddRadialImpulse(HandPos, 500.0f, 700.0f, ERadialImpulseFalloff::RIF_Constant, true);
+		OtherCharacter->GetAnimInst()->SetFalling(true);
+		/// Player Knockout End.
+	}
 }

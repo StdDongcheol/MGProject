@@ -32,6 +32,10 @@ public:
 	virtual const FMGEnemyStatusDataTable* InitEnemyData();
 	virtual void SetDamage(float _Damage, bool _IsWeakpoint = false);
 
+public:
+	void SetWeakpointEnable(bool bEnable);
+
+
 protected:
 	virtual void BeginPlay() override;
 
