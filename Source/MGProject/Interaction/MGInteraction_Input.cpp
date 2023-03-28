@@ -164,6 +164,12 @@ void AMGInteraction_Input::Tick(float DeltaTime)
 						InteractTarget->InteractionActivate();
 					}
 
+					if (SetBGMFadeOut)
+					{
+						AMGPlayGameMode* GameMode = Cast<AMGPlayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+						GameMode->BGMFadeOut();
+					}
+
 					IsWaveStart = true;
 				}
 			}

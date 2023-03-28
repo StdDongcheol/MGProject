@@ -69,6 +69,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input Setting", meta = (AllowPrivateAccess = "true"))
 	bool	IsTriggerOnly;
 	
+	UPROPERTY(EditAnywhere, Category = "Input Setting", meta = (AllowPrivateAccess = "true"))
+	bool	SetBGMFadeOut;
+	
 	bool	IsWaveStart;
 	bool	IsEntered;
 	bool	ForceStart;
