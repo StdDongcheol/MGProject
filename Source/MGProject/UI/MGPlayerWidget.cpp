@@ -29,9 +29,40 @@ void UMGPlayerWidget::StageEnd()
 	PlayAnimation(FadeOutAnimation);
 }
 
+void UMGPlayerWidget::PlayChangeWeaponMode()
+{
+	if (!PlayerChacracter->IsChargeFireMode())
+		PlayAnimation(NormalWeaponAnimation);
+
+	else
+		PlayAnimation(ChargeWeaponAnimation);
+}
+
+void UMGPlayerWidget::PlayChargeReady()
+{
+	PlayAnimation(ChargeReadyAnimation);
+}
+
+void UMGPlayerWidget::PlayChargeFire()
+{
+	PlayAnimation(ChargeFireAnimation);
+}
+
 void UMGPlayerWidget::SetPlayerDeathWidget()
 {
 	PlayAnimation(PlayerDeadAnimation);
+}
+
+void UMGPlayerWidget::SetPlayerStatus(const FMGPlayerDataTable* DataTable)
+{
+	HPCurrent = DataTable->HP;
+	HPMax = DataTable->HPMax;
+	ECoolTime = DataTable->mapSkill.Find(FName("ESkill"))->CoolTime;
+	QCoolTime = DataTable->mapSkill.Find(FName("QSkill"))->CoolTime;
+	DashCoolTime = DataTable->mapSkill.Find(FName("Dash"))->CoolTime;
+	ChargeGaugeMax = DataTable->mapSkill.Find(FName("ChargeGauge"))->CoolTime;
+	CurrentMissile = *DataTable->mapSkill.Find(FName("QSkill"))->AdditionalProperty.Find(FName("MaxMissile"));
+	MissileMax = CurrentMissile;
 }
 
 void UMGPlayerWidget::NativeOnInitialized()
@@ -48,28 +79,18 @@ void UMGPlayerWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	AMGPlayerController* PlayerController = Cast<AMGPlayerController>(GetOwningPlayer());
-	PlayerChacracter = Cast<AMGPlayerCharacter>(PlayerController->GetPlayerCharacter());
-
 	HPBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("HPProgressBar")));
 	HPSlider = Cast<USlider>(WidgetTree->FindWidget(TEXT("S_Shine")));
 	MissileChargeBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("MissileProgressBar")));
 	DroneChargeBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("DroneProgressBar")));
 	DashChargeBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("DashProgressBar")));
+	WeaponChargeBar = Cast<UProgressBar>(WidgetTree->FindWidget(TEXT("ChargeWeaponBar")));
 	MissileCountText = Cast<UTextBlock>(WidgetTree->FindWidget(TEXT("MissileCount")));
 	Fade = Cast<UImage>(WidgetTree->FindWidget(TEXT("FadeImage")));
 	TitleButton = Cast<UButton>(WidgetTree->FindWidget(TEXT("PlayBackButton")));
 
-	HPCurrent = PlayerChacracter->GetCurrentHP();
-	HPMax = PlayerChacracter->GetMaxHP();
-	ETimeLeft = PlayerChacracter->GetDroneChargeTimeAcc();
-	ECoolTime = PlayerChacracter->GetDroneChargeTime();
-	QTimeLeft = PlayerChacracter->GetMissileChargeTimeAcc();
-	QCoolTime = PlayerChacracter->GetMissileChargeTime();
-	DashTimeLeft = PlayerChacracter->GetDashChargeTimeAcc();
-	DashCoolTime = PlayerChacracter->GetDashChargeTime();
-	CurrentMissile = PlayerChacracter->GetMissileCount();
-	MissileMax = PlayerChacracter->GetMissileMax();
+	AMGPlayerController* PlayerController = Cast<AMGPlayerController>(GetOwningPlayer());
+	PlayerChacracter = Cast<AMGPlayerCharacter>(PlayerController->GetPlayerCharacter());
 
 	MissileCountText->SetText(FText::FromString(FString::FromInt(CurrentMissile)));
 
@@ -96,20 +117,25 @@ void UMGPlayerWidget::PlayerStatusUpdate(float Deltatime)
 	HPCurrent = PlayerChacracter->GetCurrentHP();
 	HPMax = PlayerChacracter->GetMaxHP();
 	ETimeLeft = PlayerChacracter->GetDroneChargeTimeAcc();
-	ECoolTime = PlayerChacracter->GetDroneChargeTime();
 	QTimeLeft = PlayerChacracter->GetMissileChargeTimeAcc();
-	QCoolTime = PlayerChacracter->GetMissileChargeTime();
 	DashTimeLeft = PlayerChacracter->GetDashChargeTimeAcc();
-	DashCoolTime = PlayerChacracter->GetDashChargeTime();
+	ChargeGauge = PlayerChacracter->GetChargeShotGauge();
 	CurrentMissile = PlayerChacracter->GetMissileCount();
-	MissileMax = PlayerChacracter->GetMissileMax();
 
 	SetHPBar(HPCurrent);
 
 	MissileChargeBar->SetPercent(QTimeLeft / QCoolTime);
 	DroneChargeBar->SetPercent(ETimeLeft / ECoolTime);
 	DashChargeBar->SetPercent(DashTimeLeft / DashCoolTime);
+	WeaponChargeBar->SetPercent(ChargeGauge / ChargeGaugeMax);
 	MissileCountText->SetText(FText::FromString(FString::FromInt(CurrentMissile)));
+
+	
+	if (WeaponChargeBar->Percent >= 1.0f && !IsAnimationPlaying(ChargeReadyAnimation))
+		PlayAnimation(ChargeReadyAnimation, 0.0f, 0);
+
+	else if (WeaponChargeBar->Percent < 1.0f)
+		StopAnimation(ChargeReadyAnimation);
 }
 
 void UMGPlayerWidget::PlayStageEndCallback()

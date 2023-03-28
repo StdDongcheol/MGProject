@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MGUserWidget.h"
+#include "../MGStructs.h"
 #include "MGPlayerWidget.generated.h"
 
 /**
@@ -31,6 +32,9 @@ private:
 	class UProgressBar* DashChargeBar;
 	
 	UPROPERTY()
+	class UProgressBar* WeaponChargeBar;
+	
+	UPROPERTY()
 	class UTextBlock* MissileCountText;
 
 
@@ -56,6 +60,18 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* PlayerDeadAnimation;
+	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* NormalWeaponAnimation;
+	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* ChargeWeaponAnimation;
+	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* ChargeReadyAnimation;
+	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
+	class UWidgetAnimation* ChargeFireAnimation;
 
 private:
 	FWidgetAnimationDynamicEvent FadeOutDelegateStart;
@@ -75,6 +91,8 @@ private:
 	float	QCoolTime;
 	float	DashTimeLeft;
 	float	DashCoolTime;
+	float	ChargeGauge;
+	float	ChargeGaugeMax;
 	int		CurrentMissile;
 	int		MissileMax;
 
@@ -83,7 +101,11 @@ public:
 	void SetHPBar(float HP);
 	void StageStart();
 	void StageEnd();
+	void PlayChangeWeaponMode();
+	void PlayChargeReady();
+	void PlayChargeFire();
 	void SetPlayerDeathWidget();
+	void SetPlayerStatus(const FMGPlayerDataTable* DataTable);
 
 
 protected:

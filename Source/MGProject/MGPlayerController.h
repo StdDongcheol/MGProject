@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Character/MGPlayerCharacter.h"
+#include "UI/MGPlayerWidget.h"
 #include "MGPlayerController.generated.h"
 
 /**
@@ -66,6 +67,12 @@ public:
 	AMGPlayerCharacter* GetPlayerCharacter() const
 	{
 		return PlayerCharacter;
+	}
+	
+	UFUNCTION()
+	UMGPlayerWidget* GetPlayerStatusWidget() const
+	{
+		return PlayerStatusWidget;
 	}
 
 public:

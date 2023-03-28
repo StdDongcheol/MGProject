@@ -110,8 +110,9 @@ void AMGPlayerController::MoveFront(float Value)
 		return;
 
 	FVector ForwardVector = ArmComponent->GetForwardVector();
+	
 
-	PlayerCharacter->AddMovementInput(ForwardVector, PlayerCharacter->GetMoveSpeed());
+	PlayerCharacter->AddMovementInput(ForwardVector);
 }
 
 void AMGPlayerController::MoveLeft(float Value)
@@ -142,7 +143,7 @@ void AMGPlayerController::MoveLeft(float Value)
 
 	FVector RightVector = ArmComponent->GetRightVector();
 
-	PlayerCharacter->AddMovementInput(-RightVector, PlayerCharacter->GetMoveSpeed());
+	PlayerCharacter->AddMovementInput(-RightVector);
 }
 
 void AMGPlayerController::MoveRight(float Value)
@@ -170,7 +171,7 @@ void AMGPlayerController::MoveRight(float Value)
 	if (!ArmComponent || !ArmComponent->IsValidLowLevel())
 		return;
 
-	PlayerCharacter->AddMovementInput(ArmComponent->GetRightVector(), PlayerCharacter->GetMoveSpeed());
+	PlayerCharacter->AddMovementInput(ArmComponent->GetRightVector());
 }
 
 void AMGPlayerController::MoveBack(float Value)
@@ -200,7 +201,7 @@ void AMGPlayerController::MoveBack(float Value)
 
 	FVector ForwardVector = ArmComponent->GetForwardVector();
 	
-	PlayerCharacter->AddMovementInput(-ForwardVector, PlayerCharacter->GetMoveSpeed());
+	PlayerCharacter->AddMovementInput(-ForwardVector);
 }
 
 void AMGPlayerController::MouseXMove(float Value)
@@ -269,6 +270,7 @@ void AMGPlayerController::LeftMouseButtonAxis(float Value)
 		{
 			PlayerCharacter->GetAnimInst<UMGPlayerAnimInstance>()->SetBodyActionState(EPlayer_BodyAction::NormalFire);
 			PlayerCharacter->UseChargeShot();
+			PlayerStatusWidget->PlayChargeFire();
 			break;
 		}
 		
@@ -347,6 +349,9 @@ void AMGPlayerController::RightMouseButtonClick()
 		// CameraArm Length 및 SocketOffset 조정
 		if (PlayerCharacter->IsChargeFireMode())
 		{
+			if (PlayerCharacter->IsChargeEnable())
+				PlayerNormalAimWidget->SetBossWeakpointWidget(true);
+
 			PlayerNormalAimWidget->SwtichAimWidget(true);
 			ArmComponent->TargetArmLength = 100.0f;
 			ArmComponent->SocketOffset = FVector(0.0f, 60.0f, 10.0f);
@@ -360,6 +365,9 @@ void AMGPlayerController::RightMouseButtonClick()
 
 		// NormalAimWidget off
 		PlayerNormalAimWidget->SetVisibility(ESlateVisibility::Visible);
+
+		// Set MoveSpeed while aiming
+		PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayerCharacter->GetMoveSpeed() * 0.7f;
 		break;
 	}
 
@@ -396,6 +404,7 @@ void AMGPlayerController::RightMouseButtonRelease()
 
 		// NormalAimWidget off
 		PlayerNormalAimWidget->SetVisibility(ESlateVisibility::Hidden);
+		PlayerNormalAimWidget->SetBossWeakpointWidget(false);
 
 		break;
 	}
@@ -406,6 +415,9 @@ void AMGPlayerController::RightMouseButtonRelease()
 	default:
 		break;
 	}
+
+	// Set MoveSpeed while aiming
+	PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayerCharacter->GetMoveSpeed();
 }
 
 void AMGPlayerController::QButtonPress()
@@ -465,8 +477,6 @@ void AMGPlayerController::QButtonRelease()
 		if (!ArmComponent)
 			return;
 
-		// 발사여부에 따라서 Aiming 상태를 유지할 것인지 설정해야함.
-		
 		int MissileCount = PlayerCharacter->GetMissileCount();
 		
 		// 발사하는 동안 QAiming 상태를 유지.
@@ -677,6 +687,9 @@ void AMGPlayerController::RButtonPress()
 			ArmComponent->TargetArmLength = 100.0f;
 			ArmComponent->SocketOffset = FVector(0.0f, 60.0f, 10.0f);
 		}
+
+		PlayerNormalAimWidget->SetBossWeakpointWidget(!CurrentFireMode);
+		PlayerStatusWidget->PlayChangeWeaponMode();
 	}
 }
 
