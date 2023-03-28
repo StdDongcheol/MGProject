@@ -119,6 +119,16 @@ public:
 	{
 		return DashChargeTimeAcc;
 	}
+	
+	float GetChargeShotGauge() const
+	{
+		return ChargeShotGauge;
+	}
+	
+	float GetChargeGaugeMax() const
+	{
+		return ChargeShotGaugeMax;
+	}
 
 	bool IsDroneReady() const
 	{

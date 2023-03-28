@@ -93,6 +93,11 @@ public:
 	}
 
 public:
+	float GetMovementYawValue() const
+	{
+		return MovementYawValue;
+	}
+	
 	FRotator GetAimRot() const
 	{
 		return CharacterAimRotation;
