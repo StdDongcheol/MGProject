@@ -10,7 +10,7 @@
 * 일정은 컨텐츠 작업을 위주로 작성되었습니다.
 
 ## Timeline
-* [Notion](https://hilarious-trunk-3ab.notion.site/MH-Project-38360d41edb6478ea30b7906b7424556)으로 팀원과 개발 일정을 공유하면서 작업을 진행하였습니다.
+* [Notion](https://hilarious-trunk-3ab.notion.site/MH-Project-38360d41edb6478ea30b7906b7424556)으로 개발 일정을 작성하여 작업을 진행하였습니다.
 <p align="center">
  <img src = "Timeline.png">
 </p>
